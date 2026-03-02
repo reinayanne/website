@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -158,12 +157,87 @@ h1{
   margin-bottom:10px;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 600;
+  margin-right: 10px;
 }
 
 .dgc-btn:hover{
   background:#fff;
   color:#ff4fa3;
   border:2px solid #ff4fa3;
+}
+
+.dgc-btn.active {
+  background: #fff;
+  color: #ff4fa3;
+  border: 2px solid #ff4fa3;
+}
+
+/* Category Selector Dropdown */
+.category-selector {
+  display: none;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.category-selector.show {
+  display: block;
+}
+
+.category-selector label {
+  color: #333;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 5px;
+  font-size: 12px;
+}
+
+.category-selector select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ff4fa3;
+  margin-bottom: 10px;
+  font-family: inherit;
+}
+
+.category-selector-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.category-selector button {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.btn-confirm {
+  background: linear-gradient(135deg,#ff4fa3,#ff7bbf);
+  color: white;
+}
+
+.btn-cancel {
+  background: #ddd;
+  color: #333;
+}
+
+/* Drag Handle */
+.drag-handle {
+  cursor: grab;
+  color: #999;
+  margin-right: 8px;
+  font-size: 14px;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
 }
 
 /* TABLE - White background with black text */
@@ -216,6 +290,18 @@ th{
 td{
   background:#ffffff;
   color:#000000;
+}
+
+/* Category Header Row */
+.category-header {
+  background: linear-gradient(135deg, #ff4fa3, #ff7bbf) !important;
+  color: #ffffff !important;
+  font-weight: bold;
+  text-align: left;
+  padding-left: 15px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 /* Alternating week colors for checkboxes - Baby pink pastel */
@@ -272,10 +358,44 @@ td input[type="checkbox"]:checked{
   accent-color:var(--pink);
 }
 
+.delete-btn {
+  cursor:pointer;
+  color:#ff4fa3;
+  transition:.2s;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.delete-btn.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 .delete-btn:hover{
   color:red;
   transform:scale(1.2);
-  transition:.2s;
+}
+
+/* Drag and Drop Styles */
+tr.routine-row {
+  transition: all 0.2s;
+}
+
+tr.routine-row.dragging {
+  opacity: 0.5;
+  background: #ffe6f2;
+  box-shadow: 0 2px 8px rgba(255, 79, 163, 0.3);
+}
+
+tr.routine-row.drag-over {
+  border-top: 3px solid #ff4fa3;
+}
+
+tr.routine-row td:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
 }
 
 /* RIGHT */
@@ -305,6 +425,7 @@ td input[type="checkbox"]:checked{
   cursor:pointer;
   transition:.3s;
   box-shadow:0 0 10px rgba(255,105,180,0.4);
+  margin-bottom: 10px;
 }
 
 #monthSelect:hover{
@@ -426,6 +547,8 @@ td input[type="checkbox"]:checked{
     width: 100%;
     padding: 12px;
     font-size: 14px;
+    margin-right: 0;
+    margin-bottom: 10px;
   }
   
   table {
@@ -439,6 +562,15 @@ td input[type="checkbox"]:checked{
   td input[type="checkbox"] {
     width: 14px;
     height: 14px;
+  }
+  
+  .delete-btn {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .drag-handle {
+    display: none;
   }
 }
 
@@ -565,9 +697,28 @@ td input[type="checkbox"]:checked{
     <option value="12">December</option>
   </select>
 
-  <button class="dgc-btn" id="addRoutineBtn">
-    <i class="fas fa-plus"></i> Add New Routine
-  </button>
+  <div style="margin-bottom: 15px;">
+    <button class="dgc-btn" id="editAllBtn">
+      <i class="fas fa-edit"></i> Edit All
+    </button>
+    <button class="dgc-btn" id="addRoutineBtn">
+      <i class="fas fa-plus"></i> Add New Routine
+    </button>
+  </div>
+
+  <!-- Category Selector -->
+  <div class="category-selector" id="categorySelector">
+    <label>Select Category:</label>
+    <select id="categorySelect">
+      <option value="Life">Life</option>
+      <option value="Work">Work</option>
+      <option value="Gaming">Gaming</option>
+    </select>
+    <div class="category-selector-buttons">
+      <button class="btn-confirm" onclick="confirmAddRoutine()">Add</button>
+      <button class="btn-cancel" onclick="cancelAddRoutine()">Cancel</button>
+    </div>
+  </div>
 
   <div class="table-wrapper">
     <table>
@@ -639,9 +790,11 @@ renderCalendar(parseInt(monthSelect.value));
 monthSelect.onchange=()=>renderCalendar(parseInt(monthSelect.value));
 
 /* ===== DATA PERSISTENCE ===== */
-const STORAGE_KEY = 'queenJulieHabitTracker';
+const STORAGE_KEY = 'queenJulieHabitTracker_v3';
 let habitData = {};
 let chartInstance = null;
+let isEditMode = false;
+let draggedRow = null;
 
 // Load data from localStorage
 function loadData() {
@@ -671,13 +824,41 @@ function getMonthKey() {
   return `2026-${monthSelect.value}`;
 }
 
+// Get previous month key
+function getPreviousMonthKey() {
+  const currentMonth = parseInt(monthSelect.value);
+  let prevMonth = currentMonth - 1;
+  let year = 2026;
+  if (prevMonth === 0) {
+    prevMonth = 12;
+    year = 2025;
+  }
+  return `${year}-${prevMonth}`;
+}
+
+// Carry over data from previous month if current month is empty
+function carryOverFromPreviousMonth() {
+  const currentKey = getMonthKey();
+  const prevKey = getPreviousMonthKey();
+  
+  if (!habitData[currentKey] || habitData[currentKey].length === 0) {
+    if (habitData[prevKey] && habitData[prevKey].length > 0) {
+      habitData[currentKey] = JSON.parse(JSON.stringify(habitData[prevKey]));
+      saveData();
+      return true;
+    }
+  }
+  return false;
+}
+
 // Save current table state
 function saveCurrentTable() {
   const monthKey = getMonthKey();
-  const rows = habitBody.querySelectorAll('tr');
+  const rows = habitBody.querySelectorAll('tr[data-category]');
   const monthData = [];
   
   rows.forEach(row => {
+    const category = row.getAttribute('data-category');
     const time = row.cells[1].innerText;
     const activity = row.cells[2].innerText;
     const checks = [];
@@ -687,7 +868,7 @@ function saveCurrentTable() {
       checks.push(cb.checked);
     });
     
-    monthData.push({ time, activity, checks });
+    monthData.push({ category, time, activity, checks });
   });
   
   habitData[monthKey] = monthData;
@@ -698,36 +879,78 @@ function saveCurrentTable() {
 // Load table for specific month
 function loadTable(month) {
   const monthKey = `2026-${month}`;
+  
+  carryOverFromPreviousMonth();
+  
   const monthData = habitData[monthKey] || [];
   
   habitBody.innerHTML = '';
   
-  monthData.forEach(data => {
-    createRow(data.time, data.activity, data.checks);
+  const categories = ['Life', 'Work', 'Gaming'];
+  const groupedData = {};
+  
+  categories.forEach(cat => {
+    groupedData[cat] = monthData.filter(item => item.category === cat);
   });
+  
+  categories.forEach(category => {
+    const items = groupedData[category];
+    if (items && items.length > 0) {
+      addCategoryHeader(category);
+      items.forEach(data => {
+        createRow(data.category, data.time, data.activity, data.checks);
+      });
+    }
+  });
+  
+  if (monthData.length === 0) {
+    categories.forEach(category => {
+      addCategoryHeader(category);
+    });
+  }
+  
+  updateDeleteButtonsVisibility();
+}
+
+// Add category header
+function addCategoryHeader(category) {
+  const days = new Date(2026, parseInt(monthSelect.value), 0).getDate();
+  const row = document.createElement('tr');
+  row.className = 'category-header-row';
+  row.innerHTML = `<td colspan="${3 + days}" class="category-header">${category}</td>`;
+  habitBody.appendChild(row);
 }
 
 // Create a row with data
-function createRow(time = '--:--', activity = 'New Routine', checks = []) {
+function createRow(category = 'Life', time = '--:--', activity = 'New Routine', checks = []) {
   const month = parseInt(monthSelect.value);
   const days = new Date(2026, month, 0).getDate();
   
   let row = document.createElement('tr');
+  row.setAttribute('draggable', 'true');
+  row.setAttribute('data-category', category);
+  row.className = 'routine-row';
+  
   row.innerHTML = `
-    <td><i class="fas fa-trash delete-btn" style="cursor:pointer;color:#ff4fa3;"></i></td>
+    <td style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+      <i class="fas fa-grip-vertical drag-handle"></i>
+      <i class="fas fa-trash delete-btn ${isEditMode ? 'visible' : ''}" style="color:#ff4fa3;"></i>
+    </td>
     <td contenteditable="true">${time}</td>
     <td contenteditable="true">${activity}</td>
   `;
   
   for(let i = 0; i < days; i++) {
     const isChecked = checks[i] ? 'checked' : '';
-    // Determine week number (0-indexed week)
     const weekNum = Math.floor(i / 7);
     const weekClass = weekNum % 2 === 0 ? 'week-1' : 'week-2';
     row.innerHTML += `<td class="${weekClass}"><input type="checkbox" ${isChecked}></td>`;
   }
   
   habitBody.appendChild(row);
+  
+  // Add drag and drop listeners
+  addDragListeners(row);
   
   // Add delete listener
   row.querySelector('.delete-btn').addEventListener('click', function() {
@@ -753,33 +976,128 @@ function createRow(time = '--:--', activity = 'New Routine', checks = []) {
   });
 }
 
+// Improved Drag and Drop functionality
+function addDragListeners(row) {
+  row.addEventListener('dragstart', handleDragStart);
+  row.addEventListener('dragend', handleDragEnd);
+  row.addEventListener('dragover', handleDragOver);
+  row.addEventListener('dragleave', handleDragLeave);
+  row.addEventListener('drop', handleDrop);
+}
+
+function handleDragStart(e) {
+  draggedRow = this;
+  this.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', this.getAttribute('data-category'));
+  
+  // Set drag image (optional, for better visual)
+  const rect = this.getBoundingClientRect();
+  e.dataTransfer.setDragImage(this, e.clientX - rect.left, e.clientY - rect.top);
+}
+
+function handleDragEnd(e) {
+  this.classList.remove('dragging');
+  
+  // Remove all drag-over classes
+  document.querySelectorAll('.drag-over').forEach(el => {
+    el.classList.remove('drag-over');
+  });
+  
+  draggedRow = null;
+  saveCurrentTable();
+}
+
+function handleDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  
+  if (!draggedRow || this === draggedRow) return;
+  
+  const targetRow = this.closest('tr');
+  if (!targetRow || !targetRow.classList.contains('routine-row')) return;
+  
+  // Only allow dropping in the same category
+  const draggedCategory = draggedRow.getAttribute('data-category');
+  const targetCategory = targetRow.getAttribute('data-category');
+  
+  if (draggedCategory === targetCategory) {
+    targetRow.classList.add('drag-over');
+    
+    const rect = targetRow.getBoundingClientRect();
+    const midpoint = rect.top + rect.height / 2;
+    
+    if (e.clientY < midpoint) {
+      targetRow.style.borderTop = '3px solid #ff4fa3';
+      targetRow.style.borderBottom = '';
+    } else {
+      targetRow.style.borderTop = '';
+      targetRow.style.borderBottom = '3px solid #ff4fa3';
+    }
+  }
+}
+
+function handleDragLeave(e) {
+  this.classList.remove('drag-over');
+  this.style.borderTop = '';
+  this.style.borderBottom = '';
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  
+  if (!draggedRow || this === draggedRow) return;
+  
+  const targetRow = this.closest('tr');
+  if (!targetRow || !targetRow.classList.contains('routine-row')) return;
+  
+  const draggedCategory = draggedRow.getAttribute('data-category');
+  const targetCategory = targetRow.getAttribute('data-category');
+  
+  if (draggedCategory === targetCategory) {
+    const rect = targetRow.getBoundingClientRect();
+    const midpoint = rect.top + rect.height / 2;
+    
+    if (e.clientY < midpoint) {
+      targetRow.parentNode.insertBefore(draggedRow, targetRow);
+    } else {
+      targetRow.parentNode.insertBefore(draggedRow, targetRow.nextSibling);
+    }
+    
+    saveCurrentTable();
+  }
+  
+  // Clean up styles
+  document.querySelectorAll('.routine-row').forEach(row => {
+    row.classList.remove('drag-over');
+    row.style.borderTop = '';
+    row.style.borderBottom = '';
+  });
+}
+
 /* ===== DYNAMIC TABLE ===== */
 const habitHead=document.getElementById("habitHead");
 const habitBody=document.getElementById("habitBody");
 const year=2026;
 
-// Days of week array
 const daysOfWeek = ['M', 'T', 'W', 'TH', 'F', 'S', 'S'];
 
 function generateTable(month){
 habitHead.innerHTML="";
 const days=new Date(year,month,0).getDate();
 
-// First row - Days of week (M T W TH F S S)
 let dayOfWeekRow = `<tr>
 <th style="width:40px;"></th>
 <th>Time</th>
 <th>Activity</th>`;
 
 for(let i=1;i<=days;i++){
-  // Calculate day of week (0 = Sunday, 1 = Monday, etc.)
   const date = new Date(year, month-1, i);
   let dayIndex = date.getDay();
-  // Convert to 0=Monday format
   dayIndex = dayIndex === 0 ? 6 : dayIndex - 1;
   const dayLetter = daysOfWeek[dayIndex];
   
-  // Determine week number for styling
   const weekNum = Math.floor((i-1) / 7);
   let headerClass;
   if (weekNum % 2 === 0) {
@@ -792,14 +1110,12 @@ for(let i=1;i<=days;i++){
 }
 dayOfWeekRow += "</tr>";
 
-// Second row - Day numbers
 let dayNumberRow = `<tr>
 <th style="width:40px;"></th>
 <th>Date</th>
 <th>To Do</th>`;
 
 for(let i=1;i<=days;i++){
-  // Determine week number for styling
   const weekNum = Math.floor((i-1) / 7);
   let headerClass;
   if (weekNum % 2 === 0) {
@@ -814,7 +1130,6 @@ dayNumberRow += "</tr>";
 
 habitHead.innerHTML = dayOfWeekRow + dayNumberRow;
 
-// Load saved data for this month
 loadTable(month);
 }
 
@@ -825,10 +1140,146 @@ generateTable(parseInt(monthSelect.value));
 updateChart();
 });
 
-document.getElementById("addRoutineBtn").addEventListener("click",()=>{
-  createRow();
-  saveCurrentTable();
+// Edit All Button functionality
+document.getElementById("editAllBtn").addEventListener("click", function() {
+  isEditMode = !isEditMode;
+  this.classList.toggle('active');
+  updateDeleteButtonsVisibility();
 });
+
+function updateDeleteButtonsVisibility() {
+  const deleteButtons = document.querySelectorAll('.delete-btn');
+  deleteButtons.forEach(btn => {
+    if (isEditMode) {
+      btn.classList.add('visible');
+    } else {
+      btn.classList.remove('visible');
+    }
+  });
+}
+
+// Category Selector Functions
+document.getElementById("addRoutineBtn").addEventListener("click", function() {
+  const selector = document.getElementById('categorySelector');
+  selector.classList.toggle('show');
+});
+
+function confirmAddRoutine() {
+  const selectedCategory = document.getElementById('categorySelect').value;
+  addRoutineToCategory(selectedCategory);
+  document.getElementById('categorySelector').classList.remove('show');
+}
+
+function cancelAddRoutine() {
+  document.getElementById('categorySelector').classList.remove('show');
+}
+
+function addRoutineToCategory(selectedCategory) {
+  // Find if category header exists
+  const headers = Array.from(habitBody.querySelectorAll('.category-header'));
+  let targetHeader = null;
+  let nextHeader = null;
+  
+  for (let i = 0; i < headers.length; i++) {
+    if (headers[i].textContent === selectedCategory) {
+      targetHeader = headers[i].parentNode;
+      // Find next category header (if any)
+      if (i + 1 < headers.length) {
+        nextHeader = headers[i + 1].parentNode;
+      }
+      break;
+    }
+  }
+  
+  // If header doesn't exist, create it
+  if (!targetHeader) {
+    addCategoryHeader(selectedCategory);
+    createRow(selectedCategory);
+    saveCurrentTable();
+    return;
+  }
+  
+  // Find the last row of this category
+  let lastRowOfCategory = null;
+  const allRows = Array.from(habitBody.querySelectorAll('tr'));
+  let foundCategory = false;
+  
+  for (let row of allRows) {
+    if (row === targetHeader) {
+      foundCategory = true;
+      continue;
+    }
+    if (foundCategory) {
+      if (row.classList.contains('category-header-row')) {
+        break;
+      }
+      if (row.getAttribute('data-category') === selectedCategory) {
+        lastRowOfCategory = row;
+      }
+    }
+  }
+  
+  const newRow = createRowElement(selectedCategory);
+  
+  if (lastRowOfCategory) {
+    lastRowOfCategory.after(newRow);
+  } else {
+    // Insert right after the header
+    targetHeader.after(newRow);
+  }
+  
+  saveCurrentTable();
+}
+
+function createRowElement(category) {
+  const month = parseInt(monthSelect.value);
+  const days = new Date(2026, month, 0).getDate();
+  
+  let row = document.createElement('tr');
+  row.setAttribute('draggable', 'true');
+  row.setAttribute('data-category', category);
+  row.className = 'routine-row';
+  
+  row.innerHTML = `
+    <td style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+      <i class="fas fa-grip-vertical drag-handle"></i>
+      <i class="fas fa-trash delete-btn ${isEditMode ? 'visible' : ''}" style="color:#ff4fa3;"></i>
+    </td>
+    <td contenteditable="true">--:--</td>
+    <td contenteditable="true">New Routine</td>
+  `;
+  
+  for(let i = 0; i < days; i++) {
+    const weekNum = Math.floor(i / 7);
+    const weekClass = weekNum % 2 === 0 ? 'week-1' : 'week-2';
+    row.innerHTML += `<td class="${weekClass}"><input type="checkbox"></td>`;
+  }
+  
+  addDragListeners(row);
+  
+  row.querySelector('.delete-btn').addEventListener('click', function() {
+    this.closest('tr').remove();
+    saveCurrentTable();
+  });
+  
+  const editableCells = row.querySelectorAll('td[contenteditable="true"]');
+  editableCells.forEach(cell => {
+    cell.addEventListener('blur', saveCurrentTable);
+    cell.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        cell.blur();
+      }
+    });
+  });
+  
+  const checkboxes = row.querySelectorAll('input[type="checkbox"]');
+  checkboxes.forEach(cb => {
+    cb.addEventListener('change', saveCurrentTable);
+  });
+  
+  return row;
+}
 
 /* ===== CHART ===== */
 function initChart() {
@@ -896,23 +1347,19 @@ function updateChart() {
   chartInstance.update();
 }
 
-// Initialize chart
 initChart();
 updateChart();
 
 /* ===== HEADER ICON FUNCTIONS ===== */
 
-// HOME
 document.getElementById("homeBtn").addEventListener("click", function(){
   window.location.href = "homepage.html";
 });
 
-// LOGOUT
 document.getElementById("logoutBtn").addEventListener("click", function(){
   window.location.href = "login.html";
 });
 
-// MUSIC PLAY / PAUSE
 const music = document.getElementById("bgMusic");
 const musicBtn = document.getElementById("musicBtn");
 
@@ -926,10 +1373,8 @@ musicBtn.addEventListener("click", function(){
   }
 });
 
-// Load saved data on startup
 loadData();
 
-// Sync across tabs
 window.addEventListener('storage', (e) => {
   if (e.key === STORAGE_KEY) {
     habitData = JSON.parse(e.newValue);
