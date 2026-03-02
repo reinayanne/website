@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Manager Julie | Business Planner</title>
+<link rel="icon" type="image/png" sizes="64x64" href="adminfavicon.ico">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --pink:#ff4fa3;
+  --pink-light:#ff7bbf;
+  --glass-bg:rgba(255,123,191,.18);
+  --glass-border:rgba(255,255,255,.2);
+  --text-main:#ffffff;
+  --success:#00ff88;
+  --warning:#ffd700;
+  --danger:#ff4757;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+html, body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:url("adminbackground.png") center/cover fixed no-repeat;
+  color:var(--text-main);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:rgba(255,79,163,.15)}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#ff4fa3,#ff7bbf);border-radius:10px}
+
+#loader{
+  position:fixed;inset:0;background:var(--pink-light);
+  display:flex;align-items:center;justify-content:center;z-index:9999;transition:.4s ease;
+}
+#loader.fade-out{opacity:0;visibility:hidden}
+.loader-content{display:flex;flex-direction:column;align-items:center;}
+.loader-content img{width:190px;margin-bottom:18px;max-width:80vw}
+.arc-spinner{
+  width:38px;height:38px;border-radius:50%;
+  border:4px solid rgba(255,255,255,.25);border-top-color:#fff;
+  border-left-color:transparent;border-bottom-color:transparent;
+  animation:spin .65s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+header{
+  position:sticky;top:0;z-index:1000;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 16px;backdrop-filter:blur(18px);
+  background:linear-gradient(270deg,#ff4fa3,#ff7bbf,#ffb3d9);
+  background-size:400% 400%;animation:flow 12s ease infinite;flex-wrap:wrap;gap:10px;
+}
+@keyframes flow{0%{background-position:0%}50%{background-position:100%}100%{background-position:0%}}
+
+.header-left{display:flex;align-items:center;gap:10px;flex:1;min-width:0;}
+.header-left img{height:40px;max-height:40px;width:auto}
+
+.motto{
+  font-size:14px;font-weight:600;font-style:italic;letter-spacing:.4px;
+  display:flex;align-items:center;gap:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;
+}
+.motto i{opacity:.95;font-size:14px;flex-shrink:0;}
+
+/* iOS Style Header Icons */
+.header-icons{display:flex;align-items:center;gap:8px;flex-shrink:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;max-width:100%;}
+.header-icons::-webkit-scrollbar{display:none}
+.header-icons a{
+  width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;
+  border-radius:14px;transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position:relative;flex-shrink:0;background:rgba(255,255,255,0.15);
+  backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.2);
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+.header-icons svg{
+  width:22px;height:22px;fill:currentColor;color:white;transition:transform 0.2s;
+}
+.header-icons a:hover{
+  background:rgba(255,255,255,0.25);
+  transform:scale(1.05);
+  box-shadow:0 4px 16px rgba(255,79,163,0.4);
+}
+.header-icons a:active{
+  transform:scale(0.95);
+  background:rgba(255,255,255,0.35);
+}
+.header-icons a.active{
+  background:rgba(255,255,255,0.9);
+  box-shadow:0 0 20px rgba(255,255,255,0.5);
+}
+.header-icons a.active svg{
+  color:var(--pink);
+  fill:var(--pink);
+}
+
+.container{max-width:1200px;margin:0 auto;padding:20px;display:grid;grid-template-columns:1fr;gap:20px;}
+
+.glass-card{
+  background:var(--glass-bg);backdrop-filter:blur(20px);
+  border:1px solid var(--glass-border);border-radius:24px;padding:24px;
+  box-shadow:0 8px 32px rgba(255,79,163,.2);
+  transition:transform 0.3s ease, box-shadow 0.3s ease;
+}
+.glass-card:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(255,79,163,.3);}
+
+.card-header{
+  display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:15px;border-bottom:1px solid rgba(255,255,255,.1);
+}
+.card-header i{font-size:24px;color:var(--pink-light);text-shadow:0 0 10px rgba(255,79,163,.5);}
+.card-header h2{font-family:'Orbitron',sans-serif;font-size:1.2rem;font-weight:700;letter-spacing:1px;}
+
+.btn-primary{
+  background:linear-gradient(135deg,var(--pink),var(--pink-light));border:none;border-radius:25px;
+  padding:14px 28px;color:white;font-weight:700;font-size:14px;cursor:pointer;transition:all 0.3s;
+  text-transform:uppercase;letter-spacing:1px;width:100%;margin-top:10px;
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(255,79,163,.4);}
+.btn-secondary{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.3);border-radius:20px;
+  padding:10px 20px;color:white;font-size:13px;cursor:pointer;transition:all 0.3s;margin-right:8px;margin-bottom:8px;
+}
+.btn-secondary:hover{background:rgba(255,79,163,.3);border-color:var(--pink);}
+
+.form-group{margin-bottom:15px;}
+.form-label{display:block;margin-bottom:6px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;opacity:.9;}
+.form-input{
+  width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  border-radius:12px;padding:12px 16px;color:white;font-size:15px;outline:none;transition:all 0.3s;
+}
+.form-input:focus{border-color:var(--pink);box-shadow:0 0 15px rgba(255,79,163,.3);}
+.form-input::placeholder{color:rgba(255,255,255,.4)}
+
+/* STATS GRID */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px;margin-bottom:20px;}
+.stat-box{
+  background:rgba(0,0,0,.2);border-radius:16px;padding:20px;text-align:center;border:1px solid rgba(255,255,255,.1);
+}
+.stat-icon{font-size:28px;margin-bottom:8px;color:var(--pink-light);}
+.stat-value{font-family:'Orbitron',sans-serif;font-size:24px;font-weight:900;margin-bottom:4px;}
+.stat-label{font-size:11px;opacity:.8;text-transform:uppercase;letter-spacing:1px;}
+
+/* BUSINESS LIST */
+.business-list{display:flex;flex-direction:column;gap:12px;}
+.business-item{
+  background:rgba(0,0,0,.2);border-radius:16px;padding:16px;display:flex;align-items:center;gap:15px;
+  border-left:4px solid var(--pink);transition:all 0.3s;
+}
+.business-item:hover{background:rgba(0,0,0,.3);transform:translateX(5px);}
+.business-icon{width:50px;height:50px;background:linear-gradient(135deg,var(--pink),var(--pink-light));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.business-info{flex:1;}
+.business-name{font-weight:700;font-size:16px;margin-bottom:4px;}
+.business-budget{font-size:13px;opacity:.8;}
+.business-status{
+  padding:6px 12px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;
+}
+.status-active{background:var(--success);color:#000;}
+.status-pending{background:var(--warning);color:#000;}
+.status-low{background:var(--danger);color:#fff;}
+
+/* MODAL */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(5px);
+  display:none;align-items:center;justify-content:center;z-index:9999;padding:20px;
+}
+.modal-overlay.active{display:flex;}
+.modal-content{
+  background:linear-gradient(135deg,rgba(255,79,163,.9),rgba(255,123,191,.9));
+  border-radius:24px;padding:30px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;
+  border:2px solid rgba(255,255,255,.3);box-shadow:0 20px 60px rgba(0,0,0,.5);
+  animation:modalSlide 0.3s ease;
+}
+@keyframes modalSlide{from{transform:translateY(-50px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+.modal-header h3{font-family:'Orbitron',sans-serif;font-size:1.3rem;}
+.close-btn{background:none;border:none;color:white;font-size:24px;cursor:pointer;transition:0.3s;}
+.close-btn:hover{transform:rotate(90deg);}
+
+/* DAILY HACK */
+.hack-container{
+  background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(255,79,163,.15));
+  border:2px solid rgba(255,215,0,.4);border-radius:20px;padding:20px;position:relative;overflow:hidden;
+}
+.hack-badge{
+  position:absolute;top:10px;right:10px;background:var(--warning);color:#000;
+  padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;
+}
+.hack-icon{font-size:40px;margin-bottom:15px;text-align:center;}
+.hack-title{font-size:18px;font-weight:700;margin-bottom:10px;color:var(--warning);text-align:center;}
+.hack-text{font-size:14px;line-height:1.6;text-align:center;opacity:.95;}
+.hack-date{font-size:12px;text-align:center;margin-top:15px;opacity:.7;font-style:italic;}
+
+/* NEEDS CALCULATOR */
+.calc-section{background:rgba(0,0,0,.2);border-radius:16px;padding:20px;margin-top:15px;}
+.calc-row{display:flex;gap:10px;margin-bottom:10px;align-items:center;}
+.calc-row label{flex:1;font-size:13px;}
+.calc-row input{flex:1;max-width:150px;}
+.calc-result{
+  background:linear-gradient(135deg,var(--pink),var(--pink-light));border-radius:12px;
+  padding:15px;text-align:center;margin-top:15px;
+}
+.result-amount{font-family:'Orbitron',sans-serif;font-size:28px;font-weight:900;}
+.result-label{font-size:12px;text-transform:uppercase;letter-spacing:1px;opacity:.9;margin-top:5px;}
+.result-status{font-size:11px;margin-top:8px;padding:4px 12px;border-radius:20px;display:inline-block;font-weight:700;}
+.status-ok{background:var(--success);color:#000;}
+.status-warning{background:var(--warning);color:#000;}
+.status-danger{background:var(--danger);color:#fff;}
+
+/* PROGRESS BAR */
+.progress-container{margin-top:15px;}
+.progress-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;}
+.progress-bar{height:10px;background:rgba(255,255,255,.1);border-radius:10px;overflow:hidden;}
+.progress-fill{
+  height:100%;background:linear-gradient(90deg,var(--pink),var(--pink-light));border-radius:10px;
+  transition:width 0.5s ease;box-shadow:0 0 10px rgba(255,79,163,.5);
+}
+
+/* NOTIFICATION */
+.notification{
+  position:fixed;top:80px;right:20px;background:linear-gradient(135deg,var(--pink),var(--pink-light));
+  padding:15px 25px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.3);
+  transform:translateX(400px);transition:transform 0.3s ease;z-index:9999;font-weight:600;
+}
+.notification.show{transform:translateX(0);}
+
+/* DELETE BUTTON */
+.delete-btn{
+  background:rgba(255,71,87,.3);border:none;border-radius:8px;padding:8px 12px;color:white;cursor:pointer;transition:0.3s;margin-left:10px;
+}
+.delete-btn:hover{background:var(--danger);}
+
+@media(min-width:768px){
+  .container{grid-template-columns:repeat(2,1fr);}
+  .full-width{grid-column:1/-1;}
+}
+@media(min-width:1024px){
+  .container{grid-template-columns:repeat(3,1fr);}
+}
+
+@media(max-width:480px){
+  header{padding:12px 10px;}
+  .header-left img{height:36px;}
+  .motto{font-size:12px;}
+  .header-icons a{width:40px;height:40px;border-radius:12px;}
+  .header-icons svg{width:20px;height:20px;}
+  .container{padding:15px;}
+  .glass-card{padding:18px;}
+  .calc-row{flex-direction:column;align-items:stretch;}
+  .calc-row input{max-width:100%;}
+}
+</style>
+</head>
+
+<body>
+
+<audio id="bgMusic" src="coffee.mp3" loop></audio>
+
+<div id="loader">
+  <div class="loader-content">
+    <img src="adminlogo.png" alt="Logo">
+    <div class="arc-spinner"></div>
+  </div>
+</div>
+
+<header>
+  <div class="header-left">
+    <a href="homepage.html"><img src="adminlogo.png" alt="Logo"></a>
+    <div class="motto" id="motto"></div>
+  </div>
+  <div class="header-icons">
+    <!-- Home Icon (iOS SF Symbol style) -->
+    <a href="homepage.html" title="Home">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3zm0 2.5L18.5 11H17v7h-4v-6h-2v6h4v-7h1.5L12 5.5z"/>
+        <path d="M12 5.5L5.5 11H7v7h4v-6h2v6h4v-7h1.5L12 5.5z" opacity="0"/>
+      </svg>
+    </a>
+    <!-- Music Icon (iOS SF Symbol style) -->
+    <a id="musicToggle" title="Music">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6zM10 19c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6-12V5h2v2h-2z"/>
+      </svg>
+    </a>
+    <!-- Logout Icon (iOS SF Symbol style) -->
+    <a id="logoutBtn" title="Logout">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+      </svg>
+    </a>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- MY BUSINESSES -->
+  <div class="glass-card full-width">
+    <div class="card-header">
+      <i class="fas fa-store"></i>
+      <h2>My Businesses</h2>
+    </div>
+    
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-icon"><i class="fas fa-briefcase"></i></div>
+        <div class="stat-value" id="totalBusinesses">0</div>
+        <div class="stat-label">Active</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-icon"><i class="fas fa-peso-sign"></i></div>
+        <div class="stat-value" id="totalBudget">₱0</div>
+        <div class="stat-label">Total Budget</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-icon"><i class="fas fa-wallet"></i></div>
+        <div class="stat-value" id="availableFunds">₱0</div>
+        <div class="stat-label">Available</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-icon"><i class="fas fa-exclamation-circle"></i></div>
+        <div class="stat-value" id="neededFunds">₱0</div>
+        <div class="stat-label">Needed</div>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="openModal()"><i class="fas fa-plus"></i> Add New Business</button>
+    
+    <div class="business-list" id="businessList" style="margin-top:20px;">
+      <!-- Businesses will appear here -->
+    </div>
+  </div>
+
+  <!-- DAILY LIFE HACK -->
+  <div class="glass-card">
+    <div class="card-header">
+      <i class="fas fa-lightbulb"></i>
+      <h2>Daily Life Hack</h2>
+    </div>
+    <div class="hack-container">
+      <div class="hack-badge">Today</div>
+      <div class="hack-icon" id="hackIcon">💡</div>
+      <div class="hack-title" id="hackTitle">Loading...</div>
+      <div class="hack-text" id="hackText">Loading your daily tip...</div>
+      <div class="hack-date" id="hackDate"></div>
+    </div>
+    <button class="btn-secondary" onclick="refreshHack()" style="margin-top:15px;width:100%;"><i class="fas fa-sync"></i> New Hack</button>
+  </div>
+
+  <!-- NEEDS CALCULATOR -->
+  <div class="glass-card">
+    <div class="card-header">
+      <i class="fas fa-calculator"></i>
+      <h2>Budget Calculator</h2>
+    </div>
+    <div class="calc-section">
+      <div class="calc-row">
+        <label>Current Savings:</label>
+        <input type="number" class="form-input" id="calcCurrent" placeholder="0" oninput="calculateNeeds()">
+      </div>
+      <div class="calc-row">
+        <label>Business Needs:</label>
+        <input type="number" class="form-input" id="calcNeeds" placeholder="0" oninput="calculateNeeds()">
+      </div>
+      <div class="calc-row">
+        <label>Emergency Fund:</label>
+        <input type="number" class="form-input" id="calcEmergency" placeholder="0" oninput="calculateNeeds()">
+      </div>
+      
+      <div class="calc-result">
+        <div class="result-amount" id="resultAmount">₱0</div>
+        <div class="result-label" id="resultLabel">Surplus/Deficit</div>
+        <span class="result-status" id="resultStatus">Calculate to see status</span>
+      </div>
+      
+      <div class="progress-container">
+        <div class="progress-label">
+          <span>Budget Health</span>
+          <span id="healthPercent">0%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="healthBar" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+    <button class="btn-secondary" onclick="syncWithBudget()" style="margin-top:15px;width:100%;">
+      <i class="fas fa-sync"></i> Sync with Budget Tracker
+    </button>
+  </div>
+
+</div>
+
+<!-- ADD BUSINESS MODAL -->
+<div class="modal-overlay" id="businessModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3><i class="fas fa-plus-circle"></i> Add New Business</h3>
+      <button class="close-btn" onclick="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">Business Name</label>
+      <input type="text" class="form-input" id="bizName" placeholder="e.g., Sari-Sari Store">
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">Category</label>
+      <select class="form-input" id="bizCategory">
+        <option value="retail">Retail/Reselling</option>
+        <option value="food">Food & Beverage</option>
+        <option value="services">Services</option>
+        <option value="online">Online/Digital</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">Starting Budget (₱)</label>
+      <input type="number" class="form-input" id="bizBudget" placeholder="0">
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">Estimated Monthly Expenses (₱)</label>
+      <input type="number" class="form-input" id="bizExpenses" placeholder="0">
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">Status</label>
+      <select class="form-input" id="bizStatus">
+        <option value="active">Active</option>
+        <option value="planning">Planning</option>
+        <option value="paused">Paused</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">Notes</label>
+      <input type="text" class="form-input" id="bizNotes" placeholder="Any important details...">
+    </div>
+    
+    <button class="btn-primary" onclick="saveBusiness()"><i class="fas fa-save"></i> Save Business</button>
+  </div>
+</div>
+
+<div class="notification" id="notification"></div>
+
+<script>
+/* LOADER */
+window.addEventListener("load",()=>{
+  setTimeout(()=>loader.classList.add("fade-out"),250)
+})
+
+/* MOTTO */
+const titles=[
+ ['fas fa-bolt','I know you can do it Julie, You will be Successful'],
+ ['fas fa-crown','You are a beautiful QUEEN JULIE'],
+ ['fas fa-money-bill','You will become rich Julie'],
+ ['fas fa-heart','I Love you Julie']
+]
+const t=titles[Math.random()*titles.length|0]
+motto.innerHTML=`<i class="${t[0]}"></i>${t[1]}`
+
+/* MUSIC */
+let musicOn=false
+musicToggle.onclick=()=>{
+  musicOn=!musicOn
+  musicOn ? bgMusic.play() : bgMusic.pause()
+  
+  // Visual feedback for music toggle
+  const musicIcon = document.querySelector('#musicToggle svg');
+  if(musicOn){
+    musicIcon.style.fill = 'var(--pink-light)';
+    musicIcon.style.filter = 'drop-shadow(0 0 8px rgba(255,79,163,0.8))';
+  } else {
+    musicIcon.style.fill = 'white';
+    musicIcon.style.filter = 'none';
+  }
+}
+
+/* LOGOUT */
+logoutBtn.onclick=()=>{
+  localStorage.clear()
+  sessionStorage.clear()
+  location.href="index.html"
+}
+
+/* BUSINESS DATA */
+let businesses = JSON.parse(localStorage.getItem('julieBusinesses')) || [];
+
+/* MODAL FUNCTIONS */
+function openModal(){
+  document.getElementById('businessModal').classList.add('active');
+  document.getElementById('bizName').focus();
+}
+function closeModal(){
+  document.getElementById('businessModal').classList.remove('active');
+  clearModal();
+}
+function clearModal(){
+  document.getElementById('bizName').value='';
+  document.getElementById('bizBudget').value='';
+  document.getElementById('bizExpenses').value='';
+  document.getElementById('bizNotes').value='';
+}
+
+function saveBusiness(){
+  const name = document.getElementById('bizName').value.trim();
+  const category = document.getElementById('bizCategory').value;
+  const budget = parseFloat(document.getElementById('bizBudget').value) || 0;
+  const expenses = parseFloat(document.getElementById('bizExpenses').value) || 0;
+  const status = document.getElementById('bizStatus').value;
+  const notes = document.getElementById('bizNotes').value.trim();
+  
+  if(!name){
+    showNotification('❌ Please enter business name');
+    return;
+  }
+  
+  const business = {
+    id: Date.now(),
+    name,
+    category,
+    budget,
+    expenses,
+    status,
+    notes,
+    created: new Date().toISOString()
+  };
+  
+  businesses.push(business);
+  localStorage.setItem('julieBusinesses', JSON.stringify(businesses));
+  
+  renderBusinesses();
+  closeModal();
+  showNotification('✅ Business added successfully!');
+}
+
+function deleteBusiness(id){
+  if(confirm('Delete this business?')){
+    businesses = businesses.filter(b => b.id !== id);
+    localStorage.setItem('julieBusinesses', JSON.stringify(businesses));
+    renderBusinesses();
+    showNotification('🗑️ Business deleted');
+  }
+}
+
+function renderBusinesses(){
+  const list = document.getElementById('businessList');
+  list.innerHTML = '';
+  
+  if(businesses.length === 0){
+    list.innerHTML = '<div style="text-align:center;padding:40px;opacity:.7;"><i class="fas fa-store" style="font-size:48px;margin-bottom:15px;display:block;"></i>No businesses yet. Add your first one!</div>';
+    updateStats();
+    return;
+  }
+  
+  businesses.forEach(biz => {
+    const icons = {
+      retail: 'fa-shopping-bag',
+      food: 'fa-utensils',
+      services: 'fa-hands-helping',
+      online: 'fa-laptop',
+      other: 'fa-store'
+    };
+    
+    const statusClass = biz.status === 'active' ? 'status-active' : 
+                       biz.status === 'planning' ? 'status-pending' : 'status-low';
+    const statusText = biz.status === 'active' ? 'Active' : 
+                      biz.status === 'planning' ? 'Planning' : 'Paused';
+    
+    const item = document.createElement('div');
+    item.className = 'business-item';
+    item.innerHTML = `
+      <div class="business-icon"><i class="fas ${icons[biz.category] || 'fa-store'}"></i></div>
+      <div class="business-info">
+        <div class="business-name">${biz.name}</div>
+        <div class="business-budget">Budget: ₱${biz.budget.toLocaleString()} | Monthly: ₱${biz.expenses.toLocaleString()}</div>
+        ${biz.notes ? `<div style="font-size:11px;opacity:.7;margin-top:4px;"><i class="fas fa-sticky-note"></i> ${biz.notes}</div>` : ''}
+      </div>
+      <span class="business-status ${statusClass}">${statusText}</span>
+      <button class="delete-btn" onclick="deleteBusiness(${biz.id})"><i class="fas fa-trash"></i></button>
+    `;
+    list.appendChild(item);
+  });
+  
+  updateStats();
+}
+
+function updateStats(){
+  const totalBiz = businesses.length;
+  const totalBudget = businesses.reduce((sum, b) => sum + b.budget, 0);
+  const totalExpenses = businesses.reduce((sum, b) => sum + b.expenses, 0);
+  
+  // Get savings from budget tracker if available
+  const budgetData = JSON.parse(localStorage.getItem('budgetData')) || {};
+  const currentSavings = budgetData.savings || parseFloat(localStorage.getItem('julieSavings')) || 0;
+  
+  const available = currentSavings - totalBudget;
+  const needed = Math.max(0, totalBudget - currentSavings);
+  
+  document.getElementById('totalBusinesses').textContent = totalBiz;
+  document.getElementById('totalBudget').textContent = '₱' + totalBudget.toLocaleString();
+  document.getElementById('availableFunds').textContent = '₱' + available.toLocaleString();
+  document.getElementById('neededFunds').textContent = '₱' + needed.toLocaleString();
+  
+  // Color code available funds
+  const availEl = document.getElementById('availableFunds');
+  if(available < 0){
+    availEl.style.color = 'var(--danger)';
+  } else if(available < totalBudget * 0.2){
+    availEl.style.color = 'var(--warning)';
+  } else {
+    availEl.style.color = 'var(--success)';
+  }
+}
+
+/* DAILY LIFE HACK */
+const lifeHacks = [
+  {icon: '⏰', title: 'The 5-Minute Rule', text: 'If a task takes less than 5 minutes, do it immediately. Prevents small tasks from piling up into big stress.'},
+  {icon: '💰', title: 'Automatic Savings', text: 'Set up auto-transfer on payday. Even ₱100/week becomes ₱5,200/year. Pay yourself first!'},
+  {icon: '🍱', title: 'Meal Prep Sunday', text: 'Cook meals for 3 days on Sunday. Saves ₱200-400 daily vs eating out. That\'s ₱6,000-12,000 monthly!'},
+  {icon: '🛒', title: 'Grocery List Rule', text: 'Never shop hungry, always use a list. Impulse buys drop by 70% with this simple habit.'},
+  {icon: '💡', title: 'Unsubscribe Challenge', text: 'Check your subscriptions today. Cancel what you haven\'t used in 30 days. Save ₱500-2,000 monthly.'},
+  {icon: '📱', title: '48-Hour Rule', text: 'Wait 48 hours before any purchase over ₱1,000. 90% of impulse buys disappear with this delay.'},
+  {icon: '💳', title: 'Cash Envelope System', text: 'Withdraw weekly budget in cash. When envelope is empty, spending stops. Works better than digital tracking.'},
+  {icon: '📊', title: 'Track Every Peso', text: 'Write down every expense for 7 days. Awareness alone reduces spending by 15-20%.'},
+  {icon: '🎯', title: 'One In, One Out', text: 'Want something new? Sell or donate something old first. Keeps clutter down and spending intentional.'},
+  {icon: '📚', title: 'Learn Before You Earn', text: 'Spend 30 mins daily learning a high-value skill. In 6 months, you can charge premium rates.'},
+  {icon: '🤝', title: 'Negotiate Everything', text: 'Bills, rent, prices - everything is negotiable. One 5-minute call can save ₱12,000+ yearly.'},
+  {icon: '🏦', title: 'High-Interest Savings', text: 'Move emergency fund to digital banks (4-6% interest). Your money grows while you sleep.'},
+  {icon: '📦', title: 'Buy in Bulk', text: 'Non-perishables on sale? Stock up! Saves 20-30% vs regular prices. Just check expiry dates.'},
+  {icon: '🔌', title: 'Unplug & Save', text: 'Unplug appliances when not in use. Phantom load costs ₱200-500 monthly on your electric bill.'},
+  {icon: '🚰', title: 'Water Bottle Habit', text: 'Bring your own water bottle. Saves ₱50-100 daily vs buying drinks. Healthy and wealthy!'},
+  {icon: '📅', title: 'No-Spend Days', text: 'Pick 2 days weekly as zero-spend days. Train your discipline and save ₱4,000+ monthly.'},
+  {icon: '💼', title: 'Side Hustle 1 Hour', text: 'Spend 1 hour daily on your side hustle. Consistency beats intensity every time.'},
+  {icon: '🎁', title: 'DIY Gifts', text: 'Handmade gifts mean more and cost less. Bake cookies, create art, write letters.'},
+  {icon: '🏃', title: 'Walk When Possible', text: 'Short trips? Walk instead of ride. Saves money, improves health, clears mind.'},
+  {icon: '📖', title: 'Library > Buying', text: 'Borrow books, movies, magazines from library. Free entertainment and education!'},
+  {icon: '💻', title: 'Free Courses First', text: 'Before paying for courses, check YouTube, Coursera free tiers. Knowledge is free if you search.'},
+  {icon: '🛍️', title: 'Thrift Shopping', text: 'Check ukay-ukay and thrift stores first. Unique finds at 10% of retail price.'},
+  {icon: '☕', title: 'Home Coffee', text: 'Skip café coffee. Home-brewed saves ₱150-200 daily. Invest in a good thermos.'},
+  {icon: '📱', title: 'Review Phone Plan', text: 'Are you using all your data? Downgrade if possible. Saves ₱200-500 monthly.'},
+  {icon: '💡', title: 'LED Bulbs Only', text: 'Replace all bulbs with LED. Uses 75% less electricity, lasts 25x longer.'},
+  {icon: '🧹', title: 'Clean as You Go', text: 'Prevents big cleaning sessions. Saves time, money on cleaning supplies, and stress.'},
+  {icon: '📋', title: 'Plan Before You Buy', text: 'Never buy without researching 3 alternatives. Comparison shopping saves 20-40%.'},
+  {icon: '🎯', title: 'Set Weekly Goals', text: 'Small weekly financial goals beat huge yearly resolutions. Momentum builds success.'},
+  {icon: '🤲', title: 'Give to Receive', text: 'Helping others opens unexpected opportunities. Share knowledge, time, or resources.'},
+  {icon: '📈', title: 'Review Weekly', text: 'Every Sunday, review expenses. Awareness is the first step to improvement.'}
+];
+
+function getDailyHack(){
+  const today = new Date();
+  const dateStr = today.toDateString();
+  const savedDate = localStorage.getItem('hackDate');
+  const savedIndex = localStorage.getItem('hackIndex');
+  
+  // Check if we need a new hack (new day)
+  if(savedDate !== dateStr || savedIndex === null){
+    // Generate random index based on date so everyone gets same hack per day
+    const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+    const newIndex = dayOfYear % lifeHacks.length;
+    
+    localStorage.setItem('hackDate', dateStr);
+    localStorage.setItem('hackIndex', newIndex);
+    
+    return lifeHacks[newIndex];
+  }
+  
+  return lifeHacks[parseInt(savedIndex)];
+}
+
+function displayDailyHack(){
+  const hack = getDailyHack();
+  document.getElementById('hackIcon').textContent = hack.icon;
+  document.getElementById('hackTitle').textContent = hack.title;
+  document.getElementById('hackText').textContent = hack.text;
+  document.getElementById('hackDate').textContent = new Date().toLocaleDateString('en-US', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'});
+}
+
+function refreshHack(){
+  // Force new random hack (not daily)
+  const randomIndex = Math.floor(Math.random() * lifeHacks.length);
+  const hack = lifeHacks[randomIndex];
+  document.getElementById('hackIcon').textContent = hack.icon;
+  document.getElementById('hackTitle').textContent = hack.title;
+  document.getElementById('hackText').textContent = hack.text;
+  showNotification('🔄 New life hack loaded!');
+}
+
+/* NEEDS CALCULATOR */
+function calculateNeeds(){
+  const current = parseFloat(document.getElementById('calcCurrent').value) || 0;
+  const needs = parseFloat(document.getElementById('calcNeeds').value) || 0;
+  const emergency = parseFloat(document.getElementById('calcEmergency').value) || 0;
+  
+  const totalNeeds = needs + emergency;
+  const difference = current - totalNeeds;
+  
+  const resultAmount = document.getElementById('resultAmount');
+  const resultLabel = document.getElementById('resultLabel');
+  const resultStatus = document.getElementById('resultStatus');
+  const healthBar = document.getElementById('healthBar');
+  const healthPercent = document.getElementById('healthPercent');
+  
+  resultAmount.textContent = '₱' + Math.abs(difference).toLocaleString();
+  
+  if(difference >= 0){
+    resultLabel.textContent = 'Surplus (Extra Money)';
+    resultAmount.style.color = 'var(--success)';
+    resultStatus.textContent = '✅ Good to go! Start your business!';
+    resultStatus.className = 'result-status status-ok';
+    
+    const health = Math.min(100, Math.round((current / totalNeeds) * 100));
+    healthBar.style.width = health + '%';
+    healthPercent.textContent = health + '%';
+    healthBar.style.background = 'linear-gradient(90deg, var(--success), #00ffaa)';
+  } else {
+    resultLabel.textContent = 'Deficit (Need More)';
+    resultAmount.style.color = 'var(--danger)';
+    
+    const shortage = Math.abs(difference);
+    if(shortage < 5000){
+      resultStatus.textContent = '⚠️ Almost there! Save a bit more.';
+      resultStatus.className = 'result-status status-warning';
+    } else {
+      resultStatus.textContent = '❌ Need more savings before starting';
+      resultStatus.className = 'result-status status-danger';
+    }
+    
+    const health = Math.max(0, Math.round((current / totalNeeds) * 100));
+    healthBar.style.width = health + '%';
+    healthPercent.textContent = health + '%';
+    healthBar.style.background = 'linear-gradient(90deg, var(--danger), var(--warning))';
+  }
+  
+  // Save to localStorage for budget tracker sync
+  localStorage.setItem('businessCalc', JSON.stringify({
+    current: current,
+    needs: needs,
+    emergency: emergency,
+    lastUpdated: new Date().toISOString()
+  }));
+}
+
+function syncWithBudget(){
+  // Try to get data from budgettrack.html
+  const budgetData = JSON.parse(localStorage.getItem('budgetData')) || {};
+  const savings = budgetData.savings || parseFloat(localStorage.getItem('julieSavings')) || 0;
+  const expenses = budgetData.totalExpenses || parseFloat(localStorage.getItem('julieMonthlyExpenses')) || 0;
+  
+  if(savings > 0){
+    document.getElementById('calcCurrent').value = savings;
+    // Estimate emergency fund as 3x monthly expenses or 10000 whichever is higher
+    const emergency = Math.max(expenses * 3, 10000);
+    document.getElementById('calcEmergency').value = emergency;
+    
+    calculateNeeds();
+    showNotification('✅ Synced with Budget Tracker!');
+  } else {
+    showNotification('⚠️ No budget data found. Please visit Budget Tracker first.');
+  }
+}
+
+// Load calculator data if exists
+const savedCalc = JSON.parse(localStorage.getItem('businessCalc'));
+if(savedCalc){
+  document.getElementById('calcCurrent').value = savedCalc.current || '';
+  document.getElementById('calcNeeds').value = savedCalc.needs || '';
+  document.getElementById('calcEmergency').value = savedCalc.emergency || '';
+  calculateNeeds();
+}
+
+/* NOTIFICATION */
+function showNotification(message){
+  const notif = document.getElementById('notification');
+  notif.textContent = message;
+  notif.classList.add('show');
+  setTimeout(() => notif.classList.remove('show'), 3000);
+}
+
+// Close modal on outside click
+document.getElementById('businessModal').addEventListener('click', (e) => {
+  if(e.target === document.getElementById('businessModal')){
+    closeModal();
+  }
+});
+
+// Initialize
+renderBusinesses();
+displayDailyHack();
+
+// Check for new day every minute
+setInterval(displayDailyHack, 60000);
+
+// WELCOME MESSAGE REMOVED - No auto notification on page load
+</script>
+
+</body>
+</html>
