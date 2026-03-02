@@ -6,8 +6,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Queen Julie | Dynamic Habit Tracker</title>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css ">
-<script src="https://cdn.jsdelivr.net/npm/chart.js "></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 :root {
@@ -72,34 +72,60 @@ header{
   border-radius: 20px;
   max-width: 1400px;
   align-items: flex-start;
+  justify-content: space-between;
 }
 
-/* Left section: Calendar + Chibi */
+/* LEFT section: Calendar + Chibi side by side */
 .control-left {
+  display: flex;
+  flex-direction: row; /* Side by side */
+  align-items: flex-start;
+  gap: 15px;
+  min-width: 280px;
+}
+
+/* Calendar wrapper */
+.calendar-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 15px;
-  min-width: 200px;
 }
 
-/* Middle section: Title, Time, Buttons */
+/* Chibi image styling - Now beside calendar */
+.chibi-image {
+  width: 180px;
+  height: auto;
+  border-radius: 15px;
+  object-fit: contain;
+}
+
+/* MIDDLE section: Title, Time ONLY (centered) */
 .control-middle {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 15px;
   flex: 1;
-  min-width: 300px;
+  min-width: 250px;
+  padding-top: 20px;
 }
 
-/* Right section: Progress Chart */
+/* RIGHT section: Buttons + Progress side by side */
 .control-right {
   display: flex;
+  flex-direction: row; /* Buttons and Progress side by side */
+  align-items: flex-start;
+  gap: 20px;
+  min-width: 400px;
+}
+
+/* Buttons container - stacked vertically */
+.buttons-container {
+  display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 15px;
-  min-width: 220px;
+  gap: 10px;
+  min-width: 180px;
 }
 
 /* Mini Calendar Styles */
@@ -126,13 +152,6 @@ header{
   color:#ffb3d9;
 }
 
-/* Chibi image styling */
-.chibi-image {
-  width: 100%;
-  max-width: 180px;
-  border-radius: 15px;
-}
-
 /* Routine Tracker Title */
 .routine-title {
   font-size: 28px;
@@ -155,13 +174,12 @@ header{
   border: 1px solid rgba(255, 79, 163, 0.4);
 }
 
-/* Button Groups */
+/* Button Groups - now in right section */
 .button-group {
   display: flex;
   flex-direction: column;
   gap: 10px;
   width: 100%;
-  max-width: 250px;
 }
 
 .monthly-buttons {
@@ -183,6 +201,7 @@ header{
   font-weight: 600;
   transition: all 0.3s;
   white-space: nowrap;
+  width: 100%;
 }
 
 .dgc-btn:hover{
@@ -231,20 +250,23 @@ header{
 #monthSelect{
   background-image:
     linear-gradient(135deg,#ff4fa3,#ff7bbf),
-    url("data:image/svg+xml;utf8,<svg fill='white' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg '><path d='M7 10l5 5 5-5z'/></svg>");
+    url("data:image/svg+xml;utf8,<svg fill='white' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
   background-repeat:no-repeat,no-repeat;
   background-position:0 0, right 10px center;
   background-size:100% 100%,16px;
 }
 
-/* Progress Chart Container - REMOVED PINK GLOW BORDER */
+/* Progress Chart Container - Same size as mini calendar */
 .progress-container {
-  width: 100%;
-  max-width: 200px;
+  width: 200px; /* Fixed width to match mini calendar */
+  height: 200px; /* Fixed height to match mini calendar */
   background: rgba(255, 255, 255, 0.1);
   border-radius: 15px;
   padding: 15px;
-  /* Removed border: 1px solid rgba(255, 79, 163, 0.3); */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0; /* Prevent shrinking */
 }
 
 /* Category Selector Dropdown */
@@ -672,13 +694,30 @@ tr.routine-row td:first-child {
     align-items: center;
   }
   
-  .control-left, .control-middle, .control-right {
+  .control-left {
+    flex-direction: column; /* Stack on mobile */
+    align-items: center;
     width: 100%;
-    min-width: unset;
   }
   
   .chibi-image {
     max-width: 150px;
+  }
+  
+  .control-right {
+    flex-direction: column; /* Stack on mobile */
+    align-items: center;
+    width: 100%;
+    min-width: unset;
+  }
+  
+  .buttons-container {
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .progress-container {
+    margin-top: 20px;
   }
   
   .table-container {
@@ -781,6 +820,10 @@ tr.routine-row td:first-child {
   #digitalClock {
     font-size: 18px;
   }
+  
+  .chibi-image {
+    width: 120px;
+  }
 }
 
 /* Touch device optimizations */
@@ -814,6 +857,10 @@ tr.routine-row td:first-child {
     flex-wrap: wrap;
   }
   
+  .control-left {
+    flex-direction: row;
+  }
+  
   .control-left, .control-right {
     flex: 1;
   }
@@ -844,72 +891,78 @@ tr.routine-row td:first-child {
 <!-- NEW VERTICAL CONTROL PANEL - Side by side on desktop -->
 <div class="control-panel-container">
 
-  <!-- LEFT: Mini Calendar + Chibi -->
+  <!-- LEFT: Mini Calendar + Chibi side by side -->
   <div class="control-left">
-    <div class="calendar" id="miniCalendar"></div>
-    <img src="adminchibli.png" alt="Chibi" class="chibi-image">
+    <div class="calendar-wrapper">
+      <div class="calendar" id="miniCalendar"></div>
+    </div>
+    <img src="animechibli.png" alt="Chibi" class="chibi-image">
   </div>
 
-  <!-- MIDDLE: Title, Time, Buttons -->
+  <!-- MIDDLE: Title + Digital Time ONLY (centered) -->
   <div class="control-middle">
     <h1 class="routine-title">ROUTINE TRACKER</h1>
     <div id="digitalClock"></div>
-    
-    <div class="button-group">
-      <div class="monthly-buttons">
-        <select id="monthSelect">
-          <option value="1">January</option>
-          <option value="2" selected>February</option>
-          <option value="3">March</option>
-          <option value="4">April</option>
-          <option value="5">May</option>
-          <option value="6">June</option>
-          <option value="7">July</option>
-          <option value="8">August</option>
-          <option value="9">September</option>
-          <option value="10">October</option>
-          <option value="11">November</option>
-          <option value="12">December</option>
-        </select>
-      </div>
-      
-      <button class="dgc-btn" id="addRoutineBtn">
-        <i class="fas fa-plus"></i> Add Routine
-      </button>
-      
-      <button class="dgc-btn" id="editAllBtn">
-        <i class="fas fa-edit"></i> Edit All
-      </button>
-      
-      <button class="dgc-btn" id="manageCategoriesBtn">
-        <i class="fas fa-folder"></i> Categories
-      </button>
-    </div>
-
-    <!-- Category Selector -->
-    <div class="category-selector" id="categorySelector">
-      <label>Select Category:</label>
-      <select id="categorySelect"></select>
-      <div class="category-selector-buttons">
-        <button class="btn-confirm" onclick="confirmAddRoutine()">Add</button>
-        <button class="btn-cancel" onclick="cancelAddRoutine()">Cancel</button>
-      </div>
-    </div>
-    
-    <!-- Category Manager -->
-    <div class="category-manager" id="categoryManager">
-      <h3>Manage Categories</h3>
-      <div class="category-list" id="categoryList"></div>
-      <div class="add-category-section">
-        <input type="text" id="newCategoryInput" placeholder="New category name...">
-        <button onclick="addNewCategory()"><i class="fas fa-plus"></i></button>
-      </div>
-      <button class="close-manager" onclick="closeCategoryManager()">Close</button>
-    </div>
   </div>
 
-  <!-- RIGHT: Monthly Progress -->
+  <!-- RIGHT: Buttons + Progress side by side -->
   <div class="control-right">
+    <!-- Buttons stacked vertically on the left of progress -->
+    <div class="buttons-container">
+      <div class="button-group">
+        <div class="monthly-buttons">
+          <select id="monthSelect">
+            <option value="1">January</option>
+            <option value="2" selected>February</option>
+            <option value="3">March</option>
+            <option value="4">April</option>
+            <option value="5">May</option>
+            <option value="6">June</option>
+            <option value="7">July</option>
+            <option value="8">August</option>
+            <option value="9">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+          </select>
+        </div>
+        
+        <button class="dgc-btn" id="addRoutineBtn">
+          <i class="fas fa-plus"></i> Add Routine
+        </button>
+        
+        <button class="dgc-btn" id="editAllBtn">
+          <i class="fas fa-edit"></i> Edit All
+        </button>
+        
+        <button class="dgc-btn" id="manageCategoriesBtn">
+          <i class="fas fa-folder"></i> Categories
+        </button>
+      </div>
+
+      <!-- Category Selector -->
+      <div class="category-selector" id="categorySelector">
+        <label>Select Category:</label>
+        <select id="categorySelect"></select>
+        <div class="category-selector-buttons">
+          <button class="btn-confirm" onclick="confirmAddRoutine()">Add</button>
+          <button class="btn-cancel" onclick="cancelAddRoutine()">Cancel</button>
+        </div>
+      </div>
+      
+      <!-- Category Manager -->
+      <div class="category-manager" id="categoryManager">
+        <h3>Manage Categories</h3>
+        <div class="category-list" id="categoryList"></div>
+        <div class="add-category-section">
+          <input type="text" id="newCategoryInput" placeholder="New category name...">
+          <button onclick="addNewCategory()"><i class="fas fa-plus"></i></button>
+        </div>
+        <button class="close-manager" onclick="closeCategoryManager()">Close</button>
+      </div>
+    </div>
+
+    <!-- Monthly Progress Chart - Same size as mini calendar -->
     <div class="progress-container">
       <canvas id="progressChart"></canvas>
     </div>
