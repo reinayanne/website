@@ -6,8 +6,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Queen Julie | Dynamic Habit Tracker</title>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css ">
+<script src="https://cdn.jsdelivr.net/npm/chart.js "></script>
 
 <style>
 :root {
@@ -60,54 +60,49 @@ header{
   text-shadow:0 0 8px #ff69b4;
 }
 
-/* CONTAINER */
-.container{
-  display:flex; gap:20px;
-  background:var(--glass-bg);
-  backdrop-filter:blur(12px);
-  padding:20px;
-  margin:30px auto;
-  border-radius:20px;
-  max-width:1400px;
-  overflow-x:auto;
+/* NEW VERTICAL CONTROL PANEL - Desktop side-by-side layout */
+.control-panel-container {
+  display: flex;
+  flex-direction: row; /* Horizontal on desktop - side by side */
+  gap: 20px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  padding: 20px;
+  margin: 30px auto;
+  border-radius: 20px;
+  max-width: 1400px;
+  align-items: flex-start;
 }
 
-/* Custom scrollbar styling - PINK */
-.container::-webkit-scrollbar {
-  height: 12px;
+/* Left section: Calendar + Chibi */
+.control-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  min-width: 200px;
 }
 
-.container::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
+/* Middle section: Title, Time, Buttons */
+.control-middle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  flex: 1;
+  min-width: 300px;
 }
 
-.container::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #ff4fa3, #ff7bbf);
-  border-radius: 10px;
-  border: 2px solid rgba(255, 255, 255, 0.1);
+/* Right section: Progress Chart */
+.control-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  min-width: 220px;
 }
 
-.container::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #ff7bbf, #ffb3d9);
-}
-
-/* Firefox scrollbar */
-.container {
-  scrollbar-width: thin;
-  scrollbar-color: #ff4fa3 rgba(255, 255, 255, 0.1);
-}
-
-/* LEFT PANEL */
-.left-panel{
-  width:220px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:10px;
-  flex-shrink:0;
-}
-
+/* Mini Calendar Styles */
 .calendar{
   display:grid;
   grid-template-columns: repeat(7, 30px);
@@ -131,20 +126,50 @@ header{
   color:#ffb3d9;
 }
 
-#digitalClock{
-  font-size:18px;
-  margin-top:10px;
+/* Chibi image styling */
+.chibi-image {
+  width: 100%;
+  max-width: 180px;
+  border-radius: 15px;
 }
 
-/* MIDDLE */
-.middle-panel{flex:1; min-width:0;}
-
-h1{
-  text-align:center;
-  margin-bottom:15px;
-  text-shadow:0 0 10px #ff69b4;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+/* Routine Tracker Title */
+.routine-title {
+  font-size: 28px;
   font-weight: 700;
+  text-align: center;
+  text-shadow: 0 0 10px #ff69b4;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin-bottom: 5px;
+}
+
+/* Digital Clock */
+#digitalClock{
+  font-size: 24px;
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 0 8px rgba(255, 79, 163, 0.8);
+  padding: 10px 20px;
+  background: rgba(255, 79, 163, 0.2);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 79, 163, 0.4);
+}
+
+/* Button Groups */
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 250px;
+}
+
+.monthly-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  width: 100%;
 }
 
 .dgc-btn{
@@ -154,10 +179,10 @@ h1{
   padding:10px 20px;
   border-radius:18px;
   cursor:pointer;
-  margin-bottom:10px;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 600;
-  margin-right: 10px;
+  transition: all 0.3s;
+  white-space: nowrap;
 }
 
 .dgc-btn:hover{
@@ -172,14 +197,65 @@ h1{
   border: 2px solid #ff4fa3;
 }
 
+/* Month Dropdown */
+#monthSelect{
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: linear-gradient(135deg,#ff4fa3,#ff7bbf);
+  color:#fff;
+  border:2px solid #ff7bbf;
+  padding:8px 35px 8px 15px;
+  border-radius:18px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size:13px;
+  font-weight: 600;
+  cursor:pointer;
+  transition:.3s;
+  box-shadow:0 0 10px rgba(255,105,180,0.4);
+  width: 100%;
+}
+
+#monthSelect:hover{
+  background:#fff;
+  color:#ff4fa3;
+  border:2px solid #ff4fa3;
+  box-shadow:0 0 15px #ff69b4;
+}
+
+#monthSelect:focus{
+  outline:none;
+  box-shadow:0 0 20px #ff69b4;
+}
+
+#monthSelect{
+  background-image:
+    linear-gradient(135deg,#ff4fa3,#ff7bbf),
+    url("data:image/svg+xml;utf8,<svg fill='white' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg '><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat:no-repeat,no-repeat;
+  background-position:0 0, right 10px center;
+  background-size:100% 100%,16px;
+}
+
+/* Progress Chart Container - REMOVED PINK GLOW BORDER */
+.progress-container {
+  width: 100%;
+  max-width: 200px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 15px;
+  /* Removed border: 1px solid rgba(255, 79, 163, 0.3); */
+}
+
 /* Category Selector Dropdown */
 .category-selector {
   display: none;
   background: rgba(255, 255, 255, 0.95);
   border-radius: 10px;
   padding: 10px;
-  margin-bottom: 15px;
+  margin-top: 10px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  width: 100%;
 }
 
 .category-selector.show {
@@ -228,17 +304,157 @@ h1{
   color: #333;
 }
 
-/* Drag Handle */
-.drag-handle {
-  cursor: grab;
-  color: #999;
-  margin-right: 8px;
-  font-size: 14px;
+/* Category Manager Styles */
+.category-manager {
+  display: none;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  padding: 15px;
+  margin-top: 10px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  width: 100%;
+  max-width: 300px;
 }
 
-.drag-handle:active {
-  cursor: grabbing;
+.category-manager.show {
+  display: block;
 }
+
+.category-manager h3 {
+  color: #333;
+  font-size: 14px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.category-list {
+  max-height: 150px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+.category-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  background: rgba(255, 79, 163, 0.1);
+  border-radius: 5px;
+  margin-bottom: 5px;
+  color: #333;
+  font-size: 13px;
+}
+
+.category-item.editing {
+  background: rgba(255, 79, 163, 0.2);
+}
+
+.category-item input {
+  flex: 1;
+  padding: 4px;
+  border: 1px solid #ff4fa3;
+  border-radius: 3px;
+  margin-right: 5px;
+  font-family: inherit;
+}
+
+.category-item .category-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.category-item button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #ff4fa3;
+  font-size: 12px;
+  padding: 2px 5px;
+}
+
+.category-item button:hover {
+  color: #ff1493;
+}
+
+.add-category-section {
+  display: flex;
+  gap: 5px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+}
+
+.add-category-section input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ff4fa3;
+  border-radius: 5px;
+  font-family: inherit;
+}
+
+.add-category-section button {
+  background: linear-gradient(135deg,#ff4fa3,#ff7bbf);
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.close-manager {
+  width: 100%;
+  margin-top: 10px;
+  padding: 8px;
+  background: #ddd;
+  color: #333;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* TABLE CONTAINER - Below the control panel */
+.table-container {
+  display: flex;
+  gap: 20px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  padding: 20px;
+  margin: 0 auto 30px;
+  border-radius: 20px;
+  max-width: 1400px;
+  overflow-x: auto;
+}
+
+/* Custom scrollbar styling - PINK */
+.table-container::-webkit-scrollbar {
+  height: 12px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #ff4fa3, #ff7bbf);
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #ff7bbf, #ffb3d9);
+}
+
+/* Firefox scrollbar */
+.table-container {
+  scrollbar-width: thin;
+  scrollbar-color: #ff4fa3 rgba(255, 255, 255, 0.1);
+}
+
+/* MIDDLE */
+.middle-panel{flex:1; min-width:0;}
 
 /* TABLE - White background with black text */
 .table-wrapper {
@@ -387,6 +603,23 @@ td input[type="checkbox"]:checked{
   transform:scale(1.2);
 }
 
+/* Drag Handle - Hidden by default, visible only in edit mode */
+.drag-handle {
+  cursor: grab;
+  color: #999;
+  margin-right: 8px;
+  font-size: 14px;
+  display: none; /* Hidden by default */
+}
+
+.drag-handle.visible {
+  display: inline-block; /* Show only in edit mode */
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
 /* Drag and Drop Styles */
 tr.routine-row {
   transition: all 0.2s;
@@ -407,64 +640,6 @@ tr.routine-row td:first-child {
   align-items: center;
   justify-content: center;
   border: none;
-}
-
-/* RIGHT */
-.right-panel{
-  width:220px;
-  display:flex;
-  flex-direction: column;
-  align-items:center;
-  gap: 15px;
-  flex-shrink:0;
-}
-
-/* ===== MONTH DROPDOWN BUTTON STYLE ===== */
-#monthSelect{
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-
-  background: linear-gradient(135deg,#ff4fa3,#ff7bbf);
-  color:#fff;
-  border:2px solid #ff7bbf;
-  padding:8px 35px 8px 15px;
-  border-radius:18px;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size:13px;
-  font-weight: 600;
-  cursor:pointer;
-  transition:.3s;
-  box-shadow:0 0 10px rgba(255,105,180,0.4);
-  margin-bottom: 10px;
-}
-
-#monthSelect:hover{
-  background:#fff;
-  color:#ff4fa3;
-  border:2px solid #ff4fa3;
-  box-shadow:0 0 15px #ff69b4;
-}
-
-#monthSelect:focus{
-  outline:none;
-  box-shadow:0 0 20px #ff69b4;
-}
-
-#monthSelect{
-  background-image:
-    linear-gradient(135deg,#ff4fa3,#ff7bbf),
-    url("data:image/svg+xml;utf8,<svg fill='white' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
-  background-repeat:no-repeat,no-repeat;
-  background-position:0 0, right 10px center;
-  background-size:100% 100%,16px;
-}
-
-/* Chibi image styling - NO PINK GLOW */
-.chibi-image {
-  width: 100%;
-  max-width: 200px;
-  border-radius: 15px;
 }
 
 /* Save indicator */
@@ -490,38 +665,26 @@ tr.routine-row td:first-child {
 
 /* ===== MOBILE RESPONSIVE ===== */
 @media screen and (max-width: 1024px) {
-  .container {
+  .control-panel-container {
     flex-direction: column;
     margin: 15px;
     padding: 15px;
+    align-items: center;
   }
   
-  .left-panel, .right-panel {
+  .control-left, .control-middle, .control-right {
     width: 100%;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  
-  .calendar {
-    order: 1;
-  }
-  
-  #digitalClock {
-    order: 2;
-    width: 100%;
-    text-align: center;
-    margin: 10px 0;
+    min-width: unset;
   }
   
   .chibi-image {
-    order: 3;
     max-width: 150px;
   }
   
-  .right-panel {
-    order: 4;
-    margin-top: 20px;
+  .table-container {
+    flex-direction: column;
+    margin: 15px;
+    padding: 15px;
   }
   
   #progressChart {
@@ -550,7 +713,7 @@ tr.routine-row td:first-child {
     margin-left: 15px;
   }
   
-  h1 {
+  .routine-title {
     font-size: 24px;
   }
   
@@ -558,8 +721,6 @@ tr.routine-row td:first-child {
     width: 100%;
     padding: 12px;
     font-size: 14px;
-    margin-right: 0;
-    margin-bottom: 10px;
   }
   
   table {
@@ -615,7 +776,10 @@ tr.routine-row td:first-child {
   
   #monthSelect {
     width: 100%;
-    margin-bottom: 10px;
+  }
+  
+  #digitalClock {
+    font-size: 18px;
   }
 }
 
@@ -645,18 +809,16 @@ tr.routine-row td:first-child {
 
 /* Landscape mode optimization */
 @media screen and (max-height: 500px) and (orientation: landscape) {
-  .container {
+  .control-panel-container {
     flex-direction: row;
     flex-wrap: wrap;
   }
   
-  .left-panel, .right-panel {
-    width: auto;
+  .control-left, .control-right {
     flex: 1;
   }
   
-  .middle-panel {
-    width: 100%;
+  .table-container {
     order: 3;
   }
 }
@@ -679,70 +841,92 @@ tr.routine-row td:first-child {
 <audio id="bgMusic" src="coffee.mp3"></audio>
 </header>
 
-<div class="container">
+<!-- NEW VERTICAL CONTROL PANEL - Side by side on desktop -->
+<div class="control-panel-container">
 
-<!-- LEFT PANEL (NOT MODIFIED MINI CALENDAR) -->
-<div class="left-panel">
-  <div id="digitalClock"></div>
-  <div class="calendar" id="miniCalendar"></div>
-  <!-- Chibi image added after mini calendar - NO PINK GLOW -->
-  <img src="adminchibli.png" alt="Chibi" class="chibi-image">
-</div>
-
-<!-- MIDDLE -->
-<div class="middle-panel">
-  <h1>HABIT TRACKER</h1>
-
-  <select id="monthSelect">
-    <option value="1">January</option>
-    <option value="2" selected>February</option>
-    <option value="3">March</option>
-    <option value="4">April</option>
-    <option value="5">May</option>
-    <option value="6">June</option>
-    <option value="7">July</option>
-    <option value="8">August</option>
-    <option value="9">September</option>
-    <option value="10">October</option>
-    <option value="11">November</option>
-    <option value="12">December</option>
-  </select>
-
-  <div style="margin-bottom: 15px;">
-    <button class="dgc-btn" id="editAllBtn">
-      <i class="fas fa-edit"></i> Edit All
-    </button>
-    <button class="dgc-btn" id="addRoutineBtn">
-      <i class="fas fa-plus"></i> Add New Routine
-    </button>
+  <!-- LEFT: Mini Calendar + Chibi -->
+  <div class="control-left">
+    <div class="calendar" id="miniCalendar"></div>
+    <img src="adminchibli.png" alt="Chibi" class="chibi-image">
   </div>
 
-  <!-- Category Selector -->
-  <div class="category-selector" id="categorySelector">
-    <label>Select Category:</label>
-    <select id="categorySelect">
-      <option value="Life">Life</option>
-      <option value="Work">Work</option>
-      <option value="Gaming">Gaming</option>
-    </select>
-    <div class="category-selector-buttons">
-      <button class="btn-confirm" onclick="confirmAddRoutine()">Add</button>
-      <button class="btn-cancel" onclick="cancelAddRoutine()">Cancel</button>
+  <!-- MIDDLE: Title, Time, Buttons -->
+  <div class="control-middle">
+    <h1 class="routine-title">ROUTINE TRACKER</h1>
+    <div id="digitalClock"></div>
+    
+    <div class="button-group">
+      <div class="monthly-buttons">
+        <select id="monthSelect">
+          <option value="1">January</option>
+          <option value="2" selected>February</option>
+          <option value="3">March</option>
+          <option value="4">April</option>
+          <option value="5">May</option>
+          <option value="6">June</option>
+          <option value="7">July</option>
+          <option value="8">August</option>
+          <option value="9">September</option>
+          <option value="10">October</option>
+          <option value="11">November</option>
+          <option value="12">December</option>
+        </select>
+      </div>
+      
+      <button class="dgc-btn" id="addRoutineBtn">
+        <i class="fas fa-plus"></i> Add Routine
+      </button>
+      
+      <button class="dgc-btn" id="editAllBtn">
+        <i class="fas fa-edit"></i> Edit All
+      </button>
+      
+      <button class="dgc-btn" id="manageCategoriesBtn">
+        <i class="fas fa-folder"></i> Categories
+      </button>
+    </div>
+
+    <!-- Category Selector -->
+    <div class="category-selector" id="categorySelector">
+      <label>Select Category:</label>
+      <select id="categorySelect"></select>
+      <div class="category-selector-buttons">
+        <button class="btn-confirm" onclick="confirmAddRoutine()">Add</button>
+        <button class="btn-cancel" onclick="cancelAddRoutine()">Cancel</button>
+      </div>
+    </div>
+    
+    <!-- Category Manager -->
+    <div class="category-manager" id="categoryManager">
+      <h3>Manage Categories</h3>
+      <div class="category-list" id="categoryList"></div>
+      <div class="add-category-section">
+        <input type="text" id="newCategoryInput" placeholder="New category name...">
+        <button onclick="addNewCategory()"><i class="fas fa-plus"></i></button>
+      </div>
+      <button class="close-manager" onclick="closeCategoryManager()">Close</button>
     </div>
   </div>
 
-  <div class="table-wrapper">
-    <table>
-      <thead id="habitHead"></thead>
-      <tbody id="habitBody"></tbody>
-    </table>
+  <!-- RIGHT: Monthly Progress -->
+  <div class="control-right">
+    <div class="progress-container">
+      <canvas id="progressChart"></canvas>
+    </div>
   </div>
+
 </div>
 
-<div class="right-panel">
-  <canvas id="progressChart"></canvas>
-</div>
-
+<!-- TABLE CONTAINER - Below the control panel -->
+<div class="table-container">
+  <div class="middle-panel" style="width: 100%;">
+    <div class="table-wrapper">
+      <table>
+        <thead id="habitHead"></thead>
+        <tbody id="habitBody"></tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
 <div class="save-indicator" id="saveIndicator">💾 Saved!</div>
@@ -802,10 +986,39 @@ monthSelect.onchange=()=>renderCalendar(parseInt(monthSelect.value));
 
 /* ===== DATA PERSISTENCE ===== */
 const STORAGE_KEY = 'queenJulieHabitTracker_v3';
+const CATEGORIES_KEY = 'queenJulieCategories_v1';
 let habitData = {};
+let categories = [];
 let chartInstance = null;
 let isEditMode = false;
 let draggedRow = null;
+
+// Initialize categories
+function initCategories() {
+  const saved = localStorage.getItem(CATEGORIES_KEY);
+  if (saved) {
+    categories = JSON.parse(saved);
+  } else {
+    categories = ['Life', 'Work', 'Gaming'];
+    saveCategories();
+  }
+  updateCategorySelect();
+}
+
+function saveCategories() {
+  localStorage.setItem(CATEGORIES_KEY, JSON.stringify(categories));
+}
+
+function updateCategorySelect() {
+  const select = document.getElementById('categorySelect');
+  select.innerHTML = '';
+  categories.forEach(cat => {
+    const option = document.createElement('option');
+    option.value = cat;
+    option.textContent = cat;
+    select.appendChild(option);
+  });
+}
 
 // Load data from localStorage
 function loadData() {
@@ -897,7 +1110,6 @@ function loadTable(month) {
   
   habitBody.innerHTML = '';
   
-  const categories = ['Life', 'Work', 'Gaming'];
   const groupedData = {};
   
   categories.forEach(cat => {
@@ -911,16 +1123,13 @@ function loadTable(month) {
       items.forEach(data => {
         createRow(data.category, data.time, data.activity, data.checks);
       });
+    } else {
+      addCategoryHeader(category);
     }
   });
   
-  if (monthData.length === 0) {
-    categories.forEach(category => {
-      addCategoryHeader(category);
-    });
-  }
-  
   updateDeleteButtonsVisibility();
+  updateDragHandlesVisibility();
 }
 
 // Add category header
@@ -938,17 +1147,17 @@ function createRow(category = 'Life', time = '--:--', activity = 'New Routine', 
   const days = new Date(2026, month, 0).getDate();
   
   let row = document.createElement('tr');
-  row.setAttribute('draggable', 'true');
+  row.setAttribute('draggable', isEditMode); // Only draggable in edit mode
   row.setAttribute('data-category', category);
   row.className = 'routine-row';
   
   row.innerHTML = `
     <td style="display: flex; align-items: center; justify-content: center; gap: 5px;">
-      <i class="fas fa-grip-vertical drag-handle"></i>
+      <i class="fas fa-grip-vertical drag-handle ${isEditMode ? 'visible' : ''}"></i>
       <i class="fas fa-trash delete-btn ${isEditMode ? 'visible' : ''}" style="color:#ff4fa3;"></i>
     </td>
-    <td contenteditable="true">${time}</td>
-    <td contenteditable="true">${activity}</td>
+    <td contenteditable="${isEditMode}">${time}</td>
+    <td contenteditable="${isEditMode}">${activity}</td>
   `;
   
   for(let i = 0; i < days; i++) {
@@ -960,14 +1169,19 @@ function createRow(category = 'Life', time = '--:--', activity = 'New Routine', 
   
   habitBody.appendChild(row);
   
-  // Add drag and drop listeners
-  addDragListeners(row);
+  // Add drag and drop listeners only in edit mode
+  if (isEditMode) {
+    addDragListeners(row);
+  }
   
   // Add delete listener
-  row.querySelector('.delete-btn').addEventListener('click', function() {
-    this.closest('tr').remove();
-    saveCurrentTable();
-  });
+  const deleteBtn = row.querySelector('.delete-btn');
+  if (deleteBtn) {
+    deleteBtn.addEventListener('click', function() {
+      this.closest('tr').remove();
+      saveCurrentTable();
+    });
+  }
   
   // Add auto-save listeners
   const editableCells = row.querySelectorAll('td[contenteditable="true"]');
@@ -1156,6 +1370,9 @@ document.getElementById("editAllBtn").addEventListener("click", function() {
   isEditMode = !isEditMode;
   this.classList.toggle('active');
   updateDeleteButtonsVisibility();
+  updateDragHandlesVisibility();
+  updateContentEditable();
+  updateDraggable();
 });
 
 function updateDeleteButtonsVisibility() {
@@ -1169,10 +1386,48 @@ function updateDeleteButtonsVisibility() {
   });
 }
 
+function updateDragHandlesVisibility() {
+  const dragHandles = document.querySelectorAll('.drag-handle');
+  dragHandles.forEach(handle => {
+    if (isEditMode) {
+      handle.classList.add('visible');
+    } else {
+      handle.classList.remove('visible');
+    }
+  });
+}
+
+function updateContentEditable() {
+  const rows = document.querySelectorAll('tr[data-category]');
+  rows.forEach(row => {
+    const cells = row.querySelectorAll('td[contenteditable]');
+    cells.forEach(cell => {
+      cell.setAttribute('contenteditable', isEditMode);
+    });
+  });
+}
+
+function updateDraggable() {
+  const rows = document.querySelectorAll('tr[data-category]');
+  rows.forEach(row => {
+    row.setAttribute('draggable', isEditMode);
+    if (isEditMode) {
+      addDragListeners(row);
+    } else {
+      row.removeEventListener('dragstart', handleDragStart);
+      row.removeEventListener('dragend', handleDragEnd);
+      row.removeEventListener('dragover', handleDragOver);
+      row.removeEventListener('dragleave', handleDragLeave);
+      row.removeEventListener('drop', handleDrop);
+    }
+  });
+}
+
 // Category Selector Functions
 document.getElementById("addRoutineBtn").addEventListener("click", function() {
   const selector = document.getElementById('categorySelector');
   selector.classList.toggle('show');
+  document.getElementById('categoryManager').classList.remove('show');
 });
 
 function confirmAddRoutine() {
@@ -1247,17 +1502,17 @@ function createRowElement(category) {
   const days = new Date(2026, month, 0).getDate();
   
   let row = document.createElement('tr');
-  row.setAttribute('draggable', 'true');
+  row.setAttribute('draggable', isEditMode);
   row.setAttribute('data-category', category);
   row.className = 'routine-row';
   
   row.innerHTML = `
     <td style="display: flex; align-items: center; justify-content: center; gap: 5px;">
-      <i class="fas fa-grip-vertical drag-handle"></i>
+      <i class="fas fa-grip-vertical drag-handle ${isEditMode ? 'visible' : ''}"></i>
       <i class="fas fa-trash delete-btn ${isEditMode ? 'visible' : ''}" style="color:#ff4fa3;"></i>
     </td>
-    <td contenteditable="true">--:--</td>
-    <td contenteditable="true">New Routine</td>
+    <td contenteditable="${isEditMode}">--:--</td>
+    <td contenteditable="${isEditMode}">New Routine</td>
   `;
   
   for(let i = 0; i < days; i++) {
@@ -1266,12 +1521,17 @@ function createRowElement(category) {
     row.innerHTML += `<td class="${weekClass}"><input type="checkbox"></td>`;
   }
   
-  addDragListeners(row);
+  if (isEditMode) {
+    addDragListeners(row);
+  }
   
-  row.querySelector('.delete-btn').addEventListener('click', function() {
-    this.closest('tr').remove();
-    saveCurrentTable();
-  });
+  const deleteBtn = row.querySelector('.delete-btn');
+  if (deleteBtn) {
+    deleteBtn.addEventListener('click', function() {
+      this.closest('tr').remove();
+      saveCurrentTable();
+    });
+  }
   
   const editableCells = row.querySelectorAll('td[contenteditable="true"]');
   editableCells.forEach(cell => {
@@ -1290,6 +1550,124 @@ function createRowElement(category) {
   });
   
   return row;
+}
+
+/* ===== CATEGORY MANAGEMENT ===== */
+document.getElementById("manageCategoriesBtn").addEventListener("click", function() {
+  const manager = document.getElementById('categoryManager');
+  manager.classList.toggle('show');
+  document.getElementById('categorySelector').classList.remove('show');
+  renderCategoryList();
+});
+
+function renderCategoryList() {
+  const list = document.getElementById('categoryList');
+  list.innerHTML = '';
+  
+  categories.forEach((cat, index) => {
+    const item = document.createElement('div');
+    item.className = 'category-item';
+    item.innerHTML = `
+      <span class="category-name">${cat}</span>
+      <div class="category-actions">
+        <button onclick="editCategory(${index})" title="Edit"><i class="fas fa-edit"></i></button>
+        <button onclick="deleteCategory(${index})" title="Delete"><i class="fas fa-trash"></i></button>
+      </div>
+    `;
+    list.appendChild(item);
+  });
+}
+
+function addNewCategory() {
+  const input = document.getElementById('newCategoryInput');
+  const name = input.value.trim();
+  
+  if (name && !categories.includes(name)) {
+    categories.push(name);
+    saveCategories();
+    updateCategorySelect();
+    renderCategoryList();
+    input.value = '';
+    
+    // Add header for new category in current table
+    addCategoryHeader(name);
+    showSaveIndicator();
+  }
+}
+
+function editCategory(index) {
+  const list = document.getElementById('categoryList');
+  const items = list.querySelectorAll('.category-item');
+  const item = items[index];
+  const oldName = categories[index];
+  
+  item.classList.add('editing');
+  item.innerHTML = `
+    <input type="text" id="editCatInput" value="${oldName}">
+    <div class="category-actions">
+      <button onclick="saveCategoryEdit(${index})" title="Save"><i class="fas fa-check"></i></button>
+      <button onclick="renderCategoryList()" title="Cancel"><i class="fas fa-times"></i></button>
+    </div>
+  `;
+  
+  document.getElementById('editCatInput').focus();
+  document.getElementById('editCatInput').select();
+}
+
+function saveCategoryEdit(index) {
+  const input = document.getElementById('editCatInput');
+  const newName = input.value.trim();
+  const oldName = categories[index];
+  
+  if (newName && newName !== oldName && !categories.includes(newName)) {
+    categories[index] = newName;
+    saveCategories();
+    updateCategorySelect();
+    
+    // Update all rows with this category
+    const rows = document.querySelectorAll(`tr[data-category="${oldName}"]`);
+    rows.forEach(row => {
+      row.setAttribute('data-category', newName);
+    });
+    
+    // Update headers
+    const headers = document.querySelectorAll('.category-header');
+    headers.forEach(header => {
+      if (header.textContent === oldName) {
+        header.textContent = newName;
+      }
+    });
+    
+    saveCurrentTable();
+    renderCategoryList();
+  }
+}
+
+function deleteCategory(index) {
+  const catName = categories[index];
+  if (confirm(`Delete category "${catName}" and all its routines?`)) {
+    categories.splice(index, 1);
+    saveCategories();
+    updateCategorySelect();
+    
+    // Remove all rows and headers for this category
+    const rows = document.querySelectorAll(`tr[data-category="${catName}"]`);
+    rows.forEach(row => row.remove());
+    
+    const headers = document.querySelectorAll('.category-header');
+    headers.forEach(header => {
+      if (header.textContent === catName) {
+        header.parentNode.remove();
+      }
+    });
+    
+    saveCurrentTable();
+    renderCategoryList();
+  }
+}
+
+function closeCategoryManager() {
+  document.getElementById('categoryManager').classList.remove('show');
 }
 
 /* ===== CHART ===== */
@@ -1384,6 +1762,8 @@ musicBtn.addEventListener("click", function(){
   }
 });
 
+// Initialize
+initCategories();
 loadData();
 
 window.addEventListener('storage', (e) => {
