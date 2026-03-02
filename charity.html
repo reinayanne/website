@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Manager Julie | Charity Planner</title>
+
+<link rel="icon" type="image/png" sizes="64x64" href="adminfavicon.ico">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<style>
+:root{
+  --pink:#ff4fa3;
+  --pink-light:#ff7bbf;
+  --glass-bg:rgba(255,123,191,.18);
+  --glass-border:rgba(255,255,255,.25);
+  --text-main:#ffffff;
+  --shadow-glow:0 8px 32px rgba(255,79,163,.3);
+  --charity-gold:#ffd700;
+  --charity-heart:#ff1744;
+  --success-green:#2ecc71;
+  --warm-orange:#ff6b35;
+  --bg-dark:#1a1a2e;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  font-family:'Inter', -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:var(--bg-dark);
+  color:var(--text-main);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  body { font-size: 14px; }
+  ::-webkit-scrollbar { width: 4px; }
+}
+
+a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
+
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:rgba(255,79,163,.15)}
+::-webkit-scrollbar-thumb{
+  background:linear-gradient(180deg,#ff4fa3,#ff7bbf);
+  border-radius:10px;
+}
+
+#loader{
+  position:fixed;
+  inset:0;
+  background:var(--pink-light);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  transition:.4s ease;
+}
+#loader.fade-out{opacity:0;visibility:hidden}
+.loader-content{display:flex;flex-direction:column;align-items:center;}
+.loader-content img{width:190px;margin-bottom:18px; max-width: 80vw;}
+.arc-spinner{
+  width:38px;height:38px;border-radius:50%;
+  border:4px solid rgba(255,255,255,.25);
+  border-top-color:#fff;
+  animation:spin .65s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+header{
+  position:sticky;top:0;z-index:1000;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:12px 16px;
+  backdrop-filter:blur(18px);
+  background:linear-gradient(270deg,#ff4fa3,#ff7bbf,#ffb3d9);
+  background-size:400% 400%;
+  animation:flow 12s ease infinite;
+}
+@keyframes flow{
+  0%{background-position:0%}
+  50%{background-position:100%}
+  100%{background-position:0%}
+}
+.header-left{display:flex;align-items:center;gap:10px;}
+.header-left img{height:40px}
+
+.motto{
+  font-size:14px;font-weight:600;font-style:italic;
+  display:flex;align-items:center;gap:6px;white-space:nowrap;
+}
+.motto i{opacity:.95;font-size:14px;}
+
+.header-icons{display:flex;align-items:center}
+.header-icons a{
+  width:40px;height:40px;display:inline-flex;
+  align-items:center;justify-content:center;
+  border-radius:12px;margin-left:8px;transition:.3s;
+  position: relative;
+}
+.header-icons i{font-size:18px}
+.header-icons a:hover{box-shadow:0 0 14px rgba(255,79,163,.8)}
+
+/* Notification Badge */
+.notification-badge {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 18px;
+  height: 18px;
+  background: var(--charity-heart);
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--pink-light);
+  animation: pulse 2s infinite;
+  display: none; /* Hidden by default */
+}
+
+.notification-badge.active {
+  display: flex;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 23, 68, 0.7); }
+  70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(255, 23, 68, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 23, 68, 0); }
+}
+
+main{
+  max-width:1400px;
+  margin:0 auto;
+  padding:15px;
+  display:grid;
+  grid-template-columns:1fr 420px;
+  gap:20px;
+}
+
+/* Tablet Layout */
+@media(max-width:1024px){
+  main{
+    grid-template-columns:1fr 350px;
+    gap:15px;
+    padding:12px;
+  }
+}
+
+/* Mobile Layout */
+@media(max-width:768px){
+  main{
+    grid-template-columns:1fr;
+    gap:15px;
+    padding:10px;
+  }
+  
+  .map-section{
+    height:350px !important;
+    order: 2;
+  }
+  
+  .sidebar {
+    order: 3;
+  }
+  
+  .hero-section {
+    order: 1;
+  }
+}
+
+.hero-section{
+  background:var(--glass-bg);
+  backdrop-filter:blur(10px);
+  border:1px solid var(--glass-border);
+  border-radius:20px;
+  padding:25px 20px;
+  margin-bottom:10px;
+  text-align:center;
+  box-shadow:var(--shadow-glow);
+  grid-column:1 / -1;
+}
+
+.hero-section h1{
+  font-family:'Orbitron',sans-serif;
+  font-size:clamp(1.4rem,4vw,2.2rem);
+  margin-bottom:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  flex-wrap: wrap;
+  line-height: 1.3;
+}
+
+.impact-stats{
+  display:flex;
+  justify-content:center;
+  gap:20px;
+  margin-top:20px;
+  flex-wrap:wrap;
+}
+
+.impact-stat{text-align:center; min-width: 80px;}
+.impact-number{
+  font-size:clamp(1.5rem, 4vw, 2.2rem);
+  font-weight:900;
+  color:var(--charity-gold);
+  text-shadow:0 4px 10px rgba(255,215,0,.3);
+  display:block;
+}
+.impact-label{
+  font-size:.75rem;
+  opacity:.9;
+  margin-top:3px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.map-section{
+  background:var(--glass-bg);
+  backdrop-filter:blur(10px);
+  border:1px solid var(--glass-border);
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:var(--shadow-glow);
+  display:flex;
+  flex-direction:column;
+  height:600px;
+}
+
+.map-header{
+  padding:15px;
+  border-bottom:1px solid rgba(255,255,255,.1);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.map-header h2{
+  font-family:'Orbitron',sans-serif;
+  font-size:1.1rem;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+#map{
+  flex:1;
+  background:#1a1a2e;
+  min-height: 200px;
+}
+
+.map-legend{
+  display:flex;
+  gap:15px;
+  font-size:.75rem;
+  flex-wrap: wrap;
+}
+
+.legend-item{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.legend-dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+}
+
+.sidebar{
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+}
+
+.panel{
+  background:var(--glass-bg);
+  backdrop-filter:blur(10px);
+  border:1px solid var(--glass-border);
+  border-radius:20px;
+  padding:18px;
+  box-shadow:var(--shadow-glow);
+}
+
+.panel-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
+  padding-bottom:12px;
+  border-bottom:1px solid rgba(255,255,255,.1);
+}
+
+.panel-title{
+  font-family:'Orbitron',sans-serif;
+  font-size:1rem;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.charity-tabs{
+  display:flex;
+  gap:5px;
+  margin-bottom:15px;
+  background:rgba(255,255,255,.1);
+  padding:4px;
+  border-radius:12px;
+}
+
+.charity-tab{
+  flex:1;
+  padding:10px 5px;
+  border:none;
+  background:transparent;
+  color:#fff;
+  border-radius:8px;
+  cursor:pointer;
+  transition:all .3s;
+  font-size:.75rem;
+  font-weight:600;
+  text-align: center;
+}
+
+.charity-tab.active{
+  background:var(--pink);
+  box-shadow:0 4px 15px rgba(255,79,163,.4);
+}
+
+.charity-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  max-height:300px;
+  overflow-y:auto;
+}
+
+.charity-card{
+  background:rgba(255,255,255,.05);
+  border-radius:12px;
+  padding:14px;
+  cursor:pointer;
+  transition:all .3s;
+  border:2px solid transparent;
+  position:relative;
+  touch-action: manipulation;
+}
+
+.charity-card:hover, .charity-card:active{
+  background:rgba(255,255,255,.1);
+  transform:translateX(5px);
+  border-color:var(--pink);
+}
+
+.charity-card.completed{
+  border-color:var(--success-green);
+  background:rgba(46,204,113,.1);
+}
+
+.charity-card.completed::after{
+  content:'✓';
+  position:absolute;
+  top:10px;
+  right:10px;
+  background:var(--success-green);
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.charity-name{
+  font-weight:700;
+  font-size:.95rem;
+  margin-bottom:4px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding-right: 25px;
+}
+
+.charity-location{
+  font-size:.8rem;
+  opacity:.8;
+  display:flex;
+  align-items:center;
+  gap:4px;
+}
+
+.charity-meta{
+  display:flex;
+  gap:10px;
+  margin-top:8px;
+  font-size:.75rem;
+  flex-wrap: wrap;
+}
+
+.charity-badge{
+  background:rgba(255,255,255,.1);
+  padding:4px 8px;
+  border-radius:20px;
+  display:flex;
+  align-items:center;
+  gap:4px;
+}
+
+.planner-form{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.form-group label{
+  display:block;
+  margin-bottom:5px;
+  font-size:.85rem;
+  font-weight:600;
+}
+
+.form-group select,
+.form-group input,
+.form-group textarea{
+  width:100%;
+  padding:12px;
+  background:rgba(255,255,255,.1);
+  border:2px solid rgba(255,255,255,.2);
+  border-radius:10px;
+  color:#fff;
+  font-size:.9rem;
+  transition:all .3s;
+  font-family: inherit;
+}
+
+.form-group select:focus,
+.form-group input:focus,
+.form-group textarea:focus{
+  outline:none;
+  border-color:var(--pink);
+  background:rgba(255,255,255,.15);
+}
+
+.form-group select option{
+  background:#2d1b2e;
+  color:#fff;
+}
+
+.form-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+@media(max-width: 400px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.calculate-btn{
+  padding:14px;
+  background:linear-gradient(135deg,var(--charity-heart),var(--pink));
+  border:none;
+  border-radius:12px;
+  color:#fff;
+  font-family:'Orbitron',sans-serif;
+  font-weight:700;
+  cursor:pointer;
+  transition:all .3s;
+  margin-top:5px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  font-size: .9rem;
+  width: 100%;
+  touch-action: manipulation;
+}
+
+.calculate-btn:hover, .calculate-btn:active{
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(255,23,68,.4);
+}
+
+.budget-result{
+  margin-top:15px;
+  padding:15px;
+  background:rgba(255,255,255,.05);
+  border-radius:15px;
+  display:none;
+}
+
+.budget-result.show{
+  display:block;
+  animation:slideUp .5s ease;
+}
+
+@keyframes slideUp{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.budget-summary{
+  text-align:center;
+  margin-bottom:15px;
+  padding-bottom:15px;
+  border-bottom:2px solid rgba(255,255,255,.1);
+}
+
+.budget-total{
+  font-size:1.8rem;
+  font-weight:900;
+  color:var(--charity-gold);
+}
+
+.budget-breakdown{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.budget-item{
+  display:flex;
+  justify-content:space-between;
+  padding:10px;
+  background:rgba(255,255,255,.05);
+  border-radius:8px;
+  align-items:center;
+  font-size: .85rem;
+}
+
+.budget-item i{
+  margin-right:6px;
+  opacity:.8;
+}
+
+.checklist-section{
+  margin-top:15px;
+}
+
+.checklist-title{
+  font-size:.85rem;
+  font-weight:600;
+  margin-bottom:10px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.checklist-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+@media(max-width: 400px) {
+  .checklist-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.checklist-item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:.8rem;
+  padding:8px;
+  background:rgba(255,255,255,.05);
+  border-radius:8px;
+  cursor: pointer;
+}
+
+.checklist-item input[type="checkbox"]{
+  width:18px;
+  height:18px;
+  accent-color:var(--pink);
+  cursor: pointer;
+}
+
+.orphanage-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  max-height:250px;
+  overflow-y:auto;
+}
+
+.orphanage-card{
+  background:rgba(255,255,255,.05);
+  border-radius:12px;
+  padding:14px;
+  transition:all .3s;
+  border-left:4px solid var(--charity-gold);
+}
+
+.orphanage-card:hover{
+  background:rgba(255,255,255,.1);
+  transform:translateX(5px);
+}
+
+.orphanage-name{
+  font-weight:700;
+  margin-bottom:5px;
+  color:var(--charity-gold);
+  font-size: .95rem;
+}
+
+.orphanage-details{
+  font-size:.8rem;
+  opacity:.9;
+  line-height:1.5;
+}
+
+.contact-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  margin-top:10px;
+  padding:8px 14px;
+  background:var(--success-green);
+  color:#fff;
+  border-radius:20px;
+  font-size:.75rem;
+  font-weight:600;
+  transition:all .3s;
+  touch-action: manipulation;
+}
+
+.contact-btn:hover, .contact-btn:active{
+  transform:scale(1.05);
+  box-shadow:0 4px 12px rgba(46,204,113,.4);
+}
+
+.fab{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  width:56px;
+  height:56px;
+  background:linear-gradient(135deg,var(--charity-heart),var(--pink));
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:24px;
+  color:#fff;
+  border:none;
+  cursor:pointer;
+  box-shadow:0 8px 24px rgba(255,23,68,.5);
+  transition:all .3s;
+  z-index:100;
+  touch-action: manipulation;
+}
+
+.fab:hover, .fab:active{
+  transform:scale(1.1) rotate(90deg);
+}
+
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.85);
+  backdrop-filter:blur(5px);
+  z-index:2000;
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+}
+
+.modal.active{
+  display:flex;
+}
+
+.modal-content{
+  background:linear-gradient(135deg,rgba(255,79,163,.95),rgba(255,123,191,.95));
+  backdrop-filter:blur(20px);
+  border-radius:24px;
+  padding:25px;
+  width:100%;
+  max-width:500px;
+  max-height:85vh;
+  overflow-y:auto;
+  border:1px solid rgba(255,255,255,.3);
+  animation:popIn .3s ease;
+}
+
+@media(max-width: 480px) {
+  .modal-content {
+    padding: 20px;
+    border-radius: 20px;
+  }
+}
+
+@keyframes popIn{
+  from{opacity:0;transform:scale(.8)}
+  to{opacity:1;transform:scale(1)}
+}
+
+.modal-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.modal-header h2{
+  font-family:'Orbitron',sans-serif;
+  font-size:1.2rem;
+  line-height: 1.3;
+  padding-right: 10px;
+}
+
+.close-modal{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  background:rgba(255,255,255,.2);
+  border:none;
+  color:#fff;
+  font-size:18px;
+  cursor:pointer;
+  transition:all .3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.close-modal:hover, .close-modal:active{
+  background:rgba(255,255,255,.3);
+  transform:rotate(90deg);
+}
+
+.custom-marker{
+  background:var(--charity-heart);
+  border:3px solid #fff;
+  border-radius:50%;
+  width:35px;
+  height:35px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  font-weight:bold;
+  box-shadow:0 4px 12px rgba(0,0,0,.3);
+  transition:all .3s;
+}
+
+.custom-marker.completed{
+  background:var(--success-green);
+}
+
+.custom-marker:hover{
+  transform:scale(1.2);
+  z-index:1000 !important;
+}
+
+.toast{
+  position:fixed;
+  top:80px;
+  right:15px;
+  background:rgba(0,0,0,.9);
+  color:#fff;
+  padding:14px 20px;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  opacity:0;
+  transform:translateX(100px);
+  transition:all .3s;
+  z-index:3000;
+  border:1px solid var(--charity-gold);
+  font-size: .9rem;
+  max-width: calc(100% - 30px);
+  box-shadow: 0 4px 20px rgba(0,0,0,.3);
+}
+
+.toast.show{
+  opacity:1;
+  transform:translateX(0);
+}
+
+/* Mobile specific adjustments */
+@media(max-width:768px){
+  .header-left .motto{display:none;}
+  .impact-stats{gap:15px;}
+  .charity-list { max-height: 250px; }
+  .orphanage-list { max-height: 200px; }
+}
+
+.leaflet-popup-content-wrapper{
+  background:rgba(30,30,40,.95);
+  backdrop-filter:blur(10px);
+  color:#fff;
+  border-radius:15px;
+  border:1px solid var(--charity-gold);
+  font-family: 'Inter', sans-serif;
+}
+
+.leaflet-popup-tip{
+  background:rgba(30,30,40,.95);
+}
+
+.popup-content h3{
+  font-family:'Orbitron',sans-serif;
+  margin-bottom:8px;
+  color:var(--charity-gold);
+  font-size: 1.1rem;
+}
+
+.popup-content p{
+  margin:4px 0;
+  font-size:.85rem;
+}
+
+.popup-btn{
+  display:inline-block;
+  margin-top:8px;
+  padding:8px 14px;
+  background:var(--charity-heart);
+  color:#fff;
+  border-radius:8px;
+  font-size:.8rem;
+  transition:all .3s;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.popup-btn:hover{
+  background:var(--pink);
+}
+
+/* Touch device optimizations */
+@media (hover: none) {
+  .charity-card:hover, .orphanage-card:hover {
+    transform: none;
+  }
+  .charity-card:active, .orphanage-card:active {
+    transform: translateX(5px);
+  }
+}
+</style>
+</head>
+
+<body>
+
+<audio id="bgMusic" src="coffee.mp3" loop></audio>
+
+<div id="loader">
+  <div class="loader-content">
+    <img src="adminlogo.png" alt="Logo">
+    <div class="arc-spinner"></div>
+  </div>
+</div>
+
+<header>
+  <div class="header-left">
+    <a href="homepage.html"><img src="adminlogo.png" alt="Logo"></a>
+    <div class="motto" id="motto"></div>
+  </div>
+  <div class="header-icons">
+    <a href="homepage.html" title="Home" id="homeIcon">
+      <i class="fas fa-home"></i>
+      <span class="notification-badge" id="notifBadge">!</span>
+    </a>
+    <a id="musicToggle" title="Toggle Music"><i class="fas fa-music"></i></a>
+  </div>
+</header>
+
+<main>
+  <section class="hero-section">
+    <h1><i class="fas fa-hand-holding-heart" style="color:var(--charity-heart)"></i> Julie's Charity Mission</h1>
+    <p style="opacity:.9;max-width:600px;margin:0 auto;line-height:1.6; font-size: clamp(0.85rem, 2vw, 1rem); padding: 0 10px;">
+      "The best way to find yourself is to lose yourself in the service of others." 
+      Plan your giving, track your impact, and spread kindness across the Philippines.
+    </p>
+    
+    <div class="impact-stats">
+      <div class="impact-stat">
+        <span class="impact-number" id="totalMissions">0</span>
+        <div class="impact-label">Missions Done</div>
+      </div>
+      <div class="impact-stat">
+        <span class="impact-number" id="totalBeneficiaries">0</span>
+        <div class="impact-label">People Helped</div>
+      </div>
+      <div class="impact-stat">
+        <span class="impact-number" id="totalBudget">₱0</span>
+        <div class="impact-label">Total Given</div>
+      </div>
+      <div class="impact-stat">
+        <span class="impact-number" id="totalPlaces">0</span>
+        <div class="impact-label">Places Visited</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="map-section">
+    <div class="map-header">
+      <h2><i class="fas fa-map-marked-alt"></i> Mission Map</h2>
+      <div class="map-legend">
+        <div class="legend-item">
+          <div class="legend-dot" style="background:var(--charity-heart)"></div>
+          <span>Planned</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:var(--success-green)"></div>
+          <span>Completed</span>
+        </div>
+      </div>
+    </div>
+    <div id="map"></div>
+  </section>
+
+  <aside class="sidebar">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><i class="fas fa-clipboard-list"></i> My Missions</div>
+      </div>
+      
+      <div class="charity-tabs">
+        <button class="charity-tab active" onclick="switchTab('all', this)">All</button>
+        <button class="charity-tab" onclick="switchTab('planned', this)">Planned</button>
+        <button class="charity-tab" onclick="switchTab('completed', this)">Done</button>
+      </div>
+
+      <div class="charity-list" id="charityList"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><i class="fas fa-calculator"></i> Mission Planner</div>
+      </div>
+      
+      <form class="planner-form" id="plannerForm" onsubmit="calculateMission(event)">
+        <div class="form-group">
+          <label>Location (Barangay/City)</label>
+          <select id="missionLocation" required onchange="updateLocationDetails()">
+            <option value="">Select location...</option>
+            <option value="tondo">Tondo, Manila</option>
+            <option value="baseco">Baseco, Manila</option>
+            <option value="caloocan">Caloocan City</option>
+            <option value="quezon">Quezon City</option>
+            <option value="pasay">Pasay City</option>
+            <option value="cebu">Cebu City</option>
+            <option value="davao">Davao City</option>
+            <option value="bacolod">Bacolod City</option>
+            <option value="iloilo">Iloilo City</option>
+            <option value="custom">Custom Location</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Beneficiaries</label>
+            <input type="number" id="beneficiaryCount" min="1" value="50" required>
+          </div>
+          <div class="form-group">
+            <label>Mission Type</label>
+            <select id="missionType" required>
+              <option value="feeding">Feeding Program</option>
+              <option value="goods">Goods Distribution</option>
+              <option value="school">School Supplies</option>
+              <option value="medical">Medical Mission</option>
+              <option value="christmas">Christmas Giving</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Items per Person</label>
+          <div class="form-row">
+            <input type="number" id="itemsPerPerson" placeholder="Qty" value="1" min="1">
+            <select id="itemType">
+              <option value="meal">Meal (Rice+Ulam)</option>
+              <option value="grocery">Grocery Pack</option>
+              <option value="snack">Snack Pack</option>
+              <option value="school">School Kit</option>
+              <option value="hygiene">Hygiene Kit</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Additional Costs</label>
+          <div class="form-row">
+            <input type="number" id="transportCost" placeholder="Transport (₱)" value="1000">
+            <input type="number" id="miscCost" placeholder="Misc (₱)" value="500">
+          </div>
+        </div>
+
+        <button type="submit" class="calculate-btn">
+          <i class="fas fa-heart"></i> Calculate Mission Budget
+        </button>
+      </form>
+
+      <div class="budget-result" id="budgetResult">
+        <div class="budget-summary">
+          <div style="font-size:.85rem;opacity:.8;margin-bottom:5px;">Estimated Total Budget</div>
+          <div class="budget-total" id="budgetTotal">₱0</div>
+          <div style="font-size:.75rem;opacity:.7;margin-top:5px;">for <span id="budgetPeople">0</span> people</div>
+        </div>
+        
+        <div class="budget-breakdown" id="budgetBreakdown"></div>
+
+        <div class="checklist-section">
+          <div class="checklist-title"><i class="fas fa-tasks"></i> Packing Checklist</div>
+          <div class="checklist-grid" id="checklistGrid"></div>
+        </div>
+
+        <button class="calculate-btn" onclick="saveMission()" style="margin-top:15px;background:var(--success-green);">
+          <i class="fas fa-save"></i> Save This Mission
+        </button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><i class="fas fa-home"></i> Partner Organizations</div>
+      </div>
+      
+      <div class="orphanage-list" id="orphanageList">
+        <div class="orphanage-card">
+          <div class="orphanage-name"><i class="fas fa-child"></i> Hospicio de San Jose</div>
+          <div class="orphanage-details">
+            <i class="fas fa-map-marker-alt"></i> Ayala Bridge, Manila<br>
+            <i class="fas fa-phone"></i> (02) 8734-9592<br>
+            <i class="fas fa-users"></i> 300+ children & elderly
+          </div>
+          <a href="tel:0277349592" class="contact-btn"><i class="fas fa-phone"></i> Contact</a>
+        </div>
+
+        <div class="orphanage-card">
+          <div class="orphanage-name"><i class="fas fa-hands-helping"></i> Virlanie Foundation</div>
+          <div class="orphanage-details">
+            <i class="fas fa-map-marker-alt"></i> Makati City<br>
+            <i class="fas fa-phone"></i> (02) 8892-9382<br>
+            <i class="fas fa-users"></i> Street children program
+          </div>
+          <a href="tel:0288929382" class="contact-btn"><i class="fas fa-phone"></i> Contact</a>
+        </div>
+
+        <div class="orphanage-card">
+          <div class="orphanage-name"><i class="fas fa-heart"></i> Gentle Hands Inc.</div>
+          <div class="orphanage-details">
+            <i class="fas fa-map-marker-alt"></i> Quezon City<br>
+            <i class="fas fa-phone"></i> (02) 8711-2578<br>
+            <i class="fas fa-users"></i> Abandoned children
+          </div>
+          <a href="tel:0287112578" class="contact-btn"><i class="fas fa-phone"></i> Contact</a>
+        </div>
+
+        <div class="orphanage-card">
+          <div class="orphanage-name"><i class="fas fa-home"></i> SOS Children's Village</div>
+          <div class="orphanage-details">
+            <i class="fas fa-map-marker-alt"></i> Alabang, Muntinlupa<br>
+            <i class="fas fa-phone"></i> (02) 8802-7183<br>
+            <i class="fas fa-users"></i> 150+ children
+          </div>
+          <a href="tel:0288027183" class="contact-btn"><i class="fas fa-phone"></i> Contact</a>
+        </div>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<div class="modal" id="missionModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2><i class="fas fa-plus-circle"></i> New Charity Mission</h2>
+      <button class="close-modal" onclick="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <form id="addMissionForm" onsubmit="saveNewMission(event)">
+      <div class="form-group">
+        <label>Mission Name</label>
+        <input type="text" id="newMissionName" placeholder="e.g., Feeding Program in Baseco" required>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="newMissionDate" required>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="newMissionStatus">
+            <option value="planned">Planned</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Location Details</label>
+        <input type="text" id="newMissionLocation" placeholder="Complete address" required>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Beneficiaries</label>
+          <input type="number" id="newMissionBeneficiaries" placeholder="Number of people" required>
+        </div>
+        <div class="form-group">
+          <label>Budget Used</label>
+          <input type="number" id="newMissionBudget" placeholder="Amount in ₱" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Notes/Impact</label>
+        <textarea id="newMissionNotes" rows="3" placeholder="What happened? How did it go?"></textarea>
+      </div>
+
+      <button type="submit" class="calculate-btn">
+        <i class="fas fa-save"></i> Save Mission
+      </button>
+    </form>
+  </div>
+</div>
+
+<button class="fab" onclick="openModal()" title="Add Mission">
+  <i class="fas fa-plus"></i>
+</button>
+
+<div class="toast" id="toast">
+  <i class="fas fa-check-circle"></i>
+  <span id="toastMsg">Saved!</span>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// Data & Config
+const costDB = {
+  tondo: { lat: 14.6056, lng: 120.9654, transport: 500, partner: 'Barangay 105' },
+  baseco: { lat: 14.5936, lng: 120.9576, transport: 600, partner: 'Baseco Community' },
+  caloocan: { lat: 14.6571, lng: 120.9841, transport: 800, partner: 'Caloocan Social Welfare' },
+  quezon: { lat: 14.6760, lng: 121.0437, transport: 700, partner: 'QC DSWD' },
+  pasay: { lat: 14.5378, lng: 121.0014, transport: 900, partner: 'Pasay CSWDO' },
+  cebu: { lat: 10.3157, lng: 123.8854, transport: 3000, partner: 'Cebu City SWD' },
+  davao: { lat: 7.1907, lng: 125.4553, transport: 4000, partner: 'Davao CSWDO' },
+  bacolod: { lat: 10.6407, lng: 122.9690, transport: 3500, partner: 'Bacolod DSWD' },
+  iloilo: { lat: 10.7202, lng: 122.5621, transport: 3200, partner: 'Iloilo CSWDO' },
+  custom: { lat: 14.5995, lng: 120.9842, transport: 1000, partner: 'Local Barangay' }
+};
+
+const itemCosts = {
+  meal: { cost: 80, name: 'Meal (Rice + Ulam)' },
+  grocery: { cost: 300, name: 'Grocery Pack' },
+  snack: { cost: 50, name: 'Snack Pack' },
+  school: { cost: 250, name: 'School Kit' },
+  hygiene: { cost: 150, name: 'Hygiene Kit' }
+};
+
+const missionMultipliers = {
+  feeding: 1, goods: 1.2, school: 1.5, medical: 2, christmas: 1.8
+};
+
+const checklists = {
+  feeding: ['Rice (sacks)', 'Ulamin ingredients', 'Plates/Utensils', 'Water', 'Tables/Chairs', 'Trash bags'],
+  goods: ['Grocery items', 'Plastic bags', 'Boxes', 'Markers', 'Inventory list'],
+  school: ['Notebooks', 'Pencils/Pens', 'Crayons', 'Erasers', 'Sharpener', 'School bag'],
+  medical: ['Medicines', 'First aid kit', 'BP apparatus', 'Thermometer', 'Face masks', 'Alcohol/sanitizer'],
+  christmas: ['Toys', 'Candies', 'Noche buena pack', 'Gift wrap', 'Decorations', 'Santa hat']
+};
+
+// State
+let myMissions = [];
+let currentTab = 'all';
+let map;
+let markers = [];
+let currentBudget = 0;
+let hasNotification = false;
+
+// Sound Effect for Notification (Web Audio API)
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function playNotificationSound() {
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  const oscillator = audioCtx.createOscillator();
+  const gainNode = audioCtx.createGain();
+  oscillator.connect(gainNode);
+  gainNode.connect(audioCtx.destination);
+  oscillator.type = 'sine';
+  oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+  oscillator.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+  gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+  gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+  oscillator.start();
+  oscillator.stop(audioCtx.currentTime + 0.3);
+}
+
+// LocalStorage Functions
+function saveToStorage() {
+  localStorage.setItem('julieCharityMissions', JSON.stringify(myMissions));
+  localStorage.setItem('julieCharityNotif', hasNotification);
+}
+
+function loadFromStorage() {
+  const stored = localStorage.getItem('julieCharityMissions');
+  if (stored) {
+    myMissions = JSON.parse(stored);
+  }
+  const notif = localStorage.getItem('julieCharityNotif');
+  if (notif === 'true') {
+    hasNotification = true;
+    updateNotificationBadge();
+  }
+}
+
+function updateNotificationBadge() {
+  const badge = document.getElementById('notifBadge');
+  if (hasNotification) {
+    badge.classList.add('active');
+  } else {
+    badge.classList.remove('active');
+  }
+}
+
+function clearNotification() {
+  hasNotification = false;
+  updateNotificationBadge();
+  localStorage.setItem('julieCharityNotif', false);
+}
+
+// Initialization
+window.addEventListener('load', () => {
+  setTimeout(() => document.getElementById('loader').classList.add('fade-out'), 500);
+  loadFromStorage();
+  initMap();
+  renderMissions();
+  updateStats();
+  document.getElementById('newMissionDate').valueAsDate = new Date();
+  
+  // Clear notification when clicking home
+  document.getElementById('homeIcon').addEventListener('click', clearNotification);
+});
+
+function initMap() {
+  // Default to Manila
+  map = L.map('map').setView([14.5995, 120.9842], 11);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; CARTO', subdomains: 'abcd', maxZoom: 19
+  }).addTo(map);
+  
+  // Add markers for existing missions
+  myMissions.forEach(mission => addMarker(mission));
+}
+
+function addMarker(mission) {
+  const isCompleted = mission.status === 'completed';
+  const icon = L.divIcon({
+    className: 'custom-marker',
+    html: `<div class="custom-marker ${isCompleted ? 'completed' : ''}" style="background: ${isCompleted ? '#2ecc71' : '#ff1744'}">
+            <i class="fas fa-heart" style="font-size: 14px;"></i>
+           </div>`,
+    iconSize: [35, 35], iconAnchor: [17, 35]
+  });
+  
+  const marker = L.marker([mission.lat, mission.lng], {icon}).addTo(map);
+  const popupContent = `
+    <div class="popup-content">
+      <h3>${mission.name}</h3>
+      <p><i class="fas fa-calendar"></i> ${mission.date}</p>
+      <p><i class="fas fa-users"></i> ${mission.beneficiaries} people helped</p>
+      <p><i class="fas fa-money-bill"></i> ₱${parseInt(mission.budget).toLocaleString()}</p>
+      <p><i class="fas fa-info-circle"></i> ${mission.status === 'completed' ? '✓ Completed' : '📅 Planned'}</p>
+      ${mission.notes ? `<p><i class="fas fa-comment"></i> ${mission.notes}</p>` : ''}
+      ${mission.status === 'planned' ? `<button class="popup-btn" onclick="markCompleted('${mission.id}')"><i class="fas fa-check"></i> Mark Done</button>` : ''}
+    </div>
+  `;
+  marker.bindPopup(popupContent);
+  markers.push({id: mission.id, marker});
+}
+
+function markCompleted(id) {
+  const mission = myMissions.find(m => m.id === id);
+  if (mission) {
+    mission.status = 'completed';
+    saveToStorage();
+    renderMissions();
+    updateStats();
+    
+    // Update marker
+    const markerObj = markers.find(m => m.id === id);
+    if (markerObj) {
+      map.removeLayer(markerObj.marker);
+      addMarker(mission);
+    }
+    
+    showToast('Mission completed! Great job! 🎉');
+    playNotificationSound();
+  }
+}
+
+// Header Motto
+const titles = [
+  ['fas fa-hand-holding-heart', 'Give with love, Julie!'],
+  ['fas fa-heart', 'Kindness is your crown'],
+  ['fas fa-hands-helping', 'Helping hands, happy heart'],
+  ['fas fa-star', 'You are a blessing to many']
+];
+const t = titles[Math.floor(Math.random() * titles.length)];
+document.getElementById('motto').innerHTML = `<i class="${t[0]}"></i> ${t[1]}`;
+
+// Music Toggle
+let musicOn = false;
+document.getElementById('musicToggle').onclick = () => {
+  musicOn = !musicOn;
+  const audio = document.getElementById('bgMusic');
+  if (musicOn) {
+    audio.play().catch(e => console.log('Audio play failed:', e));
+  } else {
+    audio.pause();
+  }
+  document.getElementById('musicToggle').style.background = musicOn ? 'rgba(255,255,255,.3)' : '';
+};
+
+// Mission List Functions
+function renderMissions() {
+  const list = document.getElementById('charityList');
+  list.innerHTML = '';
+  
+  let filtered = myMissions;
+  if (currentTab === 'planned') filtered = myMissions.filter(m => m.status === 'planned');
+  if (currentTab === 'completed') filtered = myMissions.filter(m => m.status === 'completed');
+  
+  if (filtered.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:30px 20px;opacity:.7;"><i class="fas fa-clipboard-list" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>No missions yet.<br>Plan your first charity!</div>';
+    return;
+  }
+  
+  filtered.forEach(mission => {
+    const card = document.createElement('div');
+    card.className = `charity-card ${mission.status}`;
+    card.innerHTML = `
+      <div class="charity-name">
+        <i class="fas fa-heart" style="color:${mission.status === 'completed' ? 'var(--success-green)' : 'var(--charity-heart)'}"></i>
+        ${mission.name}
+      </div>
+      <div class="charity-location"><i class="fas fa-map-marker-alt"></i> ${mission.location}</div>
+      <div class="charity-meta">
+        <span class="charity-badge"><i class="fas fa-users"></i> ${mission.beneficiaries}</span>
+        <span class="charity-badge"><i class="fas fa-money-bill"></i> ₱${parseInt(mission.budget).toLocaleString()}</span>
+        <span class="charity-badge"><i class="fas fa-calendar"></i> ${mission.date}</span>
+      </div>
+    `;
+    card.onclick = () => {
+      map.setView([mission.lat, mission.lng], 14);
+      const m = markers.find(mk => mk.id === mission.id);
+      if (m) m.marker.openPopup();
+    };
+    list.appendChild(card);
+  });
+}
+
+function switchTab(tab, btn) {
+  currentTab = tab;
+  document.querySelectorAll('.charity-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderMissions();
+}
+
+function updateLocationDetails() {
+  const loc = document.getElementById('missionLocation').value;
+  if (costDB[loc]) document.getElementById('transportCost').value = costDB[loc].transport;
+}
+
+// Budget Calculator
+function calculateMission(e) {
+  e.preventDefault();
+  const location = document.getElementById('missionLocation').value;
+  const beneficiaries = parseInt(document.getElementById('beneficiaryCount').value);
+  const missionType = document.getElementById('missionType').value;
+  const itemsPerPerson = parseInt(document.getElementById('itemsPerPerson').value) || 1;
+  const itemType = document.getElementById('itemType').value;
+  const transport = parseInt(document.getElementById('transportCost').value) || 0;
+  const misc = parseInt(document.getElementById('miscCost').value) || 0;
+  
+  if (!location) { showToast('Please select a location'); return; }
+  
+  const itemCost = itemCosts[itemType].cost;
+  const multiplier = missionMultipliers[missionType];
+  const itemsTotal = (itemCost * itemsPerPerson * beneficiaries) * multiplier;
+  const total = itemsTotal + transport + misc;
+  currentBudget = total;
+  
+  document.getElementById('budgetTotal').textContent = '₱' + total.toLocaleString();
+  document.getElementById('budgetPeople').textContent = beneficiaries;
+  
+  document.getElementById('budgetBreakdown').innerHTML = `
+    <div class="budget-item">
+      <span><i class="fas fa-box"></i> ${itemCosts[itemType].name} (${itemsPerPerson} per person)</span>
+      <span>₱${itemsTotal.toLocaleString()}</span>
+    </div>
+    <div class="budget-item">
+      <span><i class="fas fa-truck"></i> Transportation</span>
+      <span>₱${transport.toLocaleString()}</span>
+    </div>
+    <div class="budget-item">
+      <span><i class="fas fa-ellipsis-h"></i> Miscellaneous</span>
+      <span>₱${misc.toLocaleString()}</span>
+    </div>
+    <div class="budget-item" style="background:rgba(255,215,0,.1);border:1px solid var(--charity-gold);">
+      <span><i class="fas fa-calculator"></i> Cost per person</span>
+      <span>₱${Math.round(total/beneficiaries).toLocaleString()}</span>
+    </div>
+  `;
+  
+  document.getElementById('checklistGrid').innerHTML = checklists[missionType].map(item => `
+    <label class="checklist-item">
+      <input type="checkbox">
+      <span>${item}</span>
+    </label>
+  `).join('');
+  
+  document.getElementById('budgetResult').classList.add('show');
+  
+  // Scroll to result on mobile
+  if (window.innerWidth <= 768) {
+    document.getElementById('budgetResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+function saveMission() {
+  const location = document.getElementById('missionLocation').value;
+  const locData = costDB[location];
+  const missionTypeSelect = document.getElementById('missionType');
+  const mission = {
+    id: Date.now().toString(),
+    name: missionTypeSelect.options[missionTypeSelect.selectedIndex].text + ' in ' + location.charAt(0).toUpperCase() + location.slice(1),
+    location: location.charAt(0).toUpperCase() + location.slice(1),
+    lat: locData.lat, 
+    lng: locData.lng,
+    date: new Date().toISOString().split('T')[0],
+    beneficiaries: document.getElementById('beneficiaryCount').value,
+    budget: currentBudget,
+    status: 'planned', 
+    notes: ''
+  };
+  
+  myMissions.push(mission);
+  saveToStorage();
+  addMarker(mission);
+  renderMissions();
+  updateStats();
+  
+  // Trigger notification
+  hasNotification = true;
+  updateNotificationBadge();
+  playNotificationSound();
+  
+  showToast('Mission planned! Ready to help others ❤️');
+  document.getElementById('budgetResult').classList.remove('show');
+  document.getElementById('plannerForm').reset();
+  
+  // Reset transport cost to default
+  document.getElementById('transportCost').value = 1000;
+  document.getElementById('miscCost').value = 500;
+}
+
+// Modal Functions
+function openModal() {
+  document.getElementById('missionModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  // Prevent background scrolling on iOS
+  document.body.style.position = 'fixed';
+  document.body.style.width = '100%';
+}
+
+function closeModal() {
+  document.getElementById('missionModal').classList.remove('active');
+  document.body.style.overflow = '';
+  document.body.style.position = '';
+  document.body.style.width = '';
+  document.getElementById('addMissionForm').reset();
+  document.getElementById('newMissionDate').valueAsDate = new Date();
+}
+
+function saveNewMission(e) {
+  e.preventDefault();
+  const mission = {
+    id: Date.now().toString(),
+    name: document.getElementById('newMissionName').value,
+    location: document.getElementById('newMissionLocation').value,
+    lat: 14.5995 + (Math.random() - 0.5) * 0.1,
+    lng: 120.9842 + (Math.random() - 0.5) * 0.1,
+    date: document.getElementById('newMissionDate').value,
+    beneficiaries: document.getElementById('newMissionBeneficiaries').value,
+    budget: document.getElementById('newMissionBudget').value,
+    status: document.getElementById('newMissionStatus').value,
+    notes: document.getElementById('newMissionNotes').value
+  };
+  
+  myMissions.push(mission);
+  saveToStorage();
+  addMarker(mission);
+  renderMissions();
+  updateStats();
+  closeModal();
+  
+  // Trigger notification
+  hasNotification = true;
+  updateNotificationBadge();
+  playNotificationSound();
+  
+  showToast('Mission saved! You are amazing! ✨');
+}
+
+function updateStats() {
+  const completed = myMissions.filter(m => m.status === 'completed');
+  const totalBeneficiaries = myMissions.reduce((sum, m) => sum + parseInt(m.beneficiaries || 0), 0);
+  const totalBudget = myMissions.reduce((sum, m) => sum + parseInt(m.budget || 0), 0);
+  
+  document.getElementById('totalMissions').textContent = completed.length;
+  document.getElementById('totalBeneficiaries').textContent = totalBeneficiaries.toLocaleString();
+  document.getElementById('totalBudget').textContent = '₱' + totalBudget.toLocaleString();
+  document.getElementById('totalPlaces').textContent = new Set(myMissions.map(m => m.location)).size;
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// Close modal on outside click
+document.getElementById('missionModal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('missionModal')) closeModal();
+});
+
+// Keyboard support for modal
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && document.getElementById('missionModal').classList.contains('active')) {
+    closeModal();
+  }
+});
+
+// Handle visibility change (pause audio when tab hidden)
+document.addEventListener('visibilitychange', () => {
+  const audio = document.getElementById('bgMusic');
+  if (document.hidden && musicOn) {
+    audio.pause();
+  } else if (!document.hidden && musicOn) {
+    audio.play().catch(e => console.log('Audio play failed:', e));
+  }
+});
+</script>
+
+</body>
+</html>

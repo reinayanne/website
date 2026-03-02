@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Manager Julie | Homepage</title>
+
+<!-- FAVICON -->
+<link rel="icon" type="image/png" sizes="64x64" href="adminfavicon.ico">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+:root{
+  --pink:#ff4fa3;
+  --pink-light:#ff7bbf;
+  --glass-bg:rgba(255,123,191,.18);
+  --text-main:#ffffff;
+}
+
+/* RESET */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+html, body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:url("adminbackground.png") center/cover fixed no-repeat;
+  color:var(--text-main);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+a{text-decoration:none;color:inherit}
+a:focus,a:active{outline:none}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:rgba(255,79,163,.15)}
+::-webkit-scrollbar-thumb{
+  background:linear-gradient(180deg,#ff4fa3,#ff7bbf);
+  border-radius:10px;
+}
+
+/* LOADER */
+#loader{
+  position:fixed;
+  inset:0;
+  background:var(--pink-light);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  transition:.4s ease;
+}
+#loader.fade-out{opacity:0;visibility:hidden}
+
+.loader-content{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.loader-content img{width:190px;margin-bottom:18px;max-width:80vw}
+
+.arc-spinner{
+  width:38px;height:38px;border-radius:50%;
+  border:4px solid rgba(255,255,255,.25);
+  border-top-color:#fff;
+  border-left-color:transparent;
+  border-bottom-color:transparent;
+  animation:spin .65s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* HEADER */
+header{
+  position:sticky;top:0;z-index:1000;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 16px;
+  backdrop-filter:blur(18px);
+  background:linear-gradient(270deg,#ff4fa3,#ff7bbf,#ffb3d9);
+  background-size:400% 400%;
+  animation:flow 12s ease infinite;
+  flex-wrap:wrap;
+  gap:10px;
+}
+@keyframes flow{
+  0%{background-position:0%}
+  50%{background-position:100%}
+  100%{background-position:0%}
+}
+
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex:1;
+  min-width:0;
+}
+.header-left img{height:40px;max-height:40px;width:auto}
+
+/* MOTTO */
+.motto{
+  font-size:14px;
+  font-weight:600;
+  font-style:italic;
+  letter-spacing:.4px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  flex:1;
+}
+.motto i{
+  opacity:.95;
+  font-size:14px;
+  flex-shrink:0;
+}
+
+/* ICONS */
+.header-icons{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-shrink:0;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  max-width:100%;
+}
+.header-icons::-webkit-scrollbar{display:none}
+
+.header-icons a{
+  width:38px;height:38px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:12px;
+  transition:.3s;
+  position:relative;
+  flex-shrink:0;
+}
+
+.header-icons i{font-size:16px}
+.header-icons a:hover{box-shadow:0 0 14px rgba(255,79,163,.8)}
+.header-icons a.active{animation:pulse 1.8s infinite}
+
+@keyframes pulse{
+  0%{box-shadow:0 0 0 rgba(255,79,163,.8)}
+  70%{box-shadow:0 0 22px rgba(255,79,163,1)}
+  100%{box-shadow:0 0 0 rgba(255,79,163,.6)}
+}
+
+/* BADGE - PINK CIRCLE */
+.badge{
+  position:absolute;
+  top:2px;right:2px;
+  background:#ff4fa3;
+  color:#fff;
+  font-size:10px;
+  font-weight:bold;
+  min-width:18px;
+  height:18px;
+  padding:0 4px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:2px solid #fff;
+  box-shadow:0 2px 4px rgba(0,0,0,.2);
+  z-index:10;
+  display:none; /* Hidden by default */
+}
+
+.badge.show{
+  display:flex !important;
+}
+
+/* NOTIF WIGGLE + GLOW */
+@keyframes wiggleGlow {
+  0% { transform: rotate(0deg); text-shadow: 0 0 2px #ff4fa3; }
+  15% { transform: rotate(15deg); text-shadow: 0 0 6px #ff7bbf; }
+  30% { transform: rotate(-15deg); text-shadow: 0 0 6px #ff4fa3; }
+  45% { transform: rotate(10deg); text-shadow: 0 0 6px #ff7bbf; }
+  60% { transform: rotate(-10deg); text-shadow: 0 0 6px #ff4fa3; }
+  75% { transform: rotate(5deg); text-shadow: 0 0 6px #ff7bbf; }
+  100% { transform: rotate(0deg); text-shadow: 0 0 2px #ff4fa3; }
+}
+
+.wiggleGlow {
+  animation: wiggleGlow 0.8s ease-in-out infinite;
+}
+
+/* MOBILE RESPONSIVE */
+@media (max-width: 480px) {
+  header{padding:12px 10px}
+  .header-left img{height:36px}
+  .motto{font-size:12px}
+  .motto i{font-size:12px}
+  .header-icons a{width:34px;height:34px}
+  .header-icons i{font-size:14px}
+  .badge{min-width:16px;height:16px;font-size:9px;top:1px;right:1px}
+}
+
+@media (max-width: 360px) {
+  .header-icons a{width:32px;height:32px}
+  .header-icons i{font-size:13px}
+  .motto{font-size:11px}
+}
+
+/* TABLET */
+@media (min-width: 768px) and (max-width: 1024px) {
+  header{padding:16px 20px}
+  .header-left img{height:44px}
+  .motto{font-size:16px}
+  .header-icons a{width:42px;height:42px}
+  .header-icons i{font-size:18px}
+}
+
+/* DESKTOP */
+@media (min-width: 1025px) {
+  header{padding:18px 26px}
+  .header-left{gap:14px}
+  .header-left img{height:46px}
+  .motto{font-size:18px;letter-spacing:.6px}
+  .motto i{font-size:17px}
+  .header-icons{gap:10px}
+  .header-icons a{width:42px;height:42px;border-radius:14px}
+  .header-icons i{font-size:18px}
+  .badge{top:4px;right:4px;padding:2px 6px;font-size:10px}
+}
+</style>
+</head>
+
+<body>
+
+<!-- AUDIO -->
+<audio id="bgMusic" src="coffee.mp3" loop></audio>
+<audio id="calendarSound" src="notification.mp3" loop></audio>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-content">
+    <img src="adminlogo.png" alt="Logo">
+    <div class="arc-spinner"></div>
+  </div>
+</div>
+
+<header>
+  <div class="header-left">
+    <a href="homepage.html"><img src="adminlogo.png" alt="Logo"></a>
+    <div class="motto" id="motto"></div>
+  </div>
+
+  <div class="header-icons">
+    <a href="juliesitemap.html"><i class="fas fa-map"></i></a>
+    <a href="budgettracker.html"><i class="fas fa-shopping-cart"></i></a>
+
+    <a href="calendar.html" id="calendarBtn" title="">
+      <i class="fas fa-calendar" id="calendarIcon"></i>
+      <span class="badge" id="calendarBadge">0</span>
+    </a>
+
+    <a href="birthdaytracker.html" id="birthdayBtn"><i class="fas fa-gift"></i></a>
+    <a href="routinetracker.html" id="routineBtn"><i class="fas fa-clock"></i></a>
+
+    <a id="musicToggle"><i class="fas fa-music"></i></a>
+
+    <a id="logoutBtn"><i class="fas fa-right-from-bracket"></i></a>
+  </div>
+</header>
+
+<script>
+/* LOADER */
+window.addEventListener("load",()=>{
+  setTimeout(()=>loader.classList.add("fade-out"),250)
+})
+
+/* MOTTO - NOW IN ENGLISH */
+const titles=[
+ ['fas fa-bolt','I know you can do it Julie, You will be Successful'],
+ ['fas fa-crown','You are a beautiful QUEEN JULIE'],
+ ['fas fa-money-bill','You will become rich Julie'],
+ ['fas fa-heart','I Love you Julie']
+]
+const t=titles[Math.random()*titles.length|0]
+motto.innerHTML=`<i class="${t[0]}"></i>${t[1]}`
+
+/* MUSIC */
+let musicOn=false
+musicToggle.onclick=()=>{
+  musicOn=!musicOn
+  musicOn ? bgMusic.play() : bgMusic.pause()
+}
+
+/* ===== CALENDAR ALARM SYSTEM ===== */
+
+const calendarBtn   = document.getElementById("calendarBtn");
+const calendarIcon  = document.getElementById("calendarIcon");
+const calendarBadge = document.getElementById("calendarBadge");
+const calendarSound = document.getElementById("calendarSound");
+
+// Check for active alarms every second
+setInterval(checkCalendarAlarms, 1000);
+
+function checkCalendarAlarms() {
+  const activeAlarms = JSON.parse(localStorage.getItem("DGC_ACTIVE_ALARMS") || "[]");
+  
+  if (activeAlarms.length > 0) {
+    // Show badge with count
+    calendarBadge.textContent = activeAlarms.length;
+    calendarBadge.classList.add("show");
+    
+    // Add wiggle animation to icon
+    calendarIcon.classList.add("wiggleGlow");
+    
+    // Play looping sound if not already playing
+    if (calendarSound.paused) {
+      calendarSound.currentTime = 0;
+      calendarSound.play().catch(e => console.log("Audio play failed:", e));
+    }
+    
+    // Update tooltip with alarm details
+    updateCalendarTooltip(activeAlarms);
+  }
+}
+
+function updateCalendarTooltip(alarms) {
+  const tooltip = alarms.map((alarm, i) => {
+    const time = new Date(alarm.triggeredAt).toLocaleTimeString();
+    return `${i+1}. ${alarm.task} – ${time}`;
+  }).join("\n");
+  
+  calendarBtn.title = `🔔 ${alarms.length} Reminder${alarms.length > 1 ? 's' : ''}\n${tooltip}`;
+}
+
+function clearCalendarAlarms() {
+  // Stop sound
+  calendarSound.pause();
+  calendarSound.currentTime = 0;
+  
+  // Hide badge
+  calendarBadge.classList.remove("show");
+  
+  // Remove animation
+  calendarIcon.classList.remove("wiggleGlow");
+  
+  // Clear tooltip
+  calendarBtn.title = "";
+  
+  // Clear from localStorage
+  localStorage.removeItem("DGC_ACTIVE_ALARMS");
+}
+
+// Check immediately on load
+checkCalendarAlarms();
+
+// Clear alarms when calendar button is clicked
+calendarBtn.addEventListener("click", (e) => {
+  // Only clear if there are active alarms
+  const activeAlarms = JSON.parse(localStorage.getItem("DGC_ACTIVE_ALARMS") || "[]");
+  if (activeAlarms.length > 0) {
+    clearCalendarAlarms();
+    // Allow navigation to happen naturally
+  }
+});
+
+// Also clear when clicking birthday or routine (as per original request)
+document.getElementById("birthdayBtn").addEventListener("click", () => {
+  clearCalendarAlarms();
+});
+
+document.getElementById("routineBtn").addEventListener("click", () => {
+  clearCalendarAlarms();
+});
+
+// Listen for new alarms from other tabs/pages
+window.addEventListener("storage", e => {
+  if (e.key === "DGC_ACTIVE_ALARMS" && e.newValue) {
+    checkCalendarAlarms();
+  }
+});
+
+/* LOGOUT */
+logoutBtn.onclick=()=>{
+  localStorage.clear()
+  sessionStorage.clear()
+  location.href="index.html"
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Manager Julie | Homepage</title>
+
+<link rel="icon" type="image/png" sizes="64x64" href="adminfavicon.ico">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+:root{
+  --pink:#ff4fa3;
+  --pink-light:#ff7bbf;
+  --glass-bg:rgba(255,123,191,.18);
+  --text-main:#ffffff;
+  --neon-glow:0 0 20px rgba(255,79,163,0.6);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI";
+  background:url("adminbackground.png") center/cover fixed no-repeat;
+  color:var(--text-main);
+  min-height:100vh;
+  -webkit-tap-highlight-color:transparent;
+}
+
+a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
+a:focus,a:active{outline:none}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:rgba(255,79,163,.15)}
+::-webkit-scrollbar-thumb{
+  background:linear-gradient(180deg,#ff4fa3,#ff7bbf);
+  border-radius:10px;
+}
+
+/* LOADER */
+#loader{
+  position:fixed;
+  inset:0;
+  background:var(--pink-light);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  transition:.4s ease;
+}
+#loader.fade-out{opacity:0;visibility:hidden}
+
+.loader-content{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.loader-content img{width:190px;margin-bottom:18px}
+
+.arc-spinner{
+  width:38px;height:38px;border-radius:50%;
+  border:4px solid rgba(255,255,255,.25);
+  border-top-color:#fff;
+  border-left-color:transparent;
+  border-bottom-color:transparent;
+  animation:spin .65s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* HEADER */
+header{
+  position:sticky;top:0;z-index:1000;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:18px 26px;
+  backdrop-filter:blur(18px);
+  background:linear-gradient(270deg,#ff4fa3,#ff7bbf,#ffb3d9);
+  background-size:400% 400%;
+  animation:flow 12s ease infinite;
+}
+@keyframes flow{
+  0%{background-position:0%}
+  50%{background-position:100%}
+  100%{background-position:0%}
+}
+
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+.header-left img{height:46px}
+
+/* MOTTO */
+.motto{
+  font-size:18px;
+  font-weight:600;
+  font-style:italic;
+  letter-spacing:.6px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  white-space:nowrap;
+}
+.motto i{
+  opacity:.95;
+  font-size:17px;
+}
+
+/* ICONS */
+.header-icons{display:flex;align-items:center}
+
+.header-icons a{
+  width:42px;height:42px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:14px;
+  margin-left:10px;
+  transition:.3s;
+  position:relative;
+  cursor:pointer;
+}
+
+.header-icons i{font-size:18px}
+.header-icons a:hover{box-shadow:0 0 14px rgba(255,79,163,.8)}
+
+/* NOTIFICATION BADGE */
+.notification-badge{
+  position:absolute;
+  top:-2px;
+  right:-2px;
+  width:18px;
+  height:18px;
+  background:#ff1744;
+  border-radius:50%;
+  border:2px solid #ff7bbf;
+  display:none;
+  animation:pulse-badge 2s infinite;
+}
+.notification-badge.active{display:block}
+@keyframes pulse-badge{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.1)}
+}
+
+/* FITNESS TRACKER STYLES */
+.fitness-section {
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.fitness-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.fitness-header h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  background: linear-gradient(45deg, #fff, #ffb3d9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 10px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { text-shadow: 0 0 20px rgba(255,79,163,0.5); }
+  50% { text-shadow: 0 0 40px rgba(255,79,163,0.8); }
+}
+
+.fitness-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 25px;
+}
+
+@media (max-width: 900px) {
+  .fitness-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Stats Cards */
+.stats-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.stat-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 20px;
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.stat-card:hover::before {
+  opacity: 1;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--neon-glow);
+}
+
+.stat-icon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.stat-value {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255,79,163,0.5);
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  margin-top: 5px;
+}
+
+/* Progress Circle */
+.progress-container {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 20px;
+  padding: 30px;
+  text-align: center;
+}
+
+.progress-circle {
+  width: 180px;
+  height: 180px;
+  margin: 0 auto 20px;
+  position: relative;
+}
+
+.progress-circle svg {
+  transform: rotate(-90deg);
+  width: 100%;
+  height: 100%;
+}
+
+.progress-circle-bg {
+  fill: none;
+  stroke: rgba(255,255,255,0.2);
+  stroke-width: 10;
+}
+
+.progress-circle-bar {
+  fill: none;
+  stroke: url(#gradient);
+  stroke-width: 10;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s ease-in-out;
+  filter: drop-shadow(0 0 10px rgba(255,79,163,0.5));
+}
+
+.progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+.progress-label {
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+/* Checklist Section */
+.checklist-container {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 20px;
+  padding: 25px;
+}
+
+.checklist-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.checklist-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.date-display {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  background: rgba(255,255,255,0.1);
+  padding: 5px 15px;
+  border-radius: 20px;
+}
+
+/* Custom Checkbox */
+.checklist-item {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  margin-bottom: 12px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 15px;
+  transition: all 0.3s;
+  cursor: pointer;
+  border: 1px solid transparent;
+  touch-action: manipulation;
+}
+
+.checklist-item:hover {
+  background: rgba(255,255,255,0.1);
+  transform: translateX(5px);
+  border-color: rgba(255,79,163,0.3);
+}
+
+.checklist-item.completed {
+  opacity: 0.6;
+  background: rgba(255,79,163,0.1);
+}
+
+.checklist-item.completed .item-text {
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+.custom-checkbox {
+  width: 28px;
+  height: 28px;
+  border: 3px solid rgba(255,255,255,0.3);
+  border-radius: 8px;
+  margin-right: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.custom-checkbox::after {
+  content: '\f00c';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  font-size: 16px;
+  color: #fff;
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.3s;
+}
+
+.checklist-item.completed .custom-checkbox {
+  background: var(--pink);
+  border-color: var(--pink);
+  box-shadow: 0 0 15px rgba(255,79,163,0.6);
+}
+
+.checklist-item.completed .custom-checkbox::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-text {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 3px;
+  word-wrap: break-word;
+}
+
+.item-subtext {
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+.item-calories {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.9rem;
+  color: #ffb3d9;
+  font-weight: 600;
+  flex-shrink: 0;
+  margin-left: 10px;
+}
+
+/* Add Exercise Input */
+.add-exercise {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.2);
+}
+
+.add-exercise input {
+  flex: 1;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 12px;
+  padding: 12px 15px;
+  color: #fff;
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.3s;
+  min-width: 0;
+}
+
+.add-exercise input::placeholder {
+  color: rgba(255,255,255,0.5);
+}
+
+.add-exercise input:focus {
+  border-color: var(--pink);
+  box-shadow: 0 0 10px rgba(255,79,163,0.3);
+}
+
+.add-btn {
+  background: linear-gradient(135deg, #ff4fa3, #ff7bbf);
+  border: none;
+  border-radius: 12px;
+  width: 50px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 1.2rem;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.add-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(255,79,163,0.6);
+}
+
+.add-btn:active {
+  transform: scale(0.95);
+}
+
+/* Reset Button */
+.reset-btn {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.3s;
+  margin-left: 10px;
+  white-space: nowrap;
+}
+
+.reset-btn:hover {
+  background: rgba(255,79,163,0.3);
+  border-color: var(--pink);
+}
+
+/* Confetti Animation */
+@keyframes confetti {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(-100px) rotate(720deg); opacity: 0; }
+}
+
+.celebration {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.celebration-particle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #ff4fa3;
+  animation: confetti 1s ease-out forwards;
+}
+
+/* MOBILE RESPONSIVE */
+@media (max-width: 768px) {
+  header {
+    padding: 12px 15px;
+  }
+  
+  .header-left img {
+    height: 36px;
+  }
+  
+  .motto {
+    font-size: 13px;
+    letter-spacing: 0.3px;
+  }
+  
+  .motto i {
+    font-size: 14px;
+  }
+  
+  .header-icons a {
+    width: 36px;
+    height: 36px;
+    margin-left: 8px;
+  }
+  
+  .header-icons i {
+    font-size: 16px;
+  }
+  
+  .fitness-section {
+    padding: 20px 15px;
+  }
+  
+  .fitness-header h1 {
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+  }
+  
+  .stats-container {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  
+  .stat-card {
+    padding: 15px 10px;
+  }
+  
+  .stat-icon {
+    font-size: 1.5rem;
+  }
+  
+  .stat-value {
+    font-size: 1.5rem;
+  }
+  
+  .stat-label {
+    font-size: 0.8rem;
+  }
+  
+  .progress-circle {
+    width: 150px;
+    height: 150px;
+  }
+  
+  .progress-text {
+    font-size: 2rem;
+  }
+  
+  .checklist-container {
+    padding: 20px 15px;
+  }
+  
+  .checklist-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .checklist-title {
+    font-size: 1.1rem;
+  }
+  
+  .date-display {
+    font-size: 0.8rem;
+  }
+  
+  .checklist-item {
+    padding: 12px;
+  }
+  
+  .item-text {
+    font-size: 1rem;
+  }
+  
+  .item-subtext {
+    font-size: 0.75rem;
+  }
+  
+  .item-calories {
+    font-size: 0.8rem;
+  }
+  
+  .custom-checkbox {
+    width: 24px;
+    height: 24px;
+    margin-right: 12px;
+  }
+  
+  .custom-checkbox::after {
+    font-size: 14px;
+  }
+  
+  .reset-btn {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    margin-left: 0;
+  }
+  
+  .add-exercise input {
+    padding: 10px 12px;
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  .add-btn {
+    width: 44px;
+  }
+}
+
+@media (max-width: 480px) {
+  .motto {
+    font-size: 11px;
+    max-width: 150px;
+    white-space: normal;
+    line-height: 1.3;
+  }
+  
+  .fitness-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .stats-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .checklist-title {
+    font-size: 1rem;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) {
+  .checklist-item:hover {
+    transform: none;
+  }
+  
+  .stat-card:hover {
+    transform: none;
+  }
+  
+  .header-icons a:hover {
+    box-shadow: none;
+  }
+  
+  .add-btn:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .add-btn:active {
+    transform: scale(0.95);
+  }
+}
+
+/* Landscape mode */
+@media (max-height: 500px) and (orientation: landscape) {
+  .fitness-section {
+    padding: 15px;
+  }
+  
+  .stats-container {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- AUDIO -->
+<audio id="bgMusic" src="coffee.mp3" loop></audio>
+<audio id="notificationSound" src="notification.mp3" preload="auto"></audio>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-content">
+    <img src="adminlogo.png">
+    <div class="arc-spinner"></div>
+  </div>
+</div>
+
+<header>
+  <div class="header-left">
+    <a href="homepage.html"><img src="adminlogo.png"></a>
+    <div class="motto" id="motto"></div>
+  </div>
+
+  <div class="header-icons">
+
+    <!-- HOME -->
+    <a href="homepage.html">
+      <i class="fas fa-home"></i>
+    </a>
+
+    <!-- MUSIC TOGGLE -->
+    <a id="musicToggle">
+      <i class="fas fa-music"></i>
+    </a>
+    
+    <!-- NOTIFICATIONS -->
+    <a id="notificationBtn" onclick="showNotifications()">
+      <i class="fas fa-bell"></i>
+      <span class="notification-badge" id="notifBadge"></span>
+    </a>
+
+  </div>
+</header>
+
+<!-- FITNESS TRACKER SECTION -->
+<section class="fitness-section">
+  <div class="fitness-header">
+    <h1><i class="fas fa-dumbbell"></i> Fitness Tracker</h1>
+    <p style="opacity: 0.8;">Track your daily workouts and crush your goals, Julie!</p>
+  </div>
+
+  <div class="fitness-grid">
+    <!-- Left Column: Stats & Progress -->
+    <div class="left-column">
+      <div class="stats-container">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-fire"></i></div>
+          <div class="stat-value" id="caloriesBurned">0</div>
+          <div class="stat-label">Calories Burned</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-clock"></i></div>
+          <div class="stat-value" id="workoutTime">0</div>
+          <div class="stat-label">Minutes Active</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+          <div class="stat-value" id="completedCount">0</div>
+          <div class="stat-label">Completed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+          <div class="stat-value" id="streakCount">5</div>
+          <div class="stat-label">Day Streak</div>
+        </div>
+      </div>
+
+      <div class="progress-container">
+        <div class="progress-circle">
+          <svg>
+            <defs>
+              <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#ff4fa3;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#ff7bbf;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+            <circle class="progress-circle-bg" cx="90" cy="90" r="80"></circle>
+            <circle class="progress-circle-bar" cx="90" cy="90" r="80" 
+                    stroke-dasharray="502" stroke-dashoffset="502" id="progressCircle"></circle>
+          </svg>
+          <div class="progress-text" id="progressPercent">0%</div>
+        </div>
+        <div class="progress-label">Daily Goal Progress</div>
+      </div>
+    </div>
+
+    <!-- Right Column: Checklist -->
+    <div class="checklist-container">
+      <div class="checklist-header">
+        <div class="checklist-title">
+          <i class="fas fa-clipboard-check"></i>
+          Today's Workout Checklist
+        </div>
+        <div style="display: flex; align-items: center;">
+          <span class="date-display" id="currentDate"></span>
+          <button class="reset-btn" onclick="resetDaily()">
+            <i class="fas fa-redo"></i> Reset
+          </button>
+        </div>
+      </div>
+
+      <div id="checklistItems">
+        <!-- Default exercises -->
+        <div class="checklist-item" onclick="toggleItem(this)" data-calories="150" data-time="30" data-id="1">
+          <div class="custom-checkbox"></div>
+          <div class="item-content">
+            <div class="item-text">Morning Jog</div>
+            <div class="item-subtext">Cardio • 30 minutes</div>
+          </div>
+          <div class="item-calories">150 cal</div>
+        </div>
+
+        <div class="checklist-item" onclick="toggleItem(this)" data-calories="200" data-time="45" data-id="2">
+          <div class="custom-checkbox"></div>
+          <div class="item-content">
+            <div class="item-text">Yoga Session</div>
+            <div class="item-subtext">Flexibility • 45 minutes</div>
+          </div>
+          <div class="item-calories">200 cal</div>
+        </div>
+
+        <div class="checklist-item" onclick="toggleItem(this)" data-calories="300" data-time="60" data-id="3">
+          <div class="custom-checkbox"></div>
+          <div class="item-content">
+            <div class="item-text">Weight Training</div>
+            <div class="item-subtext">Strength • 60 minutes</div>
+          </div>
+          <div class="item-calories">300 cal</div>
+        </div>
+
+        <div class="checklist-item" onclick="toggleItem(this)" data-calories="100" data-time="15" data-id="4">
+          <div class="custom-checkbox"></div>
+          <div class="item-content">
+            <div class="item-text">HIIT Workout</div>
+            <div class="item-subtext">High Intensity • 15 minutes</div>
+          </div>
+          <div class="item-calories">100 cal</div>
+        </div>
+
+        <div class="checklist-item" onclick="toggleItem(this)" data-calories="50" data-time="10" data-id="5">
+          <div class="custom-checkbox"></div>
+          <div class="item-content">
+            <div class="item-text">Stretching</div>
+            <div class="item-subtext">Recovery • 10 minutes</div>
+          </div>
+          <div class="item-calories">50 cal</div>
+        </div>
+      </div>
+
+      <div class="add-exercise">
+        <input type="text" id="newExercise" placeholder="Add new exercise..." maxlength="30">
+        <button class="add-btn" onclick="addExercise()">
+          <i class="fas fa-plus"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+/* LOADER */
+window.addEventListener("load",()=>{
+  setTimeout(()=>loader.classList.add("fade-out"),250)
+})
+
+/* MOTTO */
+const titles=[
+ ['fas fa-bolt','Alam kong kaya mo yan Julie, Magiging Successful ka'],
+ ['fas fa-crown','You are a beautiful QUEEN JULIE'],
+ ['fas fa-money-bill','Yayaman ka Julie'],
+ ['fas fa-heart','I Love you Julie']
+]
+const t=titles[Math.random()*titles.length|0]
+motto.innerHTML=`<i class="${t[0]}"></i>${t[1]}`
+
+/* MUSIC */
+let musicOn=false
+musicToggle.onclick=()=>{
+  musicOn=!musicOn
+  musicOn ? bgMusic.play() : bgMusic.pause()
+  musicToggle.innerHTML = musicOn ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-music"></i>'
+}
+
+/* NOTIFICATION SYSTEM */
+let notifications = [];
+let notificationCount = 0;
+
+function loadNotifications() {
+  const saved = localStorage.getItem('julie_notifications');
+  const savedCount = localStorage.getItem('julie_notification_count');
+  if (saved) {
+    notifications = JSON.parse(saved);
+  }
+  if (savedCount) {
+    notificationCount = parseInt(savedCount);
+    updateNotificationBadge();
+  }
+}
+
+function saveNotifications() {
+  localStorage.setItem('julie_notifications', JSON.stringify(notifications));
+  localStorage.setItem('julie_notification_count', notificationCount);
+}
+
+function addNotification(title, message) {
+  const notif = {
+    id: Date.now(),
+    title: title,
+    message: message,
+    time: new Date().toLocaleTimeString(),
+    read: false
+  };
+  notifications.unshift(notif);
+  notificationCount++;
+  saveNotifications();
+  updateNotificationBadge();
+  playNotificationSound();
+}
+
+function updateNotificationBadge() {
+  const badge = document.getElementById('notifBadge');
+  if (notificationCount > 0) {
+    badge.classList.add('active');
+  } else {
+    badge.classList.remove('active');
+  }
+}
+
+function playNotificationSound() {
+  const sound = document.getElementById('notificationSound');
+  if (sound) {
+    sound.currentTime = 0;
+    sound.play().catch(e => console.log('Audio play failed:', e));
+  }
+}
+
+function showNotifications() {
+  // Mark all as read
+  notificationCount = 0;
+  notifications.forEach(n => n.read = true);
+  saveNotifications();
+  updateNotificationBadge();
+  
+  // Simple alert for now - you can customize this
+  if (notifications.length === 0) {
+    alert('No notifications yet!');
+  } else {
+    const recent = notifications.slice(0, 5).map(n => `${n.title}: ${n.message} (${n.time})`).join('\n');
+    alert('Recent Notifications:\n\n' + recent);
+  }
+}
+
+// Simulate a test notification after 5 seconds (remove in production)
+setTimeout(() => {
+  addNotification('Welcome Julie!', 'Your fitness tracker is ready!');
+}, 5000);
+
+/* FITNESS TRACKER LOGIC WITH LOCALSTORAGE */
+let totalCalories = 0;
+let totalTime = 0;
+let completedItems = 0;
+let totalItems = 5;
+let customExercises = [];
+
+// Load saved data
+function loadData() {
+  const savedDate = localStorage.getItem('julie_fitness_date');
+  const today = new Date().toDateString();
+  
+  // Check if it's a new day
+  if (savedDate !== today) {
+    // New day - reset progress but keep streak
+    localStorage.setItem('julie_fitness_date', today);
+    localStorage.removeItem('julie_completed_items');
+    localStorage.removeItem('julie_custom_exercises');
+    completedItems = 0;
+    totalCalories = 0;
+    totalTime = 0;
+  } else {
+    // Same day - load progress
+    const savedCompleted = localStorage.getItem('julie_completed_items');
+    const savedCustom = localStorage.getItem('julie_custom_exercises');
+    const savedStreak = localStorage.getItem('julie_streak');
+    
+    if (savedCompleted) {
+      const completedIds = JSON.parse(savedCompleted);
+      completedIds.forEach(id => {
+        const item = document.querySelector(`[data-id="${id}"]`);
+        if (item) {
+          item.classList.add('completed');
+          const calories = parseInt(item.getAttribute('data-calories'));
+          const time = parseInt(item.getAttribute('data-time'));
+          totalCalories += calories;
+          totalTime += time;
+          completedItems++;
+        }
+      });
+    }
+    
+    if (savedCustom) {
+      customExercises = JSON.parse(savedCustom);
+      customExercises.forEach(ex => {
+        addExerciseToDOM(ex.name, ex.calories, ex.time, ex.id, ex.completed);
+        if (ex.completed) {
+          totalCalories += ex.calories;
+          totalTime += ex.time;
+          completedItems++;
+        }
+      });
+    }
+    
+    if (savedStreak) {
+      document.getElementById('streakCount').textContent = savedStreak;
+    }
+  }
+  
+  totalItems = document.querySelectorAll('.checklist-item').length;
+  updateProgress();
+}
+
+function saveData() {
+  const completedIds = [];
+  document.querySelectorAll('.checklist-item.completed').forEach(item => {
+    const id = item.getAttribute('data-id');
+    if (id && !id.startsWith('custom-')) {
+      completedIds.push(id);
+    }
+  });
+  
+  localStorage.setItem('julie_completed_items', JSON.stringify(completedIds));
+  localStorage.setItem('julie_custom_exercises', JSON.stringify(customExercises));
+  localStorage.setItem('julie_streak', document.getElementById('streakCount').textContent);
+}
+
+// Set current date
+const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', dateOptions);
+
+function updateProgress() {
+  const percent = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
+  const circle = document.getElementById('progressCircle');
+  const circumference = 2 * Math.PI * 80;
+  const offset = circumference - (percent / 100) * circumference;
+  
+  circle.style.strokeDashoffset = offset;
+  document.getElementById('progressPercent').textContent = percent + '%';
+  
+  // Update stats
+  document.getElementById('caloriesBurned').textContent = totalCalories;
+  document.getElementById('workoutTime').textContent = totalTime;
+  document.getElementById('completedCount').textContent = completedItems;
+  
+  // Save data
+  saveData();
+  
+  // Celebration at 100%
+  if (percent === 100 && completedItems > 0) {
+    createCelebration();
+    addNotification('Goal Achieved!', 'You completed all your workouts today!');
+  }
+}
+
+function toggleItem(element) {
+  const isCompleted = element.classList.contains('completed');
+  const calories = parseInt(element.getAttribute('data-calories'));
+  const time = parseInt(element.getAttribute('data-time'));
+  const id = element.getAttribute('data-id');
+  
+  if (isCompleted) {
+    element.classList.remove('completed');
+    totalCalories -= calories;
+    totalTime -= time;
+    completedItems--;
+    
+    // Update custom exercise status
+    if (id && id.startsWith('custom-')) {
+      const customId = parseInt(id.replace('custom-', ''));
+      const customEx = customExercises.find(ex => ex.id === customId);
+      if (customEx) customEx.completed = false;
+    }
+  } else {
+    element.classList.add('completed');
+    totalCalories += calories;
+    totalTime += time;
+    completedItems++;
+    
+    // Update custom exercise status
+    if (id && id.startsWith('custom-')) {
+      const customId = parseInt(id.replace('custom-', ''));
+      const customEx = customExercises.find(ex => ex.id === customId);
+      if (customEx) customEx.completed = true;
+    }
+    
+    // Small celebration
+    createMiniCelebration(element);
+    
+    // Notification for milestone
+    if (completedItems === Math.ceil(totalItems / 2)) {
+      addNotification('Halfway There!', 'You\'re doing great Julie!');
+    }
+  }
+  
+  totalItems = document.querySelectorAll('.checklist-item').length;
+  updateProgress();
+}
+
+function addExerciseToDOM(name, calories, time, id, completed = false) {
+  const checklist = document.getElementById('checklistItems');
+  const newItem = document.createElement('div');
+  newItem.className = 'checklist-item';
+  if (completed) newItem.classList.add('completed');
+  newItem.setAttribute('onclick', 'toggleItem(this)');
+  newItem.setAttribute('data-calories', calories);
+  newItem.setAttribute('data-time', time);
+  newItem.setAttribute('data-id', 'custom-' + id);
+  newItem.innerHTML = `
+    <div class="custom-checkbox"></div>
+    <div class="item-content">
+      <div class="item-text">${name}</div>
+      <div class="item-subtext">Custom Exercise • ${time} minutes</div>
+    </div>
+    <div class="item-calories">${calories} cal</div>
+  `;
+  checklist.appendChild(newItem);
+}
+
+function addExercise() {
+  const input = document.getElementById('newExercise');
+  const value = input.value.trim();
+  
+  if (value) {
+    const newId = Date.now();
+    const calories = 100;
+    const time = 20;
+    
+    customExercises.push({
+      id: newId,
+      name: value,
+      calories: calories,
+      time: time,
+      completed: false
+    });
+    
+    addExerciseToDOM(value, calories, time, newId);
+    input.value = '';
+    
+    totalItems = document.querySelectorAll('.checklist-item').length;
+    updateProgress();
+    saveData();
+    
+    addNotification('Exercise Added!', `"${value}" has been added to your list`);
+  }
+}
+
+function resetDaily() {
+  if (confirm('Reset all progress for today?')) {
+    const items = document.querySelectorAll('.checklist-item');
+    items.forEach(item => {
+      item.classList.remove('completed');
+    });
+    
+    customExercises.forEach(ex => ex.completed = false);
+    
+    totalCalories = 0;
+    totalTime = 0;
+    completedItems = 0;
+    updateProgress();
+    saveData();
+    
+    addNotification('Progress Reset', 'Your daily progress has been reset');
+  }
+}
+
+function createCelebration() {
+  for (let i = 0; i < 50; i++) {
+    setTimeout(() => {
+      const particle = document.createElement('div');
+      particle.className = 'celebration-particle';
+      particle.style.left = Math.random() * window.innerWidth + 'px';
+      particle.style.top = window.innerHeight + 'px';
+      particle.style.background = `hsl(${Math.random() * 60 + 300}, 100%, 70%)`;
+      particle.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+      document.body.appendChild(particle);
+      
+      setTimeout(() => particle.remove(), 1000);
+    }, i * 30);
+  }
+}
+
+function createMiniCelebration(element) {
+  const rect = element.getBoundingClientRect();
+  for (let i = 0; i < 10; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'celebration-particle';
+    particle.style.left = (rect.left + rect.width / 2) + 'px';
+    particle.style.top = (rect.top + rect.height / 2) + 'px';
+    particle.style.width = '6px';
+    particle.style.height = '6px';
+    particle.style.background = '#ff4fa3';
+    particle.style.transform = `translate(${(Math.random() - 0.5) * 100}px, ${(Math.random() - 0.5) * 100}px)`;
+    document.body.appendChild(particle);
+    
+    setTimeout(() => particle.remove(), 1000);
+  }
+}
+
+// Initialize
+loadNotifications();
+loadData();
+
+// Allow Enter key to add exercise
+document.getElementById('newExercise').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') addExercise();
+});
+
+// Handle visibility change (when user returns to tab)
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) {
+    loadData(); // Refresh data when returning to page
+  }
+});
+
+// Auto-save every 30 seconds as backup
+setInterval(saveData, 30000);
+
+// Update streak if all completed yesterday
+function checkStreak() {
+  const lastActive = localStorage.getItem('julie_last_active');
+  const today = new Date().toDateString();
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+  
+  if (lastActive === yesterday) {
+    // Continued streak
+    let streak = parseInt(localStorage.getItem('julie_streak') || '0');
+    if (completedItems > 0) {
+      streak++;
+      localStorage.setItem('julie_streak', streak);
+      document.getElementById('streakCount').textContent = streak;
+    }
+  }
+  
+  if (completedItems > 0) {
+    localStorage.setItem('julie_last_active', today);
+  }
+}
+
+// Check streak on load
+checkStreak();
+</script>
+
+</body>
+</html>

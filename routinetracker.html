@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Queen Julie | Dynamic Habit Tracker</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+:root {
+  --pink: #ff4fa3;
+  --pink-light: #ff7bbf;
+  --glass-bg: rgba(255,255,255,0.12);
+  --text-main: #fff;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+  font-family:'Orbitron',sans-serif;
+  background:url('adminbackground.png') center/cover no-repeat fixed;
+  color:#fff;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* HEADER */
+header{
+  position:sticky; top:0; z-index:1000;
+  display:flex; justify-content:space-between; align-items:center;
+  padding:18px 26px;
+  backdrop-filter:blur(18px);
+  background: linear-gradient(270deg,#ff4fa3,#ff7bbf,#ffb3d9);
+  background-size:400% 400%;
+  animation:flow 12s ease infinite;
+}
+@keyframes flow{
+  0%{background-position:0%}
+  50%{background-position:100%}
+  100%{background-position:0%}
+}
+
+.header-left{display:flex;align-items:center;gap:14px;}
+.header-left img{height:46px;}
+
+.motto{
+  font-size:18px;font-weight:600;font-style:italic;
+  display:flex;align-items:center;gap:12px;
+}
+
+.header-icons i{
+  font-size:22px;margin-left:20px;color:#fff;
+  cursor:pointer;transition:.3s;
+}
+.header-icons i:hover{
+  color:#ff69b4;
+  text-shadow:0 0 8px #ff69b4;
+}
+
+/* CONTAINER */
+.container{
+  display:flex; gap:20px;
+  background:var(--glass-bg);
+  backdrop-filter:blur(12px);
+  padding:20px;
+  margin:30px auto;
+  border-radius:20px;
+  max-width:1400px;
+  overflow-x:auto;
+}
+
+/* Custom scrollbar styling - PINK */
+.container::-webkit-scrollbar {
+  height: 12px;
+}
+
+.container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.container::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #ff4fa3, #ff7bbf);
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.container::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #ff7bbf, #ffb3d9);
+}
+
+/* Firefox scrollbar */
+.container {
+  scrollbar-width: thin;
+  scrollbar-color: #ff4fa3 rgba(255, 255, 255, 0.1);
+}
+
+/* LEFT PANEL */
+.left-panel{
+  width:220px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  flex-shrink:0;
+}
+
+.calendar{
+  display:grid;
+  grid-template-columns: repeat(7, 30px);
+  gap:6px;
+  text-align:center;
+}
+
+.calendar-day{
+  width:30px;height:30px;
+  display:flex;justify-content:center;align-items:center;
+  border-radius:6px;cursor:pointer;
+}
+
+.calendar-day.today{
+  background:var(--pink);
+  font-weight:bold;
+}
+
+.weekday-header{
+  font-weight:700;
+  color:#ffb3d9;
+}
+
+#digitalClock{
+  font-size:18px;
+  margin-top:10px;
+}
+
+/* MIDDLE */
+.middle-panel{flex:1; min-width:0;}
+
+h1{
+  text-align:center;
+  margin-bottom:15px;
+  text-shadow:0 0 10px #ff69b4;
+}
+
+.dgc-btn{
+  background:linear-gradient(135deg,#ff4fa3,#ff7bbf);
+  color:#fff;
+  border:none;
+  padding:10px 20px;
+  border-radius:18px;
+  cursor:pointer;
+  margin-bottom:10px;
+}
+
+.dgc-btn:hover{
+  background:#fff;
+  color:#ff4fa3;
+  border:2px solid #ff4fa3;
+}
+
+/* TABLE */
+.table-wrapper {
+  overflow-x:auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius:10px;
+  background:rgba(255,255,255,0.05);
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:12px;
+  min-width:600px;
+}
+
+th,td{
+  border:1px solid #ff7bbf;
+  padding:6px;
+  text-align:center;
+}
+
+th{
+  background:linear-gradient(135deg,#ff4fa3,#ff7bbf);
+  position:sticky; top:0;
+}
+
+td input[type="checkbox"]{
+  width:16px;height:16px;
+  cursor:pointer;
+}
+
+td input[type="checkbox"]:checked{
+  accent-color:var(--pink);
+}
+
+.delete-btn:hover{
+  color:red;
+  transform:scale(1.2);
+  transition:.2s;
+}
+
+/* RIGHT */
+.right-panel{
+  width:220px;
+  display:flex;
+  flex-direction: column;
+  align-items:center;
+  gap: 15px;
+  flex-shrink:0;
+}
+
+/* ===== MONTH DROPDOWN BUTTON STYLE ===== */
+#monthSelect{
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background: linear-gradient(135deg,#ff4fa3,#ff7bbf);
+  color:#fff;
+  border:2px solid #ff7bbf;
+  padding:8px 35px 8px 15px;
+  border-radius:18px;
+  font-family:'Orbitron',sans-serif;
+  font-size:13px;
+  cursor:pointer;
+  transition:.3s;
+  box-shadow:0 0 10px rgba(255,105,180,0.4);
+}
+
+#monthSelect:hover{
+  background:#fff;
+  color:#ff4fa3;
+  border:2px solid #ff4fa3;
+  box-shadow:0 0 15px #ff69b4;
+}
+
+#monthSelect:focus{
+  outline:none;
+  box-shadow:0 0 20px #ff69b4;
+}
+
+#monthSelect{
+  background-image:
+    linear-gradient(135deg,#ff4fa3,#ff7bbf),
+    url("data:image/svg+xml;utf8,<svg fill='white' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat:no-repeat,no-repeat;
+  background-position:0 0, right 10px center;
+  background-size:100% 100%,16px;
+}
+
+/* Chibi image styling */
+.chibi-image {
+  width: 100%;
+  max-width: 200px;
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(255, 105, 180, 0.5);
+}
+
+/* Save indicator */
+.save-indicator {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(255, 79, 163, 0.9);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 9999;
+  backdrop-filter: blur(10px);
+}
+
+.save-indicator.show {
+  opacity: 1;
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media screen and (max-width: 1024px) {
+  .container {
+    flex-direction: column;
+    margin: 15px;
+    padding: 15px;
+  }
+  
+  .left-panel, .right-panel {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .calendar {
+    order: 1;
+  }
+  
+  #digitalClock {
+    order: 2;
+    width: 100%;
+    text-align: center;
+    margin: 10px 0;
+  }
+  
+  .chibi-image {
+    order: 3;
+    max-width: 150px;
+  }
+  
+  .right-panel {
+    order: 4;
+    margin-top: 20px;
+  }
+  
+  #progressChart {
+    max-height: 200px !important;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  header {
+    padding: 12px 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .header-left img {
+    height: 36px;
+  }
+  
+  .motto {
+    font-size: 14px;
+    gap: 8px;
+  }
+  
+  .header-icons i {
+    font-size: 18px;
+    margin-left: 15px;
+  }
+  
+  h1 {
+    font-size: 24px;
+  }
+  
+  .dgc-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+  }
+  
+  table {
+    font-size: 11px;
+  }
+  
+  th, td {
+    padding: 4px;
+  }
+  
+  td input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .motto {
+    font-size: 12px;
+    flex-direction: column;
+    gap: 5px;
+    text-align: center;
+  }
+  
+  .header-left {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .calendar-day {
+    width: 25px;
+    height: 25px;
+    font-size: 11px;
+  }
+  
+  .calendar {
+    grid-template-columns: repeat(7, 25px);
+    gap: 4px;
+  }
+  
+  .weekday-header {
+    font-size: 11px;
+  }
+  
+  #monthSelect {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) {
+  .delete-btn:hover {
+    transform: none;
+  }
+  
+  .delete-btn:active {
+    transform: scale(1.2);
+    color: red;
+  }
+  
+  .dgc-btn:hover {
+    background: linear-gradient(135deg,#ff4fa3,#ff7bbf);
+    color: #fff;
+    border: none;
+  }
+  
+  .dgc-btn:active {
+    background: #fff;
+    color: #ff4fa3;
+    border: 2px solid #ff4fa3;
+  }
+}
+
+/* Landscape mode optimization */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  .container {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  
+  .left-panel, .right-panel {
+    width: auto;
+    flex: 1;
+  }
+  
+  .middle-panel {
+    width: 100%;
+    order: 3;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="header-left">
+    <a href="homepage.html"><img src="adminlogo.png"></a>
+    <div class="motto" id="motto"></div>
+  </div>
+<div class="header-icons">
+  <i class="fas fa-house" id="homeBtn"></i>
+  <i class="fas fa-music" id="musicBtn"></i>
+  <i class="fas fa-right-from-bracket" id="logoutBtn"></i>
+</div>
+
+<audio id="bgMusic" src="coffee.mp3"></audio>
+</header>
+
+<div class="container">
+
+<!-- LEFT PANEL (NOT MODIFIED MINI CALENDAR) -->
+<div class="left-panel">
+  <div id="digitalClock"></div>
+  <div class="calendar" id="miniCalendar"></div>
+  <!-- Chibi image added after mini calendar -->
+  <img src="adminchibli.png" alt="Chibi" class="chibi-image">
+</div>
+
+<!-- MIDDLE -->
+<div class="middle-panel">
+  <h1>HABIT TRACKER</h1>
+
+  <select id="monthSelect">
+    <option value="1">January</option>
+    <option value="2" selected>February</option>
+    <option value="3">March</option>
+    <option value="4">April</option>
+    <option value="5">May</option>
+    <option value="6">June</option>
+    <option value="7">July</option>
+    <option value="8">August</option>
+    <option value="9">September</option>
+    <option value="10">October</option>
+    <option value="11">November</option>
+    <option value="12">December</option>
+  </select>
+
+  <button class="dgc-btn" id="addRoutineBtn">
+    <i class="fas fa-plus"></i> Add New Routine
+  </button>
+
+  <div class="table-wrapper">
+    <table>
+      <thead id="habitHead"></thead>
+      <tbody id="habitBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="right-panel">
+  <canvas id="progressChart"></canvas>
+</div>
+
+</div>
+
+<div class="save-indicator" id="saveIndicator">💾 Saved!</div>
+
+<script>
+
+/* ===== MOTTO ===== */
+const titles=[
+['fas fa-bolt','Alam kong kaya mo yan Julie'],
+['fas fa-crown','You are a beautiful QUEEN JULIE'],
+['fas fa-money-bill','Yayaman ka Julie'],
+['fas fa-heart','I Love you Julie']
+];
+const t=titles[Math.floor(Math.random()*titles.length)];
+document.getElementById('motto').innerHTML=`<i class="${t[0]}"></i> ${t[1]}`;
+
+/* CLOCK */
+function updateClock(){
+document.getElementById('digitalClock').innerText=new Date().toLocaleTimeString();
+}
+setInterval(updateClock,1000);
+updateClock();
+
+/* MINI CALENDAR (UNCHANGED) */
+const miniCal=document.getElementById('miniCalendar');
+const monthSelect=document.getElementById('monthSelect');
+function renderCalendar(month){
+miniCal.innerHTML='';
+const year=2026;
+const daysInMonth=new Date(year,month,0).getDate();
+const firstDay=new Date(year,month-1,1);
+let startDay=firstDay.getDay();
+startDay=startDay===0?6:startDay-1;
+const weekdays=['M','T','W','T','F','S','S'];
+weekdays.forEach(day=>{
+const div=document.createElement('div');
+div.className='weekday-header';
+div.innerText=day;
+miniCal.appendChild(div);
+});
+for(let i=0;i<startDay;i++){
+miniCal.appendChild(document.createElement('div'));
+}
+const today=new Date();
+for(let d=1;d<=daysInMonth;d++){
+const div=document.createElement('div');
+div.className='calendar-day';
+div.innerText=d;
+if(d===today.getDate()&&month===today.getMonth()+1&&year===today.getFullYear()){
+div.classList.add('today');
+}
+miniCal.appendChild(div);
+}
+}
+renderCalendar(parseInt(monthSelect.value));
+monthSelect.onchange=()=>renderCalendar(parseInt(monthSelect.value));
+
+/* ===== DATA PERSISTENCE ===== */
+const STORAGE_KEY = 'queenJulieHabitTracker';
+let habitData = {};
+let chartInstance = null;
+
+// Load data from localStorage
+function loadData() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    habitData = JSON.parse(saved);
+  }
+}
+
+// Save data to localStorage
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(habitData));
+  showSaveIndicator();
+}
+
+// Show save indicator
+function showSaveIndicator() {
+  const indicator = document.getElementById('saveIndicator');
+  indicator.classList.add('show');
+  setTimeout(() => {
+    indicator.classList.remove('show');
+  }, 2000);
+}
+
+// Get current month key
+function getMonthKey() {
+  return `2026-${monthSelect.value}`;
+}
+
+// Save current table state
+function saveCurrentTable() {
+  const monthKey = getMonthKey();
+  const rows = habitBody.querySelectorAll('tr');
+  const monthData = [];
+  
+  rows.forEach(row => {
+    const time = row.cells[1].innerText;
+    const activity = row.cells[2].innerText;
+    const checks = [];
+    
+    const checkboxes = row.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(cb => {
+      checks.push(cb.checked);
+    });
+    
+    monthData.push({ time, activity, checks });
+  });
+  
+  habitData[monthKey] = monthData;
+  saveData();
+  updateChart();
+}
+
+// Load table for specific month
+function loadTable(month) {
+  const monthKey = `2026-${month}`;
+  const monthData = habitData[monthKey] || [];
+  
+  habitBody.innerHTML = '';
+  
+  monthData.forEach(data => {
+    createRow(data.time, data.activity, data.checks);
+  });
+}
+
+// Create a row with data
+function createRow(time = '--:--', activity = 'New Routine', checks = []) {
+  const month = parseInt(monthSelect.value);
+  const days = new Date(2026, month, 0).getDate();
+  
+  let row = document.createElement('tr');
+  row.innerHTML = `
+    <td><i class="fas fa-trash delete-btn" style="cursor:pointer;color:#ff4fa3;"></i></td>
+    <td contenteditable="true">${time}</td>
+    <td contenteditable="true">${activity}</td>
+  `;
+  
+  for(let i = 0; i < days; i++) {
+    const isChecked = checks[i] ? 'checked' : '';
+    row.innerHTML += `<td><input type="checkbox" ${isChecked}></td>`;
+  }
+  
+  habitBody.appendChild(row);
+  
+  // Add delete listener
+  row.querySelector('.delete-btn').addEventListener('click', function() {
+    this.closest('tr').remove();
+    saveCurrentTable();
+  });
+  
+  // Add auto-save listeners
+  const editableCells = row.querySelectorAll('td[contenteditable="true"]');
+  editableCells.forEach(cell => {
+    cell.addEventListener('blur', saveCurrentTable);
+    cell.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        cell.blur();
+      }
+    });
+  });
+  
+  const checkboxes = row.querySelectorAll('input[type="checkbox"]');
+  checkboxes.forEach(cb => {
+    cb.addEventListener('change', saveCurrentTable);
+  });
+}
+
+/* ===== DYNAMIC TABLE ===== */
+const habitHead=document.getElementById("habitHead");
+const habitBody=document.getElementById("habitBody");
+const year=2026;
+
+function generateTable(month){
+habitHead.innerHTML="";
+const days=new Date(year,month,0).getDate();
+let header=`<tr>
+<th style="width:40px;"></th>
+<th>Time</th>
+<th>Activity</th>`;
+for(let i=1;i<=days;i++){
+header+=`<th>${i}</th>`;
+}
+header+="</tr>";
+habitHead.innerHTML=header;
+
+// Load saved data for this month
+loadTable(month);
+}
+
+generateTable(parseInt(monthSelect.value));
+
+monthSelect.addEventListener("change",()=>{
+generateTable(parseInt(monthSelect.value));
+updateChart();
+});
+
+document.getElementById("addRoutineBtn").addEventListener("click",()=>{
+  createRow();
+  saveCurrentTable();
+});
+
+/* ===== CHART ===== */
+function initChart() {
+  const ctx = document.getElementById('progressChart').getContext('2d');
+  
+  chartInstance = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Completed', 'Remaining'],
+      datasets: [{
+        data: [0, 100],
+        backgroundColor: ['#ff4fa3', 'rgba(255,255,255,0.2)'],
+        borderWidth: 0,
+        hoverOffset: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: '#fff',
+            font: {
+              family: 'Orbitron',
+              size: 10
+            }
+          }
+        },
+        title: {
+          display: true,
+          text: 'Monthly Progress',
+          color: '#fff',
+          font: {
+            family: 'Orbitron',
+            size: 14
+          }
+        }
+      },
+      cutout: '60%'
+    }
+  });
+}
+
+function updateChart() {
+  if (!chartInstance) return;
+  
+  const monthKey = getMonthKey();
+  const monthData = habitData[monthKey] || [];
+  
+  let totalTasks = 0;
+  let completedTasks = 0;
+  
+  monthData.forEach(row => {
+    row.checks.forEach(checked => {
+      totalTasks++;
+      if (checked) completedTasks++;
+    });
+  });
+  
+  const remaining = totalTasks - completedTasks;
+  
+  chartInstance.data.datasets[0].data = [completedTasks, Math.max(remaining, 0)];
+  chartInstance.update();
+}
+
+// Initialize chart
+initChart();
+updateChart();
+
+/* ===== HEADER ICON FUNCTIONS ===== */
+
+// HOME
+document.getElementById("homeBtn").addEventListener("click", function(){
+  window.location.href = "homepage.html";
+});
+
+// LOGOUT
+document.getElementById("logoutBtn").addEventListener("click", function(){
+  window.location.href = "login.html";
+});
+
+// MUSIC PLAY / PAUSE
+const music = document.getElementById("bgMusic");
+const musicBtn = document.getElementById("musicBtn");
+
+musicBtn.addEventListener("click", function(){
+  if(music.paused){
+    music.play();
+    musicBtn.style.color = "#ff69b4";
+  } else {
+    music.pause();
+    musicBtn.style.color = "#fff";
+  }
+});
+
+// Load saved data on startup
+loadData();
+
+// Sync across tabs
+window.addEventListener('storage', (e) => {
+  if (e.key === STORAGE_KEY) {
+    habitData = JSON.parse(e.newValue);
+    loadTable(parseInt(monthSelect.value));
+    updateChart();
+  }
+});
+
+</script>
+
+</body>
+</html>

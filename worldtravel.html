@@ -1,0 +1,1520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Manager Julie | World Travel Map</title>
+
+<link rel="icon" type="image/png" sizes="64x64" href="adminfavicon.ico">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<style>
+:root{
+  --pink:#ff4fa3;
+  --pink-light:#ff7bbf;
+  --pink-dark:#d63384;
+  --glass-bg:rgba(255,123,191,.18);
+  --glass-border:rgba(255,255,255,.25);
+  --text-main:#ffffff;
+  --shadow-glow:0 8px 32px rgba(255,79,163,.3);
+  --success-green:#2ecc71;
+  --warning-orange:#f39c12;
+  --danger-red:#e74c3c;
+  --info-blue:#3498db;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+body{
+  font-family: 'Poppins', sans-serif;
+  background:url("adminbackground.png") center/cover fixed no-repeat;
+  color:var(--text-main);
+  min-height:100vh;
+  overflow-x:hidden;
+  font-size: 14px;
+}
+
+a{text-decoration:none;color:inherit;}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:rgba(255,79,163,.15)}
+::-webkit-scrollbar-thumb{
+  background:linear-gradient(180deg,#ff4fa3,#ff7bbf);
+  border-radius:10px;
+}
+
+/* LOADER */
+#loader{
+  position:fixed;
+  inset:0;
+  background:var(--pink-light);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  transition:.4s ease;
+}
+#loader.fade-out{opacity:0;visibility:hidden}
+.loader-content{display:flex;flex-direction:column;align-items:center;}
+.loader-content img{width:190px;margin-bottom:18px}
+.arc-spinner{
+  width:38px;height:38px;border-radius:50%;
+  border:4px solid rgba(255,255,255,.25);
+  border-top-color:#fff;
+  animation:spin .65s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* HEADER */
+header{
+  position:sticky;top:0;z-index:1000;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:12px 16px;
+  backdrop-filter:blur(18px);
+  background:linear-gradient(270deg,#ff4fa3,#ff7bbf,#ffb3d9);
+  background-size:400% 400%;
+  animation:flow 12s ease infinite;
+}
+@keyframes flow{
+  0%{background-position:0%}
+  50%{background-position:100%}
+  100%{background-position:0%}
+}
+.header-left{display:flex;align-items:center;gap:10px;}
+.header-left img{height:40px}
+
+.motto{
+  font-size:14px;font-weight:600;font-style:italic;
+  display:flex;align-items:center;gap:6px;white-space:nowrap;
+}
+.motto i{opacity:.95;font-size:14px;}
+
+.header-icons{display:flex;align-items:center;gap:8px;}
+.header-icons a{
+  width:36px;height:36px;display:inline-flex;
+  align-items:center;justify-content:center;
+  border-radius:50%;transition:.3s;position:relative;
+}
+.header-icons i{font-size:18px}
+.header-icons a:hover{box-shadow:0 0 14px rgba(255,79,163,.8);background:rgba(255,255,255,.2)}
+
+/* Notification Badge */
+.notification-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 12px;
+  height: 12px;
+  background-color: var(--pink-dark);
+  border: 2px solid #fff;
+  border-radius: 50%;
+  display: none;
+  animation: pulse 2s infinite;
+}
+.notification-badge.active { display: block; }
+
+@keyframes pulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(255, 255, 255, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+}
+
+/* MAIN LAYOUT */
+main{
+  max-width:1400px;
+  margin:0 auto;
+  padding:15px;
+  display:grid;
+  grid-template-columns:1fr 400px;
+  gap:20px;
+  height:calc(100vh - 70px);
+}
+
+/* MAP CONTAINER */
+.map-section{
+  background:var(--glass-bg);
+  backdrop-filter:blur(10px);
+  border:1px solid var(--glass-border);
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:var(--shadow-glow);
+  display:flex;
+  flex-direction:column;
+}
+
+.map-header{
+  padding:15px;
+  border-bottom:1px solid rgba(255,255,255,.1);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.map-header h1{
+  font-family:'Orbitron',sans-serif;
+  font-size:1.2rem;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.map-stats{
+  display:flex;
+  gap:10px;
+}
+
+.stat-badge{
+  background:rgba(255,255,255,.1);
+  padding:6px 12px;
+  border-radius:20px;
+  font-size:.8rem;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+#map{
+  flex:1;
+  min-height:400px;
+  background:#1a1a2e;
+  z-index: 1;
+}
+
+/* SIDEBAR */
+.sidebar{
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+  overflow-y:auto;
+  max-height:calc(100vh - 100px);
+}
+
+.panel{
+  background:var(--glass-bg);
+  backdrop-filter:blur(10px);
+  border:1px solid var(--glass-border);
+  border-radius:20px;
+  padding:15px;
+  box-shadow:var(--shadow-glow);
+}
+
+.panel-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
+  padding-bottom:12px;
+  border-bottom:1px solid rgba(255,255,255,.1);
+}
+
+.panel-title{
+  font-family:'Orbitron',sans-serif;
+  font-size:1rem;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+/* TABS */
+.tabs{
+  display:flex;
+  gap:5px;
+  margin-bottom:15px;
+  background:rgba(255,255,255,.1);
+  padding:5px;
+  border-radius:12px;
+}
+
+.tab{
+  flex:1;
+  padding:8px 4px;
+  border:none;
+  background:transparent;
+  color:#fff;
+  border-radius:8px;
+  cursor:pointer;
+  transition:all .3s;
+  font-size:.8rem;
+  font-weight:600;
+}
+
+.tab.active{
+  background:var(--pink);
+  box-shadow:0 4px 15px rgba(255,79,163,.4);
+}
+
+/* DESTINATION SEARCH */
+.search-box{
+  position:relative;
+  margin-bottom:15px;
+}
+
+.search-input{
+  width:100%;
+  padding:10px 40px 10px 15px;
+  background:rgba(255,255,255,.1);
+  border:2px solid rgba(255,255,255,.2);
+  border-radius:12px;
+  color:#fff;
+  font-size:1rem;
+  transition:all .3s;
+}
+
+.search-input:focus{
+  outline:none;
+  border-color:var(--pink);
+  background:rgba(255,255,255,.15);
+}
+
+.search-btn{
+  position:absolute;
+  right:5px;
+  top:50%;
+  transform:translateY(-50%);
+  background:var(--pink);
+  border:none;
+  color:#fff;
+  width:32px;
+  height:32px;
+  border-radius:8px;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* DESTINATION LIST */
+.dest-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  max-height:300px;
+  overflow-y:auto;
+}
+
+.dest-card{
+  background:rgba(255,255,255,.05);
+  border-radius:12px;
+  padding:12px;
+  cursor:pointer;
+  transition:all .3s;
+  border:2px solid transparent;
+  position:relative;
+  overflow:hidden;
+}
+
+.dest-card:hover{
+  background:rgba(255,255,255,.1);
+  transform:translateX(5px);
+  border-color:var(--pink);
+}
+
+.dest-card.visited{
+  border-color:var(--success-green);
+  background:rgba(46,204,113,.1);
+}
+
+.dest-card.visited::after{
+  content:'✓';
+  position:absolute;
+  top:10px;
+  right:10px;
+  background:var(--success-green);
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.dest-name{
+  font-weight:700;
+  font-size:1rem;
+  margin-bottom:5px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.dest-info{
+  font-size:.8rem;
+  opacity:.8;
+  display:flex;
+  gap:15px;
+}
+
+.dest-price{
+  color:var(--success-green);
+  font-weight:600;
+}
+
+/* BUDGET CALCULATOR */
+.budget-form{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.form-group label{
+  display:block;
+  margin-bottom:5px;
+  font-size:.85rem;
+  font-weight:600;
+}
+
+.form-group select,
+.form-group input{
+  width:100%;
+  padding:10px;
+  background:rgba(255,255,255,.1);
+  border:2px solid rgba(255,255,255,.2);
+  border-radius:10px;
+  color:#fff;
+  font-size:.95rem;
+  font-family:inherit;
+}
+
+.form-group select option{
+  background:#2d1b2e;
+  color:#fff;
+}
+
+.calculate-btn{
+  padding:12px;
+  background:linear-gradient(135deg,var(--pink),var(--pink-light));
+  border:none;
+  border-radius:12px;
+  color:#fff;
+  font-family:'Orbitron',sans-serif;
+  font-weight:700;
+  cursor:pointer;
+  transition:all .3s;
+  margin-top:10px;
+  font-size: .9rem;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+
+.calculate-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(255,79,163,.5);
+}
+
+/* BUDGET RESULTS */
+.budget-result{
+  margin-top:20px;
+  padding:15px;
+  background:rgba(255,255,255,.05);
+  border-radius:15px;
+  display:none;
+}
+
+.budget-result.show{
+  display:block;
+  animation:slideUp .5s ease;
+}
+
+@keyframes slideUp{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.cost-breakdown{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  margin:15px 0;
+}
+
+.cost-item{
+  display:flex;
+  justify-content:space-between;
+  padding:8px;
+  background:rgba(255,255,255,.05);
+  border-radius:8px;
+  font-size: .9rem;
+}
+
+.cost-item.total{
+  background:var(--pink);
+  font-weight:700;
+  font-size:1rem;
+}
+
+/* BOOKING LINKS */
+.booking-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:15px;
+}
+
+.booking-btn{
+  padding:10px;
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:10px;
+  color:#fff;
+  text-align:center;
+  transition:all .3s;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:5px;
+  font-size:.8rem;
+}
+
+.booking-btn:hover{
+  background:var(--pink);
+  transform:translateY(-3px);
+  box-shadow:0 8px 20px rgba(255,79,163,.3);
+}
+
+.booking-btn i{
+  font-size:1.2rem;
+}
+
+/* ITINERARY */
+.itinerary-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.day-card{
+  background:rgba(255,255,255,.05);
+  border-radius:12px;
+  padding:12px;
+  border-left:4px solid var(--pink);
+}
+
+.day-number{
+  font-family:'Orbitron',sans-serif;
+  font-weight:700;
+  color:var(--pink-light);
+  margin-bottom:8px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size: .9rem;
+}
+
+.day-activities{
+  font-size:.85rem;
+  line-height:1.5;
+}
+
+/* FLOATING ACTION BUTTON */
+.fab{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  width:56px;
+  height:56px;
+  background:linear-gradient(135deg,var(--pink),var(--pink-light));
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:24px;
+  color:#fff;
+  border:none;
+  cursor:pointer;
+  box-shadow:0 8px 24px rgba(255,79,163,.5);
+  transition:all .3s;
+  z-index:100;
+}
+
+.fab:hover{
+  transform:scale(1.1) rotate(90deg);
+}
+
+/* MODAL */
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.8);
+  backdrop-filter:blur(5px);
+  z-index:2000;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.modal.active{
+  display:flex;
+}
+
+.modal-content{
+  background:linear-gradient(135deg,rgba(255,79,163,.95),rgba(255,123,191,.95));
+  backdrop-filter:blur(20px);
+  border-radius:24px;
+  padding:25px;
+  width:100%;
+  max-width:500px;
+  max-height:90vh;
+  overflow-y:auto;
+  border:1px solid rgba(255,255,255,.3);
+  animation:popIn .3s ease;
+}
+
+@keyframes popIn{
+  from{opacity:0;transform:scale(.8)}
+  to{opacity:1;transform:scale(1)}
+}
+
+.modal-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.modal-header h2{
+  font-family:'Orbitron',sans-serif;
+  font-size:1.2rem;
+}
+
+.close-modal{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  background:rgba(255,255,255,.2);
+  border:none;
+  color:#fff;
+  font-size:18px;
+  cursor:pointer;
+  transition:all .3s;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.close-modal:hover{
+  background:rgba(255,255,255,.3);
+  transform:rotate(90deg);
+}
+
+/* CUSTOM MARKER */
+.custom-marker{
+  background:var(--pink);
+  border:3px solid #fff;
+  border-radius:50%;
+  width:30px;
+  height:30px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  font-weight:bold;
+  box-shadow:0 4px 12px rgba(0,0,0,.3);
+  transition:all .3s;
+}
+
+.custom-marker.visited{
+  background:var(--success-green);
+}
+
+.custom-marker:hover{
+  transform:scale(1.2);
+  z-index:1000 !important;
+}
+
+/* POPUP STYLES */
+.leaflet-popup-content-wrapper{
+  background:rgba(30,30,40,.95);
+  backdrop-filter:blur(10px);
+  color:#fff;
+  border-radius:15px;
+  border:1px solid var(--pink);
+  font-family: 'Poppins', sans-serif;
+}
+
+.leaflet-popup-tip{
+  background:rgba(30,30,40,.95);
+}
+
+.popup-content h3{
+  font-family:'Orbitron',sans-serif;
+  margin-bottom:10px;
+  color:var(--pink-light);
+}
+
+.popup-content p{
+  margin:5px 0;
+  font-size:.9rem;
+}
+
+.popup-btn{
+  display:inline-block;
+  margin-top:10px;
+  padding:8px 16px;
+  background:var(--pink);
+  color:#fff;
+  border-radius:8px;
+  font-size:.85rem;
+  transition:all .3s;
+}
+
+.popup-btn:hover{
+  background:var(--pink-light);
+}
+
+/* TOAST */
+.toast{
+  position:fixed;
+  top:80px;
+  right:20px;
+  background:rgba(0,0,0,.9);
+  color:#fff;
+  padding:12px 20px;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  opacity:0;
+  transform:translateX(100px);
+  transition:all .3s;
+  z-index:3000;
+  border:1px solid var(--pink);
+  font-size: .9rem;
+  max-width: 90%;
+}
+
+.toast.show{
+  opacity:1;
+  transform:translateX(0);
+}
+
+/* Live Indicator */
+.live-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.7rem;
+  color: var(--success-green);
+  margin-left: 10px;
+  background: rgba(0,0,0,0.3);
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+.live-dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--success-green);
+  border-radius: 50%;
+  animation: blink 1.5s infinite;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+  main{
+    grid-template-columns:1fr;
+    height:auto;
+    padding-bottom: 80px; /* Space for FAB */
+  }
+  
+  #map{
+    min-height:50vh;
+    height: 50vh;
+  }
+  
+  .sidebar{
+    max-height:none;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .map-section { order: 1; }
+  .sidebar { order: 2; }
+}
+
+@media(max-width:768px){
+  .header-left .motto{display:none;}
+  .map-header h1 { font-size: 1rem; }
+  .stat-badge { font-size: .7rem; padding: 4px 8px; }
+  .booking-grid { grid-template-columns: 1fr 1fr; }
+  .panel { padding: 12px; }
+  .modal-content { padding: 20px; }
+  .fab { width: 50px; height: 50px; font-size: 20px; }
+}
+
+@media(max-width:480px){
+  .map-stats { gap: 5px; }
+  .stat-badge span { display: none; } /* Hide text, show only icon on very small screens */
+  .stat-badge i { font-size: 1rem; }
+}
+</style>
+</head>
+
+<body>
+
+<audio id="bgMusic" src="coffee.mp3" loop></audio>
+<audio id="notifSound" src="notification.mp3"></audio> <!-- Ensure you have this file or a valid URL -->
+
+<div id="loader">
+  <div class="loader-content">
+    <img src="adminlogo.png" alt="Logo">
+    <div class="arc-spinner"></div>
+  </div>
+</div>
+
+<header>
+  <div class="header-left">
+    <a href="homepage.html"><img src="adminlogo.png" alt="Logo"></a>
+    <div class="motto" id="motto"></div>
+  </div>
+  <div class="header-icons">
+    <a href="homepage.html" title="Home" style="position:relative;">
+        <i class="fas fa-home"></i>
+        <span class="notification-badge" id="homeBadge"></span>
+    </a>
+    <a id="musicToggle" title="Toggle Music"><i class="fas fa-music"></i></a>
+  </div>
+</header>
+
+<main>
+  <!-- MAP SECTION -->
+  <section class="map-section">
+    <div class="map-header">
+      <h1><i class="fas fa-globe-americas"></i> Julie's Travel Map</h1>
+      <div class="map-stats">
+        <div class="stat-badge">
+          <i class="fas fa-map-marker-alt" style="color:var(--pink)"></i>
+          <span id="totalDestinations">0 Places</span>
+        </div>
+        <div class="stat-badge">
+          <i class="fas fa-check-circle" style="color:var(--success-green)"></i>
+          <span id="visitedCount">0 Visited</span>
+        </div>
+        <div class="live-indicator" title="Data is saved in real-time">
+            <div class="live-dot"></div> LIVE
+        </div>
+      </div>
+    </div>
+    <div id="map"></div>
+  </section>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <!-- DESTINATIONS PANEL -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><i class="fas fa-map-marked-alt"></i> Destinations</div>
+      </div>
+      
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('all')">All</button>
+        <button class="tab" onclick="switchTab('visited')">Visited</button>
+        <button class="tab" onclick="switchTab('planned')">Planned</button>
+      </div>
+
+      <div class="search-box">
+        <input type="text" class="search-input" id="destSearch" placeholder="Search country or city..." onkeyup="searchDestinations()">
+        <button class="search-btn"><i class="fas fa-search"></i></button>
+      </div>
+
+      <div class="dest-list" id="destList">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- BUDGET CALCULATOR -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><i class="fas fa-calculator"></i> Budget Planner</div>
+      </div>
+      
+      <form class="budget-form" id="budgetForm" onsubmit="calculateBudget(event)">
+        <div class="form-group">
+          <label>From (Origin)</label>
+          <select id="origin" required>
+            <option value="">Select origin...</option>
+            <option value="MNL">Manila, Philippines (MNL)</option>
+            <option value="CEB">Cebu, Philippines (CEB)</option>
+            <option value="SIN">Singapore (SIN)</option>
+            <option value="HKG">Hong Kong (HKG)</option>
+            <option value="NRT">Tokyo, Japan (NRT)</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>To (Destination)</label>
+          <select id="destination" required>
+            <option value="">Select destination...</option>
+            <option value="JPN">Japan (Tokyo/Osaka)</option>
+            <option value="KOR">South Korea (Seoul)</option>
+            <option value="THA">Thailand (Bangkok/Phuket)</option>
+            <option value="SGP">Singapore</option>
+            <option value="HKG">Hong Kong</option>
+            <option value="TWN">Taiwan (Taipei)</option>
+            <option value="VNM">Vietnam (Ho Chi Minh/Hanoi)</option>
+            <option value="IDN">Indonesia (Bali/Jakarta)</option>
+            <option value="MYS">Malaysia (Kuala Lumpur)</option>
+            <option value="FRA">France (Paris)</option>
+            <option value="ITA">Italy (Rome/Milan)</option>
+            <option value="ESP">Spain (Barcelona/Madrid)</option>
+            <option value="USA">USA (New York/LA)</option>
+            <option value="ARE">UAE (Dubai)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Travel Dates</label>
+          <input type="date" id="travelDate" required>
+        </div>
+
+        <div class="form-group">
+          <label>Duration (Days)</label>
+          <input type="number" id="duration" min="1" max="30" value="5" required>
+        </div>
+
+        <div class="form-group">
+          <label>Travel Style</label>
+          <select id="travelStyle">
+            <option value="budget">Budget Backpacker</option>
+            <option value="standard" selected>Standard Comfort</option>
+            <option value="luxury">Luxury Traveler</option>
+          </select>
+        </div>
+
+        <button type="submit" class="calculate-btn">
+          <i class="fas fa-calculator"></i> Calculate Budget
+        </button>
+      </form>
+
+      <div class="budget-result" id="budgetResult">
+        <h4 style="margin-bottom:15px;font-family:'Orbitron',sans-serif;">
+          <i class="fas fa-receipt"></i> Estimated Costs (PHP)
+        </h4>
+        <div class="cost-breakdown" id="costBreakdown">
+          <!-- Populated by JS -->
+        </div>
+        
+        <div style="margin-top:20px;padding-top:15px;border-top:1px solid rgba(255,255,255,.2);">
+          <h4 style="margin-bottom:10px;font-size:.9rem;">Book Now (Best Prices):</h4>
+          <div class="booking-grid">
+            <a href="https://www.booking.com/index.html?aid=2312932" target="_blank" class="booking-btn">
+              <i class="fas fa-hotel" style="color:#003580"></i>
+              <span>Booking.com</span>
+            </a>
+            <a href="https://www.agoda.com/?cid=1844704" target="_blank" class="booking-btn">
+              <i class="fas fa-bed" style="color:#537bb4"></i>
+              <span>Agoda</span>
+            </a>
+            <a href="https://www.expedia.com/" target="_blank" class="booking-btn">
+              <i class="fas fa-plane" style="color:#ffc107"></i>
+              <span>Expedia</span>
+            </a>
+            <a href="https://www.airbnb.com/" target="_blank" class="booking-btn">
+              <i class="fas fa-home" style="color:#ff5a5f"></i>
+              <span>Airbnb</span>
+            </a>
+            <a href="https://www.kayak.com/flights" target="_blank" class="booking-btn">
+              <i class="fas fa-search-dollar" style="color:#ff690f"></i>
+              <span>Kayak</span>
+            </a>
+            <a href="https://www.skyscanner.com/" target="_blank" class="booking-btn">
+              <i class="fas fa-plane-departure" style="color:#0770e3"></i>
+              <span>Skyscanner</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICK ITINERARY -->
+    <div class="panel" id="itineraryPanel" style="display:none;">
+      <div class="panel-header">
+        <div class="panel-title"><i class="fas fa-route"></i> Suggested Itinerary</div>
+      </div>
+      <div class="itinerary-list" id="itineraryList">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </aside>
+</main>
+
+<!-- ADD DESTINATION MODAL -->
+<div class="modal" id="addModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2><i class="fas fa-map-pin"></i> Pin New Destination</h2>
+      <button class="close-modal" onclick="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <form id="addDestForm" onsubmit="saveDestination(event)">
+      <div class="form-group">
+        <label>Country</label>
+        <select id="newCountry" required onchange="updateCities()">
+          <option value="">Select country...</option>
+          <option value="Japan">Japan</option>
+          <option value="South Korea">South Korea</option>
+          <option value="Thailand">Thailand</option>
+          <option value="Singapore">Singapore</option>
+          <option value="Hong Kong">Hong Kong</option>
+          <option value="Taiwan">Taiwan</option>
+          <option value="Vietnam">Vietnam</option>
+          <option value="Indonesia">Indonesia</option>
+          <option value="Malaysia">Malaysia</option>
+          <option value="Philippines">Philippines</option>
+          <option value="France">France</option>
+          <option value="Italy">Italy</option>
+          <option value="Spain">Spain</option>
+          <option value="USA">USA</option>
+          <option value="UAE">UAE</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>City</label>
+        <select id="newCity" required>
+          <option value="">Select city...</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Status</label>
+        <select id="newStatus" required>
+          <option value="planned">Planned (Future Trip)</option>
+          <option value="visited">Visited (Been There)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Travel Date</label>
+        <input type="date" id="newDate">
+      </div>
+
+      <div class="form-group">
+        <label>Notes/Memories</label>
+        <textarea id="newNotes" rows="3" placeholder="What did you love about this place?" style="width:100%; background:rgba(255,255,255,.1); border:2px solid rgba(255,255,255,.2); border-radius:10px; padding:10px; color:#fff; font-family:inherit;"></textarea>
+      </div>
+
+      <button type="submit" class="calculate-btn">
+        <i class="fas fa-save"></i> Save Destination
+      </button>
+    </form>
+  </div>
+</div>
+
+<button class="fab" onclick="openModal()" title="Add Destination">
+  <i class="fas fa-plus"></i>
+</button>
+
+<div class="toast" id="toast">
+  <i class="fas fa-check-circle"></i>
+  <span id="toastMsg">Saved!</span>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// Travel Database with coordinates and costs
+const travelDB = {
+  'Japan': {
+    cities: {
+      'Tokyo': {lat: 35.6762, lng: 139.6503, avgHotel: 8000, avgFood: 2500, avgTranspo: 1500},
+      'Osaka': {lat: 34.6937, lng: 135.5023, avgHotel: 6000, avgFood: 2000, avgTranspo: 1200},
+      'Kyoto': {lat: 35.0116, lng: 135.7681, avgHotel: 7000, avgFood: 2200, avgTranspo: 1000}
+    },
+    flightCost: {MNL: 15000, CEB: 18000, SIN: 25000, HKG: 20000},
+    itinerary: ['Arrive & Check-in', 'Temple Hopping / City Tour', 'Food Trip & Shopping', 'Day Trip to Nearby City', 'Last-minute Shopping & Departure']
+  },
+  'South Korea': {
+    cities: {
+      'Seoul': {lat: 37.5665, lng: 126.9780, avgHotel: 7000, avgFood: 2000, avgTranspo: 1000},
+      'Busan': {lat: 35.1796, lng: 129.0756, avgHotel: 5500, avgFood: 1800, avgTranspo: 800}
+    },
+    flightCost: {MNL: 12000, CEB: 15000, SIN: 20000, HKG: 18000},
+    itinerary: ['Arrive & Myeongdong Shopping', 'Palace Tour & Bukchon', 'Nami Island Day Trip', 'DMZ Tour or Ski Resort', 'Last Shopping & Departure']
+  },
+  'Thailand': {
+    cities: {
+      'Bangkok': {lat: 13.7563, lng: 100.5018, avgHotel: 3000, avgFood: 800, avgTranspo: 500},
+      'Phuket': {lat: 7.8804, lng: 98.3923, avgHotel: 4000, avgFood: 1000, avgTranspo: 800},
+      'Chiang Mai': {lat: 18.7883, lng: 98.9853, avgHotel: 2500, avgFood: 600, avgTranspo: 400}
+    },
+    flightCost: {MNL: 8000, CEB: 10000, SIN: 6000, HKG: 9000},
+    itinerary: ['Arrive & Night Market', 'Temple Tour & Massage', 'Island Hopping / Nature', 'Cooking Class / Shopping', 'Relax & Departure']
+  },
+  'Singapore': {
+    cities: {
+      'Singapore': {lat: 1.3521, lng: 103.8198, avgHotel: 10000, avgFood: 1500, avgTranspo: 800}
+    },
+    flightCost: {MNL: 6000, CEB: 8000, SIN: 0, HKG: 12000},
+    itinerary: ['Arrive & Marina Bay', 'Sentosa Island', 'Universal Studios / Zoo', 'Orchard Road Shopping', 'Chinatown & Departure']
+  },
+  'Hong Kong': {
+    cities: {
+      'Hong Kong': {lat: 22.3193, lng: 114.1694, avgHotel: 9000, avgFood: 1200, avgTranspo: 600}
+    },
+    flightCost: {MNL: 5000, CEB: 7000, SIN: 12000, HKG: 0},
+    itinerary: ['Arrive & Victoria Peak', 'Disneyland / Ocean Park', 'Street Food Tour', 'Shopping at Ladies Market', 'Dim Sum & Departure']
+  },
+  'Taiwan': {
+    cities: {
+      'Taipei': {lat: 25.0330, lng: 121.5654, avgHotel: 4500, avgFood: 800, avgTranspo: 500},
+      'Kaohsiung': {lat: 22.6273, lng: 120.3014, avgHotel: 3500, avgFood: 700, avgTranspo: 400}
+    },
+    flightCost: {MNL: 7000, CEB: 9000, SIN: 15000, HKG: 8000},
+    itinerary: ['Arrive & Night Market', 'Jiufen Day Trip', 'Hot Springs / Museum', 'Shopping at Ximending', 'Beef Noodle & Departure']
+  },
+  'Vietnam': {
+    cities: {
+      'Ho Chi Minh': {lat: 10.8231, lng: 106.6297, avgHotel: 2500, avgFood: 600, avgTranspo: 300},
+      'Hanoi': {lat: 21.0278, lng: 105.8342, avgHotel: 2200, avgFood: 500, avgTranspo: 250}
+    },
+    flightCost: {MNL: 6000, CEB: 8000, SIN: 4000, HKG: 7000},
+    itinerary: ['Arrive & Cu Chi Tunnels', 'Mekong Delta Tour', 'City Tour & Coffee', 'Shopping at Ben Thanh', 'Pho Breakfast & Departure']
+  },
+  'Indonesia': {
+    cities: {
+      'Bali': {lat: -8.4095, lng: 115.1889, avgHotel: 4000, avgFood: 1000, avgTranspo: 600},
+      'Jakarta': {lat: -6.2088, lng: 106.8456, avgHotel: 3500, avgFood: 800, avgTranspo: 500}
+    },
+    flightCost: {MNL: 8000, CEB: 10000, SIN: 5000, HKG: 9000},
+    itinerary: ['Arrive & Beach Time', 'Temple Tour / Culture', 'Island Hopping', 'Spa & Relaxation', 'Sunrise & Departure']
+  },
+  'Malaysia': {
+    cities: {
+      'Kuala Lumpur': {lat: 3.1390, lng: 101.6869, avgHotel: 4000, avgFood: 900, avgTranspo: 500},
+      'Penang': {lat: 5.4141, lng: 100.3288, avgHotel: 3000, avgFood: 700, avgTranspo: 400}
+    },
+    flightCost: {MNL: 7000, CEB: 9000, SIN: 4000, HKG: 8000},
+    itinerary: ['Arrive & Petronas Towers', 'Batu Caves Tour', 'Food Trip / Shopping', 'Genting Highlands', 'Last-minute Shopping & Departure']
+  },
+  'Philippines': {
+    cities: {
+      'Boracay': {lat: 11.9674, lng: 121.9247, avgHotel: 5000, avgFood: 1200, avgTranspo: 800},
+      'Palawan': {lat: 9.8349, lng: 118.7384, avgHotel: 4500, avgFood: 1000, avgTranspo: 1000},
+      'Cebu': {lat: 10.3157, lng: 123.8854, avgHotel: 3500, avgFood: 800, avgTranspo: 600}
+    },
+    flightCost: {MNL: 3000, CEB: 0, SIN: 12000, HKG: 10000},
+    itinerary: ['Arrive & Island Hopping', 'Beach Hopping / Diving', 'Local Food Tour', 'Resort Relaxation', 'Sunset & Departure']
+  },
+  'France': {
+    cities: {
+      'Paris': {lat: 48.8566, lng: 2.3522, avgHotel: 12000, avgFood: 3000, avgTranspo: 1500}
+    },
+    flightCost: {MNL: 45000, CEB: 48000, SIN: 35000, HKG: 40000},
+    itinerary: ['Arrive & Eiffel Tower', 'Louvre Museum', 'Versailles Day Trip', 'Montmartre & Shopping', 'Seine Cruise & Departure']
+  },
+  'Italy': {
+    cities: {
+      'Rome': {lat: 41.9028, lng: 12.4964, avgHotel: 11000, avgFood: 2800, avgTranspo: 1200},
+      'Milan': {lat: 45.4642, lng: 9.1900, avgHotel: 10000, avgFood: 2500, avgTranspo: 1000}
+    },
+    flightCost: {MNL: 48000, CEB: 50000, SIN: 38000, HKG: 42000},
+    itinerary: ['Arrive & Colosseum', 'Vatican City Tour', 'Tuscan Wine Tour', 'Florence Day Trip', 'Last Gelato & Departure']
+  },
+  'Spain': {
+    cities: {
+      'Barcelona': {lat: 41.3851, lng: 2.1734, avgHotel: 10000, avgFood: 2500, avgTranspo: 1000},
+      'Madrid': {lat: 40.4168, lng: -3.7038, avgHotel: 9000, avgFood: 2200, avgTranspo: 900}
+    },
+    flightCost: {MNL: 50000, CEB: 52000, SIN: 40000, HKG: 45000},
+    itinerary: ['Arrive & Sagrada Familia', 'Park Guell & Beach', 'Flamenco Show', 'Day Trip to Montserrat', 'Tapas & Departure']
+  },
+  'USA': {
+    cities: {
+      'New York': {lat: 40.7128, lng: -74.0060, avgHotel: 15000, avgFood: 3500, avgTranspo: 2000},
+      'Los Angeles': {lat: 34.0522, lng: -118.2437, avgHotel: 14000, avgFood: 3200, avgTranspo: 1800}
+    },
+    flightCost: {MNL: 55000, CEB: 58000, SIN: 60000, HKG: 50000},
+    itinerary: ['Arrive & Times Square', 'Statue of Liberty', 'Central Park & Museums', 'Shopping at 5th Avenue', 'Broadway & Departure']
+  },
+  'UAE': {
+    cities: {
+      'Dubai': {lat: 25.2048, lng: 55.2708, avgHotel: 13000, avgFood: 3000, avgTranspo: 1500}
+    },
+    flightCost: {MNL: 35000, CEB: 38000, SIN: 25000, HKG: 30000},
+    itinerary: ['Arrive & Burj Khalifa', 'Desert Safari', 'Dubai Mall & Fountain', 'Palm Jumeirah', 'Gold Souk & Departure']
+  }
+};
+
+// User's saved destinations
+let myDestinations = [];
+let map;
+let markers = [];
+let currentTab = 'all';
+
+/* INITIALIZE */
+window.addEventListener('load', () => {
+  // Load data from local storage
+  const storedData = localStorage.getItem('julieTravelMap');
+  if (storedData) {
+      myDestinations = JSON.parse(storedData);
+  }
+
+  setTimeout(() => document.getElementById('loader').classList.add('fade-out'), 250);
+  initMap();
+  renderDestinations();
+  updateStats();
+  checkNotifications();
+  
+  // Set min date to today
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('travelDate').min = today;
+  document.getElementById('newDate').max = today;
+});
+
+/* MAP INITIALIZATION */
+function initMap() {
+  // Check for mobile to set different default zoom
+  const isMobile = window.innerWidth < 768;
+  map = L.map('map').setView([20, 100], isMobile ? 1 : 2);
+  
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+    subdomains: 'abcd',
+    maxZoom: 19
+  }).addTo(map);
+
+  // Add existing markers
+  myDestinations.forEach(dest => addMarker(dest));
+}
+
+function addMarker(dest) {
+  const isVisited = dest.status === 'visited';
+  const icon = L.divIcon({
+    className: 'custom-marker',
+    html: `<div class="custom-marker ${isVisited ? 'visited' : ''}" style="background: ${isVisited ? '#2ecc71' : '#ff4fa3'}">
+            <i class="fas ${isVisited ? 'fa-check' : 'fa-map-pin'}" style="font-size: 14px;"></i>
+           </div>`,
+    iconSize: [30, 30],
+    iconAnchor: [15, 30]
+  });
+
+  const marker = L.marker([dest.lat, dest.lng], {icon}).addTo(map);
+  
+  const popupContent = `
+    <div class="popup-content">
+      <h3>${dest.city}, ${dest.country}</h3>
+      <p><i class="fas fa-calendar"></i> ${dest.date || 'No date set'}</p>
+      <p><i class="fas fa-info-circle"></i> ${dest.status === 'visited' ? '✓ Visited' : '📅 Planned'}</p>
+      ${dest.notes ? `<p><i class="fas fa-comment"></i> ${dest.notes}</p>` : ''}
+      <a href="https://www.google.com/search?q=${dest.city}+${dest.country}+travel+guide" target="_blank" class="popup-btn">
+        <i class="fas fa-book-open"></i> View Guide
+      </a>
+    </div>
+  `;
+  
+  marker.bindPopup(popupContent);
+  markers.push({id: dest.id, marker});
+}
+
+/* MOTTO */
+const titles = [
+  ['fas fa-plane', 'Travel far, Julie! The world is yours'],
+  ['fas fa-globe', 'Collect memories, not things'],
+  ['fas fa-passport', 'Adventure awaits, Queen Julie!'],
+  ['fas fa-heart', 'Travel is the only thing you buy that makes you richer']
+];
+const t = titles[Math.floor(Math.random() * titles.length)];
+document.getElementById('motto').innerHTML = `<i class="${t[0]}"></i> ${t[1]}`;
+
+/* MUSIC */
+let musicOn = false;
+document.getElementById('musicToggle').onclick = () => {
+  musicOn = !musicOn;
+  const audio = document.getElementById('bgMusic');
+  if(musicOn) {
+      audio.play().catch(e => console.log("Audio play failed (interaction needed first)"));
+  } else {
+      audio.pause();
+  }
+  document.getElementById('musicToggle').style.background = musicOn ? 'rgba(255,255,255,.3)' : '';
+};
+
+/* NOTIFICATIONS */
+function checkNotifications() {
+    // Logic to check if there are unread notifications (simulated here)
+    // In a real app, this would check a 'notifications' array in localStorage
+    const hasUnread = myDestinations.some(d => d.status === 'planned' && !d.notified);
+    
+    const badge = document.getElementById('homeBadge');
+    if (hasUnread) {
+        badge.classList.add('active');
+        playNotificationSound();
+    } else {
+        badge.classList.remove('active');
+    }
+}
+
+function playNotificationSound() {
+    const sound = document.getElementById('notifSound');
+    // Only play if user has interacted with the page (browser policy)
+    if (sound && typeof sound.play === 'function') {
+        sound.play().catch(e => {
+            // Ignore autoplay errors until user clicks
+        });
+    }
+}
+
+/* DESTINATION MANAGEMENT */
+function renderDestinations() {
+  const list = document.getElementById('destList');
+  list.innerHTML = '';
+  
+  let filtered = myDestinations;
+  if (currentTab === 'visited') filtered = myDestinations.filter(d => d.status === 'visited');
+  if (currentTab === 'planned') filtered = myDestinations.filter(d => d.status === 'planned');
+  
+  if (filtered.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:20px;opacity:.7;">No destinations yet. Click + to add!</div>';
+    return;
+  }
+  
+  filtered.forEach(dest => {
+    const card = document.createElement('div');
+    card.className = `dest-card ${dest.status}`;
+    card.innerHTML = `
+      <div class="dest-name">
+        <i class="fas fa-map-marker-alt" style="color:${dest.status === 'visited' ? 'var(--success-green)' : 'var(--pink)'}"></i>
+        ${dest.city}, ${dest.country}
+      </div>
+      <div class="dest-info">
+        <span><i class="fas fa-calendar"></i> ${dest.date || 'TBD'}</span>
+        <span class="dest-price">${dest.status === 'visited' ? '✓ Visited' : 'Planned'}</span>
+      </div>
+    `;
+    card.onclick = () => {
+      map.setView([dest.lat, dest.lng], 10);
+      const m = markers.find(m => m.id === dest.id);
+      if (m) m.marker.openPopup();
+      
+      // On mobile, scroll to map
+      if(window.innerWidth < 1024) {
+          document.getElementById('map').scrollIntoView({behavior: 'smooth'});
+      }
+    };
+    list.appendChild(card);
+  });
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  renderDestinations();
+}
+
+function searchDestinations() {
+  const query = document.getElementById('destSearch').value.toLowerCase();
+  const cards = document.querySelectorAll('.dest-card');
+  cards.forEach(card => {
+    const text = card.textContent.toLowerCase();
+    card.style.display = text.includes(query) ? 'block' : 'none';
+  });
+}
+
+/* MODAL FUNCTIONS */
+function openModal() {
+  document.getElementById('addModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('addModal').classList.remove('active');
+  document.body.style.overflow = '';
+  document.getElementById('addDestForm').reset();
+  document.getElementById('newCity').innerHTML = '<option value="">Select city...</option>';
+}
+
+function updateCities() {
+  const country = document.getElementById('newCountry').value;
+  const citySelect = document.getElementById('newCity');
+  citySelect.innerHTML = '<option value="">Select city...</option>';
+  
+  if (travelDB[country]) {
+    Object.keys(travelDB[country].cities).forEach(city => {
+      citySelect.innerHTML += `<option value="${city}">${city}</option>`;
+    });
+  } else if (country === 'Other') {
+    citySelect.innerHTML += `<option value="Custom">Custom Location</option>`;
+  }
+}
+
+function saveDestination(e) {
+  e.preventDefault();
+  
+  const country = document.getElementById('newCountry').value;
+  const city = document.getElementById('newCity').value;
+  const status = document.getElementById('newStatus').value;
+  const date = document.getElementById('newDate').value;
+  const notes = document.getElementById('newNotes').value;
+  
+  let lat = 0, lng = 0;
+  if (travelDB[country] && travelDB[country].cities[city]) {
+    lat = travelDB[country].cities[city].lat;
+    lng = travelDB[country].cities[city].lng;
+  } else {
+      // Fallback coordinates for "Other" or if data missing
+      lat = 0; lng = 0; 
+  }
+  
+  const dest = {
+    id: Date.now().toString(),
+    country,
+    city,
+    status,
+    date: date || new Date().toISOString().split('T')[0],
+    notes,
+    lat,
+    lng,
+    notified: false // For notification logic
+  };
+  
+  myDestinations.push(dest);
+  
+  // SAVE TO LOCAL STORAGE (Real-time persistence)
+  localStorage.setItem('julieTravelMap', JSON.stringify(myDestinations));
+  
+  addMarker(dest);
+  renderDestinations();
+  updateStats();
+  closeModal();
+  showToast('Destination saved! ✈️');
+  
+  // Fly to location
+  if (lat && lng) {
+    map.flyTo([lat, lng], 10, {duration: 2});
+  }
+  
+  // Check notifications (e.g. if added a planned trip)
+  checkNotifications();
+}
+
+/* BUDGET CALCULATOR */
+function calculateBudget(e) {
+  e.preventDefault();
+  
+  const origin = document.getElementById('origin').value;
+  const destCode = document.getElementById('destination').value;
+  const duration = parseInt(document.getElementById('duration').value);
+  const style = document.getElementById('travelStyle').value;
+  
+  const destMap = {
+    'JPN': 'Japan', 'KOR': 'South Korea', 'THA': 'Thailand',
+    'SGP': 'Singapore', 'HKG': 'Hong Kong', 'TWN': 'Taiwan',
+    'VNM': 'Vietnam', 'IDN': 'Indonesia', 'MYS': 'Malaysia',
+    'PHL': 'Philippines', 'FRA': 'France', 'ITA': 'Italy',
+    'ESP': 'Spain', 'USA': 'USA', 'ARE': 'UAE'
+  };
+  
+  const country = destMap[destCode];
+  if (!country || !travelDB[country]) {
+    showToast('Destination data not available');
+    return;
+  }
+  
+  // Get first city as default
+  const cityName = Object.keys(travelDB[country].cities)[0];
+  const cityData = travelDB[country].cities[cityName];
+  
+  // Calculate costs
+  const flightCost = travelDB[country].flightCost[origin] || 30000;
+  
+  let multiplier = 1;
+  if (style === 'budget') multiplier = 0.6;
+  if (style === 'luxury') multiplier = 2.5;
+  
+  const hotelCost = cityData.avgHotel * duration * multiplier;
+  const foodCost = cityData.avgFood * duration * 3; // 3 meals
+  const transpoCost = cityData.avgTranspo * duration;
+  const activitiesCost = 2000 * duration * multiplier; // Tours/entrance fees
+  const miscCost = 5000 * multiplier; // Shopping/emergency
+  
+  const total = flightCost + hotelCost + foodCost + transpoCost + activitiesCost + miscCost;
+  
+  // Display results
+  const resultDiv = document.getElementById('budgetResult');
+  const breakdownDiv = document.getElementById('costBreakdown');
+  
+  breakdownDiv.innerHTML = `
+    <div class="cost-item">
+      <span><i class="fas fa-plane"></i> Round-trip Flight</span>
+      <span>₱${flightCost.toLocaleString()}</span>
+    </div>
+    <div class="cost-item">
+      <span><i class="fas fa-hotel"></i> Hotel (${duration} nights)</span>
+      <span>₱${hotelCost.toLocaleString()}</span>
+    </div>
+    <div class="cost-item">
+      <span><i class="fas fa-utensils"></i> Food & Dining</span>
+      <span>₱${foodCost.toLocaleString()}</span>
+    </div>
+    <div class="cost-item">
+      <span><i class="fas fa-bus"></i> Local Transport</span>
+      <span>₱${transpoCost.toLocaleString()}</span>
+    </div>
+    <div class="cost-item">
+      <span><i class="fas fa-ticket-alt"></i> Activities & Tours</span>
+      <span>₱${activitiesCost.toLocaleString()}</span>
+    </div>
+    <div class="cost-item">
+      <span><i class="fas fa-shopping-bag"></i> Shopping & Misc</span>
+      <span>₱${miscCost.toLocaleString()}</span>
+    </div>
+    <div class="cost-item total">
+      <span><i class="fas fa-calculator"></i> TOTAL ESTIMATED BUDGET</span>
+      <span>₱${total.toLocaleString()}</span>
+    </div>
+    <div style="margin-top:15px;font-size:.8rem;opacity:.8;text-align:center;">
+      <i class="fas fa-info-circle"></i> Prices are estimates in PHP. Actual costs may vary.
+    </div>
+  `;
+  
+  resultDiv.classList.add('show');
+  
+  // Show itinerary
+  const itinPanel = document.getElementById('itineraryPanel');
+  const itinList = document.getElementById('itineraryList');
+  
+  itinPanel.style.display = 'block';
+  itinList.innerHTML = travelDB[country].itinerary.map((day, idx) => `
+    <div class="day-card">
+      <div class="day-number"><i class="fas fa-calendar-day"></i> Day ${idx + 1}</div>
+      <div class="day-activities">${day}</div>
+    </div>
+  `).join('');
+  
+  // Scroll to results
+  resultDiv.scrollIntoView({behavior: 'smooth'});
+}
+
+/* UTILITIES */
+function updateStats() {
+  document.getElementById('totalDestinations').textContent = myDestinations.length + ' Places';
+  document.getElementById('visitedCount').textContent = myDestinations.filter(d => d.status === 'visited').length + ' Visited';
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// Close modal on outside click
+document.getElementById('addModal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('addModal')) closeModal();
+});
+
+// Handle window resize for map
+window.addEventListener('resize', () => {
+    if(map) map.invalidateSize();
+});
+</script>
+
+</body>
+</html>

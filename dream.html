@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Manager Julie | Dream Goals</title>
+
+<link rel="icon" type="image/png" sizes="64x64" href="adminfavicon.ico">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+:root{
+  --pink:#ff4fa3;
+  --pink-light:#ff7bbf;
+  --glass-bg:rgba(255,123,191,.18);
+  --glass-border:rgba(255,255,255,.25);
+  --text-main:#ffffff;
+  --shadow-glow:0 8px 32px rgba(255,79,163,.3);
+  --success-green:#2ecc71;
+  --warning-orange:#f39c12;
+  --info-blue:#3498db;
+  --purple:#9b59b6;
+  --gold:#ffd700;
+  --dream-gradient:linear-gradient(135deg,#667eea,#764ba2);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:url("adminbackground.png") center/cover fixed no-repeat;
+  color:var(--text-main);
+  min-height:100vh;
+}
+
+a{text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
+
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:rgba(255,79,163,.15)}
+::-webkit-scrollbar-thumb{
+  background:linear-gradient(180deg,#ff4fa3,#ff7bbf);
+  border-radius:10px;
+}
+
+#loader{
+  position:fixed;
+  inset:0;
+  background:var(--pink-light);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  transition:.4s ease;
+}
+#loader.fade-out{opacity:0;visibility:hidden}
+.loader-content{display:flex;flex-direction:column;align-items:center;}
+.loader-content img{width:190px;margin-bottom:18px}
+.arc-spinner{
+  width:38px;height:38px;border-radius:50%;
+  border:4px solid rgba(255,255,255,.25);
+  border-top-color:#fff;
+  animation:spin .65s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+header{
+  position:sticky;top:0;z-index:1000;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:18px 26px;
+  backdrop-filter:blur(18px);
+  background:linear-gradient(270deg,#ff4fa3,#ff7bbf,#ffb3d9);
+  background-size:400% 400%;
+  animation:flow 12s ease infinite;
+}
+@keyframes flow{
+  0%{background-position:0%}
+  50%{background-position:100%}
+  100%{background-position:0%}
+}
+.header-left{display:flex;align-items:center;gap:14px;}
+.header-left img{height:46px}
+
+.motto{
+  font-size:18px;font-weight:600;font-style:italic;
+  display:flex;align-items:center;gap:8px;white-space:nowrap;
+}
+.motto i{opacity:.95;font-size:17px;}
+
+.header-icons{display:flex;align-items:center}
+.header-icons a{
+  width:42px;height:42px;display:inline-flex;
+  align-items:center;justify-content:center;
+  border-radius:14px;margin-left:10px;transition:.3s;
+}
+.header-icons i{font-size:18px}
+.header-icons a:hover{box-shadow:0 0 14px rgba(255,79,163,.8)}
+
+main{
+  max-width:1400px;
+  margin:0 auto;
+  padding:20px;
+}
+
+/* HERO SECTION */
+.hero-section{
+  background:var(--glass-bg);
+  backdrop-filter:blur(10px);
+  border:1px solid var(--glass-border);
+  border-radius:20px;
+  padding:40px;
+  margin-bottom:20px;
+  text-align:center;
+  box-shadow:var(--shadow-glow);
+  position:relative;
+  overflow:hidden;
+}
+
+.hero-section::before{
+  content:'';
+  position:absolute;
+  top:-50%;
+  left:-50%;
+  width:200%;
+  height:200%;
+  background:radial-gradient(circle,rgba(255,215,0,.1) 0%,transparent 70%);
+  animation:rotate 20s linear infinite;
+}
+
+@keyframes rotate{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
+}
+
+.hero-content{position:relative;z-index:1;}
+
+.hero-section h1{
+  font-family:'Orbitron',sans-serif;
+  font-size:clamp(2rem,5vw,3rem);
+  margin-bottom:15px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:15px;
+  text-shadow:0 4px 20px rgba(255,79,163,.5);
+}
+
+.quote-box{
+  background:rgba(255,255,255,.1);
+  backdrop-filter:blur(10px);
+  border-radius:15px;
+  padding:20px;
+  margin:25px auto;
+  max-width:600px;
+  border-left:4px solid var(--gold);
+  font-style:italic;
+  font-size:1.1rem;
+  line-height:1.6;
+}
+
+.quote-author{
+  margin-top:10px;
+  font-size:.9rem;
+  opacity:.8;
+  font-style:normal;
+}
+
+/* DASHBOARD GRID */
+.dashboard{
+  display:grid;
+  grid-template-columns:1fr 350px;
+  gap:20px;
+}
+
+/* GOALS AREA */
+.goals-section{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+
+/* CATEGORY TABS */
+.category-tabs{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:10px;
+}
+
+.cat-btn{
+  padding:12px 20px;
+  background:rgba(255,255,255,.1);
+  border:2px solid transparent;
+  border-radius:25px;
+  color:#fff;
+  cursor:pointer;
+  transition:all .3s;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-weight:600;
+}
+
+.cat-btn:hover, .cat-btn.active{
+  background:var(--pink);
+  border-color:var(--pink-light);
+  transform:translateY(-3px);
+  box-shadow:0 8px 20px rgba(255,79,163,.3);
+}
+
+/* GOALS GRID */
+.goals-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:20px;
+}
+
+.goal-card{
+  background:var(--glass-bg);
+  backdrop-filter:blur(10px);
+  border:1px solid var(--glass-border);
+  border-radius:20px;
+  padding:25px;
+  position:relative;
+  transition:all .3s;
+  animation:fadeIn .5s ease;
+}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.goal-card:hover{
+  transform:translateY(-5px);
+  box-shadow:var(--shadow-glow);
+  border-color:var(--pink);
+}
+
+.goal-card.completed{
+  border-color:var(--success-green);
+  background:rgba(46,204,113,.1);
+}
+
+.goal-card.completed .goal-title{
+  text-decoration:line-through;
+  opacity:.7;
+}
+
+.goal-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  margin-bottom:15px;
+}
+
+.goal-icon{
+  width:50px;
+  height:50px;
+  border-radius:15px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.5rem;
+  margin-bottom:10px;
+}
+
+.goal-actions{
+  display:flex;
+  gap:8px;
+  opacity:0;
+  transition:opacity .3s;
+}
+
+.goal-card:hover .goal-actions{
+  opacity:1;
+}
+
+.action-icon{
+  width:35px;
+  height:35px;
+  border-radius:10px;
+  border:none;
+  background:rgba(255,255,255,.1);
+  color:#fff;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:all .3s;
+}
+
+.action-icon:hover{
+  transform:scale(1.1);
+}
+
+.action-icon.edit:hover{background:var(--info-blue)}
+.action-icon.delete:hover{background:#e74c3c}
+.action-icon.complete:hover{background:var(--success-green)}
+
+.goal-title{
+  font-family:'Orbitron',sans-serif;
+  font-size:1.2rem;
+  margin-bottom:10px;
+  line-height:1.4;
+}
+
+.goal-desc{
+  font-size:.95rem;
+  opacity:.9;
+  line-height:1.6;
+  margin-bottom:15px;
+}
+
+.goal-meta{
+  display:flex;
+  gap:15px;
+  flex-wrap:wrap;
+  font-size:.85rem;
+  margin-bottom:15px;
+}
+
+.meta-tag{
+  background:rgba(255,255,255,.1);
+  padding:6px 12px;
+  border-radius:20px;
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+
+/* PROGRESS SECTION */
+.goal-progress{
+  margin-top:15px;
+}
+
+.progress-label{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:8px;
+  font-size:.9rem;
+}
+
+.progress-bar-goal{
+  height:10px;
+  background:rgba(255,255,255,.1);
+  border-radius:10px;
+  overflow:hidden;
+}
+
+.progress-fill-goal{
+  height:100%;
+  background:linear-gradient(90deg,var(--pink),var(--pink-light));
+  border-radius:10px;
+  transition:width .5s ease;
+}
+
+/* AI TIPS PANEL */
+.sidebar{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+
+.ai-coach-panel{
+  background:var(--glass-bg);
+  backdrop-filter:blur(10px);
+  border:1px solid var(--glass-border);
+  border-radius:20px;
+  padding:25px;
+  box-shadow:var(--shadow-glow);
+  position:relative;
+}
+
+.ai-header{
+  display:flex;
+  align-items:center;
+  gap:15px;
+  margin-bottom:20px;
+}
+
+.ai-avatar{
+  width:60px;
+  height:60px;
+  background:var(--dream-gradient);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.5rem;
+  animation:pulse 2s infinite;
+}
+
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(102,126,234,.4)}
+  50%{box-shadow:0 0 0 15px rgba(102,126,234,0)}
+}
+
+.ai-info h3{
+  font-family:'Orbitron',sans-serif;
+  font-size:1.2rem;
+  margin-bottom:5px;
+}
+
+.ai-info p{
+  font-size:.85rem;
+  opacity:.8;
+}
+
+.tip-card{
+  background:rgba(255,255,255,.05);
+  border-radius:15px;
+  padding:20px;
+  margin-bottom:15px;
+  border-left:4px solid var(--gold);
+  transition:all .3s;
+}
+
+.tip-card:hover{
+  transform:translateX(5px);
+  background:rgba(255,255,255,.1);
+}
+
+.tip-category{
+  font-size:.75rem;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:var(--gold);
+  margin-bottom:8px;
+  font-weight:700;
+}
+
+.tip-title{
+  font-weight:700;
+  margin-bottom:10px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.tip-content{
+  font-size:.9rem;
+  line-height:1.6;
+  opacity:.9;
+}
+
+.tip-hack{
+  background:rgba(255,215,0,.1);
+  border:1px dashed var(--gold);
+  border-radius:10px;
+  padding:12px;
+  margin-top:12px;
+  font-size:.85rem;
+}
+
+.tip-hack strong{
+  color:var(--gold);
+}
+
+/* HACKS SECTION */
+.hacks-panel{
+  background:var(--glass-bg);
+  backdrop-filter:blur(10px);
+  border:1px solid var(--glass-border);
+  border-radius:20px;
+  padding:25px;
+  box-shadow:var(--shadow-glow);
+}
+
+.hacks-title{
+  font-family:'Orbitron',sans-serif;
+  font-size:1.1rem;
+  margin-bottom:20px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.hack-list{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.hack-item{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  padding:15px;
+  background:rgba(255,255,255,.05);
+  border-radius:12px;
+  transition:all .3s;
+  cursor:pointer;
+}
+
+.hack-item:hover{
+  background:rgba(255,255,255,.1);
+  transform:translateX(5px);
+}
+
+.hack-number{
+  width:30px;
+  height:30px;
+  background:var(--pink);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  font-size:.9rem;
+  flex-shrink:0;
+}
+
+.hack-content h4{
+  font-size:.95rem;
+  margin-bottom:5px;
+}
+
+.hack-content p{
+  font-size:.85rem;
+  opacity:.8;
+  line-height:1.5;
+}
+
+/* ADD BUTTON */
+.fab{
+  position:fixed;
+  bottom:30px;
+  right:30px;
+  width:60px;
+  height:60px;
+  background:var(--dream-gradient);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:24px;
+  color:#fff;
+  border:none;
+  cursor:pointer;
+  box-shadow:0 8px 24px rgba(102,126,234,.5);
+  transition:all .3s;
+  z-index:100;
+}
+
+.fab:hover{
+  transform:scale(1.1) rotate(90deg);
+}
+
+/* MODAL */
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.8);
+  backdrop-filter:blur(5px);
+  z-index:2000;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.modal.active{
+  display:flex;
+}
+
+.modal-content{
+  background:linear-gradient(135deg,rgba(255,79,163,.95),rgba(123,104,238,.95));
+  backdrop-filter:blur(20px);
+  border-radius:24px;
+  padding:30px;
+  width:100%;
+  max-width:550px;
+  max-height:90vh;
+  overflow-y:auto;
+  border:1px solid rgba(255,255,255,.3);
+  animation:popIn .3s ease;
+}
+
+@keyframes popIn{
+  from{opacity:0;transform:scale(.8)}
+  to{opacity:1;transform:scale(1)}
+}
+
+.modal-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:25px;
+}
+
+.modal-header h2{
+  font-family:'Orbitron',sans-serif;
+  font-size:1.4rem;
+}
+
+.close-modal{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  background:rgba(255,255,255,.2);
+  border:none;
+  color:#fff;
+  font-size:20px;
+  cursor:pointer;
+  transition:all .3s;
+}
+
+.close-modal:hover{
+  background:rgba(255,255,255,.3);
+  transform:rotate(90deg);
+}
+
+.form-group{
+  margin-bottom:20px;
+}
+
+.form-group label{
+  display:block;
+  margin-bottom:8px;
+  font-weight:600;
+  font-size:.9rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea{
+  width:100%;
+  padding:14px;
+  background:rgba(255,255,255,.15);
+  border:2px solid rgba(255,255,255,.2);
+  border-radius:12px;
+  color:#fff;
+  font-size:1rem;
+  transition:all .3s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus{
+  outline:none;
+  border-color:#fff;
+  background:rgba(255,255,255,.25);
+}
+
+.form-group textarea{
+  min-height:100px;
+  resize:vertical;
+}
+
+.form-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
+
+.save-btn{
+  width:100%;
+  padding:16px;
+  background:#fff;
+  color:var(--pink);
+  border:none;
+  border-radius:12px;
+  font-family:'Orbitron',sans-serif;
+  font-size:1.1rem;
+  font-weight:700;
+  cursor:pointer;
+  transition:all .3s;
+  margin-top:10px;
+}
+
+.save-btn:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 30px rgba(0,0,0,.2);
+}
+
+/* VISION BOARD */
+.vision-section{
+  margin-top:20px;
+  background:var(--glass-bg);
+  backdrop-filter:blur(10px);
+  border:1px solid var(--glass-border);
+  border-radius:20px;
+  padding:25px;
+  box-shadow:var(--shadow-glow);
+}
+
+.vision-title{
+  font-family:'Orbitron',sans-serif;
+  font-size:1.3rem;
+  margin-bottom:20px;
+  text-align:center;
+}
+
+.vision-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+}
+
+.vision-item{
+  aspect-ratio:1;
+  background:rgba(255,255,255,.1);
+  border-radius:15px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  cursor:pointer;
+  transition:all .3s;
+  border:2px dashed rgba(255,255,255,.3);
+  position:relative;
+  overflow:hidden;
+}
+
+.vision-item:hover{
+  background:rgba(255,255,255,.15);
+  border-color:var(--pink);
+  transform:scale(1.05);
+}
+
+.vision-item.added{
+  border-style:solid;
+  border-color:var(--success-green);
+  background:rgba(46,204,113,.1);
+}
+
+.vision-icon{
+  font-size:2rem;
+}
+
+.vision-label{
+  font-size:.85rem;
+  text-align:center;
+  padding:0 10px;
+}
+
+/* TOAST */
+.toast{
+  position:fixed;
+  top:100px;
+  right:20px;
+  background:rgba(0,0,0,.9);
+  color:#fff;
+  padding:16px 24px;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  opacity:0;
+  transform:translateX(100px);
+  transition:all .3s;
+  z-index:3000;
+  border:1px solid var(--gold);
+}
+
+.toast.show{
+  opacity:1;
+  transform:translateX(0);
+}
+
+/* STATS BAR */
+.stats-bar{
+  display:flex;
+  justify-content:center;
+  gap:40px;
+  margin-top:30px;
+  flex-wrap:wrap;
+}
+
+.stat-item{
+  text-align:center;
+}
+
+.stat-value{
+  font-size:2rem;
+  font-weight:900;
+  color:var(--gold);
+  display:block;
+}
+
+.stat-label{
+  font-size:.9rem;
+  opacity:.8;
+}
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+  .dashboard{
+    grid-template-columns:1fr;
+  }
+  
+  .vision-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media(max-width:768px){
+  .header-left .motto{display:none;}
+  .goals-grid{grid-template-columns:1fr;}
+  .form-row{grid-template-columns:1fr;}
+  .category-tabs{justify-content:center;}
+  .stats-bar{gap:20px;}
+}
+</style>
+</head>
+
+<body>
+
+<audio id="bgMusic" src="coffee.mp3" loop></audio>
+
+<div id="loader">
+  <div class="loader-content">
+    <img src="adminlogo.png" alt="Logo">
+    <div class="arc-spinner"></div>
+  </div>
+</div>
+
+<header>
+  <div class="header-left">
+    <a href="homepage.html"><img src="adminlogo.png" alt="Logo"></a>
+    <div class="motto" id="motto"></div>
+  </div>
+  <div class="header-icons">
+    <a href="homepage.html" title="Home"><i class="fas fa-home"></i></a>
+    <a id="musicToggle" title="Toggle Music"><i class="fas fa-music"></i></a>
+  </div>
+</header>
+
+<main>
+  <!-- HERO SECTION -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1><i class="fas fa-star" style="color:var(--gold)"></i> Julie's Dream Goals</h1>
+      <div class="quote-box">
+        <div id="dailyQuote">"The future belongs to those who believe in the beauty of their dreams."</div>
+        <div class="quote-author">— Eleanor Roosevelt</div>
+      </div>
+      
+      <div class="stats-bar">
+        <div class="stat-item">
+          <span class="stat-value" id="totalGoals">0</span>
+          <span class="stat-label">Total Goals</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value" id="completedGoals">0</span>
+          <span class="stat-label">Achieved</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value" id="completionRate">0%</span>
+          <span class="stat-label">Success Rate</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value" id="currentStreak">0</span>
+          <span class="stat-label">Day Streak</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DASHBOARD -->
+  <div class="dashboard">
+    <!-- GOALS SECTION -->
+    <div class="goals-section">
+      <!-- CATEGORY TABS -->
+      <div class="category-tabs">
+        <button class="cat-btn active" onclick="filterCategory('all')">
+          <i class="fas fa-layer-group"></i> All Goals
+        </button>
+        <button class="cat-btn" onclick="filterCategory('career')">
+          <i class="fas fa-briefcase"></i> Career
+        </button>
+        <button class="cat-btn" onclick="filterCategory('health')">
+          <i class="fas fa-heartbeat"></i> Health
+        </button>
+        <button class="cat-btn" onclick="filterCategory('wealth')">
+          <i class="fas fa-coins"></i> Wealth
+        </button>
+        <button class="cat-btn" onclick="filterCategory('personal')">
+          <i class="fas fa-user-astronaut"></i> Personal
+        </button>
+        <button class="cat-btn" onclick="filterCategory('relationships')">
+          <i class="fas fa-heart"></i> Love
+        </button>
+      </div>
+
+      <!-- GOALS GRID -->
+      <div class="goals-grid" id="goalsGrid">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- VISION BOARD -->
+      <div class="vision-section">
+        <div class="vision-title"><i class="fas fa-eye"></i> Vision Board 2024</div>
+        <div class="vision-grid" id="visionGrid">
+          <div class="vision-item" onclick="toggleVision(this, 'Dream House')">
+            <div class="vision-icon">🏠</div>
+            <div class="vision-label">Dream Home</div>
+          </div>
+          <div class="vision-item" onclick="toggleVision(this, 'Travel World')">
+            <div class="vision-icon">✈️</div>
+            <div class="vision-label">Travel</div>
+          </div>
+          <div class="vision-item" onclick="toggleVision(this, 'Financial Freedom')">
+            <div class="vision-icon">💰</div>
+            <div class="vision-label">Wealth</div>
+          </div>
+          <div class="vision-item" onclick="toggleVision(this, 'Healthy Life')">
+            <div class="vision-icon">💪</div>
+            <div class="vision-label">Health</div>
+          </div>
+          <div class="vision-item" onclick="toggleVision(this, 'Dream Career')">
+            <div class="vision-icon">👑</div>
+            <div class="vision-label">Success</div>
+          </div>
+          <div class="vision-item" onclick="toggleVision(this, 'Happy Family')">
+            <div class="vision-icon">👨‍👩‍👧‍👦</div>
+            <div class="vision-label">Family</div>
+          </div>
+          <div class="vision-item" onclick="toggleVision(this, 'Self Growth')">
+            <div class="vision-icon">📚</div>
+            <div class="vision-label">Growth</div>
+          </div>
+          <div class="vision-item" onclick="toggleVision(this, 'Give Back')">
+            <div class="vision-icon">🤝</div>
+            <div class="vision-label">Charity</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <!-- AI COACH -->
+      <div class="ai-coach-panel">
+        <div class="ai-header">
+          <div class="ai-avatar"><i class="fas fa-robot"></i></div>
+          <div class="ai-info">
+            <h3>Dream Coach AI</h3>
+            <p>Your personal success strategist</p>
+          </div>
+        </div>
+        
+        <div id="aiTips">
+          <!-- Tips populated by JS -->
+        </div>
+        
+        <button class="calculate-btn" onclick="generateNewTip()" style="width:100%;margin-top:15px;background:var(--dream-gradient);">
+          <i class="fas fa-magic"></i> Get New Advice
+        </button>
+      </div>
+
+      <!-- LIFE HACKS -->
+      <div class="hacks-panel">
+        <div class="hacks-title"><i class="fas fa-bolt" style="color:var(--warning-orange)"></i> Life Hacks</div>
+        <div class="hack-list">
+          <div class="hack-item" onclick="showHackDetail(0)">
+            <div class="hack-number">1</div>
+            <div class="hack-content">
+              <h4>The 5-Second Rule</h4>
+              <p>Count 5-4-3-2-1 to beat procrastination</p>
+            </div>
+          </div>
+          <div class="hack-item" onclick="showHackDetail(1)">
+            <div class="hack-number">2</div>
+            <div class="hack-content">
+              <h4>Eat the Frog</h4>
+              <p>Do the hardest task first thing</p>
+            </div>
+          </div>
+          <div class="hack-item" onclick="showHackDetail(2)">
+            <div class="hack-number">3</div>
+            <div class="hack-content">
+              <h4>Pomodoro Technique</h4>
+              <p>25 min focus, 5 min break</p>
+            </div>
+          </div>
+          <div class="hack-item" onclick="showHackDetail(3)">
+            <div class="hack-number">4</div>
+            <div class="hack-content">
+              <h4>2-Minute Rule</h4>
+              <p>If it takes 2 min, do it now</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<!-- ADD GOAL MODAL -->
+<div class="modal" id="goalModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2><i class="fas fa-plus-circle"></i> Add New Dream Goal</h2>
+      <button class="close-modal" onclick="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <form id="addGoalForm" onsubmit="saveGoal(event)">
+      <div class="form-group">
+        <label>Goal Title</label>
+        <input type="text" id="goalTitle" placeholder="e.g., Become a Manager" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="goalDesc" placeholder="Why is this important? How will you feel when achieved?"></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Category</label>
+          <select id="goalCategory" required>
+            <option value="career">Career</option>
+            <option value="health">Health</option>
+            <option value="wealth">Wealth</option>
+            <option value="personal">Personal Growth</option>
+            <option value="relationships">Relationships</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Target Date</label>
+          <input type="date" id="goalDeadline" required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Priority</label>
+          <select id="goalPriority">
+            <option value="high">High 🔥</option>
+            <option value="medium" selected>Medium ⚡</option>
+            <option value="low">Low 💫</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Progress (%)</label>
+          <input type="number" id="goalProgress" min="0" max="100" value="0">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Action Steps (one per line)</label>
+        <textarea id="goalActions" placeholder="1. Research requirements&#10;2. Take online course&#10;3. Practice daily&#10;4. Network with experts" rows="4"></textarea>
+      </div>
+
+      <button type="submit" class="save-btn">
+        <i class="fas fa-save"></i> Save Dream Goal
+      </button>
+    </form>
+  </div>
+</div>
+
+<button class="fab" onclick="openModal()" title="Add Goal">
+  <i class="fas fa-plus"></i>
+</button>
+
+<div class="toast" id="toast">
+  <i class="fas fa-check-circle"></i>
+  <span id="toastMsg">Goal saved!</span>
+</div>
+
+<script>
+// Quotes database
+const quotes = [
+  {text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt"},
+  {text: "Dream big and dare to fail.", author: "Norman Vaughan"},
+  {text: "Your limitation—it's only your imagination.", author: "Unknown"},
+  {text: "Push yourself, because no one else is going to do it for you.", author: "Unknown"},
+  {text: "Great things never come from comfort zones.", author: "Unknown"},
+  {text: "Dream it. Wish it. Do it.", author: "Unknown"},
+  {text: "Success doesn't just find you. You have to go out and get it.", author: "Unknown"},
+  {text: "The harder you work for something, the greater you'll feel when you achieve it.", author: "Unknown"}
+];
+
+// AI Tips database
+const aiTips = [
+  {
+    category: "Mindset",
+    title: "The Growth Mindset",
+    content: "View challenges as opportunities to grow rather than obstacles. Your brain is like a muscle—the more you use it, the stronger it gets.",
+    hack: "Add 'yet' to negative thoughts. Instead of 'I can't do this', say 'I can't do this... yet!'"
+  },
+  {
+    category: "Productivity",
+    title: "The 1% Rule",
+    content: "Improve by just 1% every day. In one year, you'll be 37 times better. Small consistent actions compound into massive results.",
+    hack: "Spend 15 minutes daily on your most important goal before checking your phone."
+  },
+  {
+    category: "Focus",
+    title: "Deep Work Blocks",
+    content: "Quality work requires uninterrupted focus. Multitasking reduces productivity by 40%.",
+    hack: "Put phone in airplane mode. Use website blockers. Create a 'do not disturb' signal."
+  },
+  {
+    category: "Motivation",
+    title: "Visualize Success",
+    content: "Olympic athletes use visualization. Your brain can't distinguish between vivid imagination and reality.",
+    hack: "Spend 5 minutes each morning visualizing your goal as already achieved. Feel the emotions."
+  },
+  {
+    category: "Habits",
+    title: "Habit Stacking",
+    content: "Attach new habits to existing ones. After [CURRENT HABIT], I will [NEW HABIT].",
+    hack: "After I pour my morning coffee, I will write down my top 3 goals for the day."
+  },
+  {
+    category: "Resilience",
+    title: "The Obstacle is the Way",
+    content: "Every challenge contains the seed of opportunity. Ask: 'What can this teach me?'",
+    hack: "Keep a 'failure resume'. List your failures and what you learned. It reframes setbacks."
+  },
+  {
+    category: "Energy",
+    title: "Manage Energy, Not Time",
+    content: "You have limited willpower. Do important tasks when your energy is highest (usually morning).",
+    hack: "Track your energy for 3 days. Find your peak performance window. Protect it fiercely."
+  },
+  {
+    category: "Goals",
+    title: "SMART Goals",
+    content: "Specific, Measurable, Achievable, Relevant, Time-bound goals are 10x more likely to be achieved.",
+    hack: "Write goals as if already achieved: 'I am so grateful I now earn ₱100,000 monthly.'"
+  }
+];
+
+// Life hacks detail
+const hackDetails = [
+  {title: "The 5-Second Rule", content: "When you have an instinct to act on a goal, count 5-4-3-2-1 and physically move. This interrupts procrastination patterns in your brain."},
+  {title: "Eat the Frog", content: "Your 'frog' is your biggest, most important task. Tackle it first thing when willpower is strongest. Everything else becomes easier."},
+  {title: "Pomodoro Technique", content: "Work 25 minutes, rest 5 minutes. After 4 cycles, take a 15-30 min break. Keeps brain fresh and maintains high focus."},
+  {title: "2-Minute Rule", content: "If a task takes less than 2 minutes, do it immediately. Prevents small tasks from piling up and draining mental energy."}
+];
+
+// Sample goals
+let myGoals = JSON.parse(localStorage.getItem('julieDreamGoals')) || [
+  {
+    id: '1',
+    title: 'Become a Manager',
+    desc: 'Lead a team and make strategic decisions. Help others grow while growing myself.',
+    category: 'career',
+    deadline: '2024-12-31',
+    priority: 'high',
+    progress: 35,
+    actions: 'Complete leadership course\nFind a mentor\nPractice delegation\nRead management books',
+    completed: false
+  },
+  {
+    id: '2',
+    title: 'Travel to 5 Countries',
+    desc: 'Experience different cultures, food, and perspectives. Broaden my worldview.',
+    category: 'personal',
+    deadline: '2024-08-30',
+    priority: 'medium',
+    progress: 20,
+    actions: 'Save monthly travel fund\nResearch destinations\nGet passport ready\nBook first trip',
+    completed: false
+  },
+  {
+    id: '3',
+    title: 'Build Emergency Fund',
+    desc: 'Save 6 months of expenses for financial security and peace of mind.',
+    category: 'wealth',
+    deadline: '2024-06-30',
+    priority: 'high',
+    progress: 60,
+    actions: 'Automate savings\nCut unnecessary expenses\nSide hustle income\nTrack spending',
+    completed: false
+  }
+];
+
+let currentCategory = 'all';
+let currentTipIndex = 0;
+
+// Initialize
+window.addEventListener('load', () => {
+  setTimeout(() => document.getElementById('loader').classList.add('fade-out'), 250);
+  renderGoals();
+  updateStats();
+  generateNewTip();
+  rotateQuote();
+  
+  // Set default date to 3 months from now
+  const future = new Date();
+  future.setMonth(future.getMonth() + 3);
+  document.getElementById('goalDeadline').valueAsDate = future;
+});
+
+// Rotate quote daily
+function rotateQuote() {
+  const today = new Date().getDate();
+  const quote = quotes[today % quotes.length];
+  document.querySelector('.quote-box div').textContent = `"${quote.text}"`;
+  document.querySelector('.quote-author').textContent = `— ${quote.author}`;
+}
+
+// Motto
+const titles = [
+  ['fas fa-crown', 'Queen Julie, your dreams are valid'],
+  ['fas fa-star', 'Reach for the stars, you deserve them'],
+  ['fas fa-rocket', 'Launch your dreams into reality'],
+  ['fas fa-heart', 'Believe in yourself always']
+];
+const t = titles[Math.floor(Math.random() * titles.length)];
+document.getElementById('motto').innerHTML = `<i class="${t[0]}"></i> ${t[1]}`;
+
+// Music
+let musicOn = false;
+document.getElementById('musicToggle').onclick = () => {
+  musicOn = !musicOn;
+  const audio = document.getElementById('bgMusic');
+  musicOn ? audio.play() : audio.pause();
+  document.getElementById('musicToggle').style.background = musicOn ? 'rgba(255,255,255,.3)' : '';
+};
+
+// Render goals
+function renderGoals() {
+  const grid = document.getElementById('goalsGrid');
+  grid.innerHTML = '';
+  
+  let filtered = currentCategory === 'all' ? myGoals : myGoals.filter(g => g.category === currentCategory);
+  
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div style="text-align:center;padding:40px;opacity:.7;">No goals yet. Click + to add your first dream!</div>';
+    return;
+  }
+  
+  // Sort: High priority first, then by progress
+  filtered.sort((a, b) => {
+    if (a.completed !== b.completed) return a.completed ? 1 : -1;
+    if (a.priority !== b.priority) return a.priority === 'high' ? -1 : 1;
+    return b.progress - a.progress;
+  });
+  
+  filtered.forEach(goal => {
+    const card = document.createElement('div');
+    card.className = `goal-card ${goal.completed ? 'completed' : ''}`;
+    
+    const icons = {
+      career: '💼', health: '❤️', wealth: '💰', 
+      personal: '🚀', relationships: '💕'
+    };
+    
+    const colors = {
+      career: '#3498db', health: '#e74c3c', wealth: '#f1c40f',
+      personal: '#9b59b6', relationships: '#e91e63'
+    };
+    
+    card.innerHTML = `
+      <div class="goal-header">
+        <div class="goal-icon" style="background:${colors[goal.category]}20;color:${colors[goal.category]}">
+          ${icons[goal.category]}
+        </div>
+        <div class="goal-actions">
+          <button class="action-icon complete" onclick="toggleComplete('${goal.id}')" title="${goal.completed ? 'Mark Active' : 'Mark Complete'}">
+            <i class="fas ${goal.completed ? 'fa-undo' : 'fa-check'}"></i>
+          </button>
+          <button class="action-icon edit" onclick="editGoal('${goal.id}')" title="Edit">
+            <i class="fas fa-pen"></i>
+          </button>
+          <button class="action-icon delete" onclick="deleteGoal('${goal.id}')" title="Delete">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="goal-title">${goal.title}</div>
+      <div class="goal-desc">${goal.desc}</div>
+      
+      <div class="goal-meta">
+        <span class="meta-tag" style="background:${colors[goal.category]}30">
+          <i class="fas fa-tag"></i> ${goal.category}
+        </span>
+        <span class="meta-tag">
+          <i class="fas fa-calendar"></i> ${new Date(goal.deadline).toLocaleDateString()}
+        </span>
+        <span class="meta-tag">
+          <i class="fas fa-fire"></i> ${goal.priority === 'high' ? 'High' : goal.priority === 'medium' ? 'Medium' : 'Low'}
+        </span>
+      </div>
+      
+      <div class="goal-progress">
+        <div class="progress-label">
+          <span>Progress</span>
+          <span>${goal.progress}%</span>
+        </div>
+        <div class="progress-bar-goal">
+          <div class="progress-fill-goal" style="width:${goal.progress}%;background:${colors[goal.category]}"></div>
+        </div>
+      </div>
+      
+      ${goal.actions ? `
+      <div style="margin-top:15px;padding-top:15px;border-top:1px solid rgba(255,255,255,.1);">
+        <div style="font-size:.8rem;opacity:.7;margin-bottom:8px;"><i class="fas fa-tasks"></i> Action Steps:</div>
+        <div style="font-size:.85rem;line-height:1.6;white-space:pre-line;">${goal.actions}</div>
+      </div>
+      ` : ''}
+    `;
+    
+    grid.appendChild(card);
+  });
+}
+
+// Filter category
+function filterCategory(cat) {
+  currentCategory = cat;
+  document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+  renderGoals();
+}
+
+// Toggle complete
+function toggleComplete(id) {
+  const goal = myGoals.find(g => g.id === id);
+  if (goal) {
+    goal.completed = !goal.completed;
+    if (goal.completed) goal.progress = 100;
+    saveGoals();
+    renderGoals();
+    updateStats();
+    showToast(goal.completed ? 'Goal achieved! 🎉 You\'re amazing!' : 'Goal reactivated! 💪');
+  }
+}
+
+// Delete goal
+function deleteGoal(id) {
+  if (confirm('Delete this dream goal?')) {
+    myGoals = myGoals.filter(g => g.id !== id);
+    saveGoals();
+    renderGoals();
+    updateStats();
+    showToast('Goal deleted');
+  }
+}
+
+// Edit goal (simplified - just opens modal with data)
+function editGoal(id) {
+  const goal = myGoals.find(g => g.id === id);
+  if (!goal) return;
+  
+  document.getElementById('goalTitle').value = goal.title;
+  document.getElementById('goalDesc').value = goal.desc;
+  document.getElementById('goalCategory').value = goal.category;
+  document.getElementById('goalDeadline').value = goal.deadline;
+  document.getElementById('goalPriority').value = goal.priority;
+  document.getElementById('goalProgress').value = goal.progress;
+  document.getElementById('goalActions').value = goal.actions;
+  
+  // Remove old goal and save as new
+  myGoals = myGoals.filter(g => g.id !== id);
+  openModal();
+}
+
+// Modal functions
+function openModal() {
+  document.getElementById('goalModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('goalModal').classList.remove('active');
+  document.body.style.overflow = '';
+  document.getElementById('addGoalForm').reset();
+}
+
+// Save goal
+function saveGoal(e) {
+  e.preventDefault();
+  
+  const goal = {
+    id: Date.now().toString(),
+    title: document.getElementById('goalTitle').value,
+    desc: document.getElementById('goalDesc').value,
+    category: document.getElementById('goalCategory').value,
+    deadline: document.getElementById('goalDeadline').value,
+    priority: document.getElementById('goalPriority').value,
+    progress: parseInt(document.getElementById('goalProgress').value) || 0,
+    actions: document.getElementById('goalActions').value,
+    completed: false
+  };
+  
+  myGoals.push(goal);
+  saveGoals();
+  renderGoals();
+  updateStats();
+  closeModal();
+  showToast('Dream goal saved! ✨ Time to make it happen!');
+}
+
+function saveGoals() {
+  localStorage.setItem('julieDreamGoals', JSON.stringify(myGoals));
+}
+
+// Update stats
+function updateStats() {
+  const total = myGoals.length;
+  const completed = myGoals.filter(g => g.completed).length;
+  const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
+  
+  document.getElementById('totalGoals').textContent = total;
+  document.getElementById('completedGoals').textContent = completed;
+  document.getElementById('completionRate').textContent = rate + '%';
+  
+  // Calculate streak (simplified)
+  const streak = completed > 0 ? Math.min(completed * 2, 30) : 0;
+  document.getElementById('currentStreak').textContent = streak;
+}
+
+// AI Tips
+function generateNewTip() {
+  const tip = aiTips[currentTipIndex % aiTips.length];
+  currentTipIndex++;
+  
+  const container = document.getElementById('aiTips');
+  container.innerHTML = `
+    <div class="tip-card">
+      <div class="tip-category">${tip.category}</div>
+      <div class="tip-title"><i class="fas fa-lightbulb" style="color:var(--gold)"></i> ${tip.title}</div>
+      <div class="tip-content">${tip.content}</div>
+      <div class="tip-hack">
+        <strong>💡 HACK:</strong> ${tip.hack}
+      </div>
+    </div>
+  `;
+}
+
+// Show hack detail
+function showHackDetail(index) {
+  const hack = hackDetails[index];
+  showToast(`${hack.title}: ${hack.content.substring(0, 50)}...`);
+}
+
+// Vision board toggle
+function toggleVision(item, label) {
+  item.classList.toggle('added');
+  const isAdded = item.classList.contains('added');
+  showToast(isAdded ? `${label} added to vision! ✨` : `${label} removed from vision`);
+}
+
+// Toast
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// Close modal on outside click
+document.getElementById('goalModal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('goalModal')) closeModal();
+});
+</script>
+
+</body>
+</html>

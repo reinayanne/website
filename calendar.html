@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DGC Admin – Monthly Calendar</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<link rel="icon" type="image/png" sizes="64x64" href="adminfavicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+:root{
+  --pink:#ff4fa3;
+  --pink-light:#ff7bbf;
+  --glass-bg:rgba(255,123,191,.18);
+  --text-main:#fff;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:url("adminbackground.png") center/cover fixed no-repeat;
+  color:var(--text-main);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* LOADER */
+#loader{position:fixed;inset:0;background:var(--pink-light);display:flex;align-items:center;justify-content:center;z-index:9999;transition:.4s}
+#loader.fade-out{opacity:0;visibility:hidden}
+.arc-spinner{width:40px;height:40px;border:4px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.loader-inner{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:16px;
+  text-align:center;
+}
+
+/* HEADER */
+header{
+  position:sticky;top:0;z-index:1000;height:70px;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:0 20px;
+  backdrop-filter:blur(18px);
+  background:linear-gradient(270deg,#ff4fa3,#ff7bbf,#ffb3d9);
+  background-size:400% 400%;
+  animation:headerFlow 12s ease infinite;
+}
+@keyframes headerFlow{0%{background-position:0%}50%{background-position:100%}100%{background-position:0%}}
+.header-left{display:flex;align-items:center;gap:12px}
+.header-left img{height:44px}
+.motto{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600}
+.header-icons{display:flex;gap:12px;position:relative}
+.header-icons a{
+  width:42px;height:42px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:14px;color:#fff;text-decoration:none;
+  transition:.3s;position:relative;
+}
+.header-icons a:hover{transform:translateY(-2px) scale(1.05);box-shadow:0 0 14px rgba(255,79,163,.8)}
+
+/* CONTAINER */
+.container{
+  max-width:1500px;margin:20px auto 60px;padding:20px;
+  background:var(--glass-bg);backdrop-filter:blur(18px);
+  border-radius:24px;border:1px solid rgba(255,255,255,.35);
+}
+.calendar-wrapper{display:grid;grid-template-columns:260px 1fr;gap:20px}
+
+/* SIDEBAR */
+.sidebar{background:rgba(255,255,255,.35);border-radius:20px;padding:20px;color:#7a2f4d;display:flex;flex-direction:column}
+.sidebar input,.sidebar select{width:100%;padding:8px;border-radius:12px;border:none;margin-bottom:10px;font-size:14px}
+.sidebar h3{margin-bottom:8px;font-size:14px}
+.sidebar-art{margin-top:auto;height:260px;position:relative}
+.sidebar-art img{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:135%}
+
+/* CALENDAR */
+.calendar-main{background:rgba(255,255,255,.35);border-radius:20px;padding:20px;color:#7a2f4d}
+.days,.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr)}
+.days{margin-bottom:10px;font-weight:600;font-size:12px;text-align:center}
+.calendar-grid{gap:8px;grid-auto-rows:110px}
+.day{background:rgba(255,255,255,.65);border-radius:14px;padding:6px;position:relative;font-size:12px;min-height:80px}
+.day span{position:absolute;top:6px;left:8px;font-weight:600}
+
+.day-tasks{
+  margin-top:22px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.day-sticker{
+  position:absolute;
+  right:6px;
+  bottom:6px;
+  width:32px;
+  height:auto;
+  opacity:.9;
+  pointer-events:none;
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,.25));
+}
+
+.day.today{
+  box-shadow:0 0 0 2px var(--pink),
+             0 0 14px rgba(255,79,163,.6)
+}
+
+.task-pill{font-size:10px;font-weight:700;color:#fff;border-radius:10px;padding:3px 6px;text-align:center;cursor:pointer;transition:.25s}
+.task-pill:hover{transform:scale(1.05);box-shadow:0 0 10px rgba(0,0,0,.25)}
+.task-myself{background:#ff4fa3}
+.task-edit{background:#4fa3ff}
+.task-vsquad{background:#8a4fff}
+.task-tlobby{background:#ff4f4f}
+
+.task-pill{
+  align-self:flex-start;
+  max-width:100%;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* TODO */
+.todo-section{grid-column:1/-1;background:rgba(255,255,255,.35);border-radius:20px;padding:20px;margin-top:20px;color:#7a2f4d;overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:600px}
+th,td{border:1px dotted #fff;padding:6px;font-size:13px;text-align:left}
+th{background:rgba(255,79,163,0.2)}
+td input[type="date"],td input[type="time"],td select{width:100%;padding:4px;border-radius:6px;border:none;font-size:12px}
+td[contenteditable]{min-width:120px}
+.dgc-btn{margin-top:10px;background:linear-gradient(135deg,#ff4fa3,#ff7bbf);color:#fff;border:none;padding:12px 22px;border-radius:18px;font-weight:600;cursor:pointer;width:100%;max-width:200px;transition:.3s}
+.dgc-btn:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(255,79,163,0.4)}
+
+/* MOBILE RESPONSIVE */
+@media(max-width:1024px){
+  .calendar-wrapper{grid-template-columns:1fr}
+  .sidebar-art{display:none}
+  .container{margin:10px;padding:15px;border-radius:20px}
+}
+
+@media(max-width:768px){
+  header{height:60px;padding:0 15px}
+  .header-left img{height:36px}
+  .motto{font-size:11px}
+  .header-icons a{width:36px;height:36px;border-radius:12px}
+  .header-icons a i{font-size:14px}
+  
+  .calendar-grid{grid-auto-rows:80px;gap:4px}
+  .day{min-height:60px;padding:4px}
+  .day span{font-size:11px;top:4px;left:6px}
+  .day-tasks{margin-top:18px;gap:2px}
+  .day-sticker{width:24px;right:4px;bottom:4px}
+  .task-pill{font-size:9px;padding:2px 4px;border-radius:6px}
+  
+  .days{font-size:10px}
+  .days div{padding:4px 2px}
+  
+  .sidebar{padding:15px}
+  .sidebar h3{font-size:13px}
+  
+  table{font-size:12px}
+  th,td{padding:4px}
+}
+
+@media(max-width:480px){
+  .container{padding:10px;margin:5px}
+  .calendar-main{padding:10px}
+  .calendar-grid{grid-template-columns:repeat(7,1fr);gap:2px}
+  .day{min-height:50px;border-radius:8px}
+  .day span{font-size:10px}
+  .day-sticker{width:20px}
+  .task-pill{font-size:8px;padding:1px 3px}
+  
+  .todo-section{padding:10px}
+  table{min-width:500px;font-size:11px}
+  
+  .dgc-btn{padding:10px 16px;font-size:14px}
+}
+
+/* SCROLL */
+#scrollBtn{position:fixed;right:20px;bottom:20px;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#ff4fa3,#ff7bbf);color:#fff;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:.3s;z-index:999;box-shadow:0 4px 15px rgba(255,79,163,0.4)}
+#scrollBtn.show{opacity:1;pointer-events:auto}
+
+/* TASK DETAIL POPUP */
+#taskPopup{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.45);
+  z-index:99999;
+  padding:20px;
+}
+#taskPopup .popup-box{
+  background:rgba(255,123,191,.25);
+  backdrop-filter:blur(20px);
+  border-radius:22px;
+  padding:26px 30px;
+  width:100%;
+  max-width:360px;
+  color:#fff;
+  text-align:left;
+  border:1px solid rgba(255,255,255,.35);
+  box-shadow:0 0 30px rgba(255,79,163,.9);
+  animation:pop .3s ease;
+}
+@keyframes pop{
+  from{transform:scale(.85);opacity:0}
+  to{transform:scale(1);opacity:1}
+}
+.popup-title{
+  font-size:16px;
+  font-weight:700;
+  margin-bottom:10px;
+}
+.popup-row{
+  font-size:13px;
+  margin-bottom:6px;
+}
+.popup-close{
+  margin-top:16px;
+  width:100%;
+  padding:10px;
+  border:none;
+  border-radius:14px;
+  background:linear-gradient(135deg,#ff4fa3,#ff7bbf);
+  color:#fff;
+  font-weight:600;
+  cursor:pointer;
+  transition:.3s;
+}
+.popup-close:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(255,79,163,0.4)}
+
+/* ALARM NOTIFICATION POPUP */
+#alarmPopup{
+  position:fixed;
+  top:20px;
+  right:20px;
+  background:linear-gradient(135deg,#ff4fa3,#ff7bbf);
+  color:#fff;
+  padding:16px 20px;
+  border-radius:16px;
+  box-shadow:0 4px 20px rgba(255,79,163,.5);
+  z-index:999999;
+  display:none;
+  animation:slideIn 0.3s ease;
+  max-width:300px;
+}
+@keyframes slideIn{
+  from{transform:translateX(400px);opacity:0}
+  to{transform:translateX(0);opacity:1}
+}
+#alarmPopup.show{display:block}
+.alarm-title{font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.alarm-title i{font-size:18px}
+.alarm-task{font-size:14px;opacity:0.95}
+.alarm-time{font-size:12px;opacity:0.8;margin-top:4px}
+
+/* TOUCH OPTIMIZATIONS */
+@media(hover:none){
+  .task-pill:hover{transform:none}
+  .header-icons a:hover{transform:none;box-shadow:none}
+  .dgc-btn:hover{transform:none;box-shadow:none}
+}
+
+/* PREVENT HORIZONTAL SCROLL ON BODY */
+body{overflow-x:hidden}
+</style>
+</head>
+
+<body>
+
+<div id="loader">
+  <div class="loader-inner">
+    <img src="adminlogo.png" width="90">
+    <div class="arc-spinner"></div>
+  </div>
+</div>
+
+<!-- ALARM NOTIFICATION -->
+<div id="alarmPopup">
+  <div class="alarm-title"><i class="fas fa-bell"></i> Task Alarm!</div>
+  <div class="alarm-task" id="alarmTaskName">Task name here</div>
+  <div class="alarm-time" id="alarmTime">Time here</div>
+</div>
+
+<header>
+  <div class="header-left">
+    <a href="homepage.html"><img src="adminlogo.png"></a>
+    <div class="motto" id="motto"></div>
+  </div>
+  <div class="header-icons">
+    <a href="homepage.html" id="homeBtn">
+      <i class="fas fa-house"></i>
+    </a>
+    <a id="musicToggle"><i class="fas fa-music"></i></a>
+    <a id="logoutBtn"><i class="fas fa-right-from-bracket"></i></a>
+  </div>
+</header>
+
+<div class="container">
+  <div class="calendar-wrapper">
+    <aside class="sidebar">
+      <h3>Today</h3><div id="todayLabel"></div>
+      <h3>Month</h3><select id="monthSelect"></select>
+      <h3>Year</h3><input type="number" id="yearInput">
+      <div class="sidebar-art"><img src="adminchibli.png"></div>
+    </aside>
+
+    <section class="calendar-main">
+      <h2 id="headerLabel"></h2>
+      <div class="days">
+        <div>Sun</div><div>Mon</div><div>Tue</div>
+        <div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+      </div>
+      <div class="calendar-grid" id="calendar"></div>
+    </section>
+
+    <section class="todo-section">
+      <h3>TO DO LIST</h3>
+      <table>
+        <thead>
+          <tr><th>✔</th><th>Date</th><th>Time</th><th>Code</th><th>Task</th><th>⏰</th></tr>
+        </thead>
+        <tbody id="todoBody"></tbody>
+      </table>
+      <button class="dgc-btn" onclick="addTask()">+ Add Task</button>
+    </section>
+  </div>
+</div>
+
+<div id="scrollBtn"><i class="fas fa-arrow-up"></i></div>
+
+<audio id="bgMusic" src="coffee.mp3" loop></audio>
+
+<!-- TASK DETAIL POPUP -->
+<div id="taskPopup">
+  <div class="popup-box">
+    <div class="popup-title">
+      <i class="fas fa-bell"></i> Task Details
+    </div>
+    <div class="popup-row"><strong>Task:</strong> <span id="pdTask"></span></div>
+    <div class="popup-row"><strong>Code:</strong> <span id="pdCode"></span></div>
+    <div class="popup-row"><strong>Date:</strong> <span id="pdDate"></span></div>
+    <div class="popup-row"><strong>Time:</strong> <span id="pdTime"></span></div>
+    <button class="popup-close" onclick="closeTaskPopup()">Close</button>
+  </div>
+</div>
+
+<script>
+const loader=document.getElementById("loader");
+window.onload=()=>setTimeout(()=>loader.classList.add("fade-out"),300);
+
+/* RANDOM MOTTO */
+const motto=document.getElementById("motto");
+const titles=[
+ ['fas fa-crown','You are a QUEEN Julie'],
+ ['fas fa-heart','I Love you Julie'],
+ ['fas fa-bolt','Kaya mo yan Julie']
+];
+const t=titles[Math.floor(Math.random()*titles.length)];
+motto.innerHTML=`<i class="${t[0]}"></i>${t[1]}`;
+
+/* MUSIC */
+musicToggle.onclick=()=>{
+  bgMusic.paused
+    ?(bgMusic.play(),musicToggle.innerHTML='<i class="fas fa-pause"></i>')
+    :(bgMusic.pause(),musicToggle.innerHTML='<i class="fas fa-music"></i>');
+};
+
+/* SCROLL */
+window.addEventListener("scroll",()=>scrollBtn.classList.toggle("show",scrollY>400));
+scrollBtn.onclick=()=>scrollTo({top:0,behavior:"smooth"});
+
+/* CALENDAR */
+const monthNames=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const today=new Date();
+monthNames.forEach((m,i)=>monthSelect.innerHTML+=`<option value="${i}">${m}</option>`);
+monthSelect.value=today.getMonth();
+yearInput.value=today.getFullYear();
+todayLabel.textContent=today.toDateString();
+
+function buildCalendar(){
+  calendar.innerHTML="";
+  const m=+monthSelect.value,y=+yearInput.value;
+  headerLabel.textContent=`${monthNames[m]} ${y}`;
+  const first=new Date(y,m,1).getDay();
+  const total=new Date(y,m+1,0).getDate();
+  for(let i=0;i<first;i++)calendar.innerHTML+=`<div></div>`;
+  for(let d=1;d<=total;d++){
+    const isToday=d===today.getDate()&&m===today.getMonth()&&y===today.getFullYear();
+    const weekday = new Date(y, m, d).getDay();
+    const stickerMap = {
+      1: "sticker1.png",
+      2: "sticker2.png",
+      3: "sticker3.png",
+      4: "sticker4.png",
+      5: "sticker5.png",
+      6: "sticker6.png",
+      0: "sticker7.png"
+    };
+
+    calendar.innerHTML+=`
+      <div class="day ${isToday?"today":""}" data-date="${y}-${m+1}-${d}">
+        <span>${d}</span>
+        <div class="day-tasks"></div>
+        <img src="${stickerMap[weekday]}" class="day-sticker" alt="">
+      </div>`;
+  }
+  renderTasks();
+}
+monthSelect.onchange=yearInput.onchange=buildCalendar;
+buildCalendar();
+
+/* ADD TASK */
+function addTask(data={}){
+  const r=document.createElement("tr");
+
+  r.innerHTML=`
+    <td><input type="checkbox" ${data.done?"checked":""}></td>
+    <td><input type="date" value="${data.date||""}"></td>
+    <td><input type="time" value="${data.time||""}"></td>
+    <td>
+      <select>
+        <option value="myself">Myself</option>
+        <option value="edit">Edit</option>
+        <option value="vsquad">VSquad</option>
+        <option value="tlobby">TLobby</option>
+      </select>
+    </td>
+    <td contenteditable="true"></td>
+    <td><input type="checkbox" class="alarm-check" ${data.alarm?"checked":""}></td>
+  `;
+
+  if(data.code) r.children[3].querySelector("select").value=data.code;
+  if(data.task) r.children[4].innerText=data.task;
+
+  r.querySelectorAll("input,select").forEach(el=>{
+    el.addEventListener("change",()=>{
+      saveTasks();
+      renderTasks();
+    });
+  });
+
+  r.children[4].addEventListener("input", saveTasks);
+
+  r.children[0].querySelector("input").onchange=()=>{
+    r.remove();
+    saveTasks();
+    renderTasks();
+  };
+
+  todoBody.appendChild(r);
+  saveTasks();
+  renderTasks();
+}
+
+/* RENDER TASKS */
+function renderTasks(){
+  document.querySelectorAll(".day-tasks").forEach(c=>c.innerHTML="");
+
+  const rows=[...document.querySelectorAll("#todoBody tr")];
+
+  rows.sort((a,b)=>{
+    const da=a.children[1].querySelector("input").value;
+    const ta=a.children[2].querySelector("input").value || "23:59";
+    const db=b.children[1].querySelector("input").value;
+    const tb=b.children[2].querySelector("input").value || "23:59";
+
+    if(!da) return 1;
+    if(!db) return -1;
+
+    return new Date(`${da}T${ta}`) - new Date(`${db}T${tb}`);
+  });
+
+  rows.forEach(r=>todoBody.appendChild(r));
+
+  rows.forEach(row=>{
+    const date=row.children[1].querySelector("input").value;
+    if(!date) return;
+
+    const [y,m,d]=date.split("-");
+    const cell=document.querySelector(`.day[data-date="${+y}-${+m}-${+d}"]`);
+    if(!cell) return;
+
+    const code=row.children[3].querySelector("select").value;
+    const task=row.children[4].innerText || "No task name";
+    const time=row.children[2].querySelector("input").value || "—";
+
+    const p=document.createElement("div");
+    p.className=`task-pill task-${code}`;
+    p.textContent=code.toUpperCase();
+
+    p.onclick=()=>{
+      openTaskPopup({task,code,date,time});
+    };
+
+    cell.querySelector(".day-tasks").appendChild(p);
+  });
+}
+
+function saveTasks(){
+  const data=[];
+  document.querySelectorAll("#todoBody tr").forEach(r=>{
+    data.push({
+      done:r.children[0].querySelector("input").checked,
+      date:r.children[1].querySelector("input").value,
+      time:r.children[2].querySelector("input").value,
+      code:r.children[3].querySelector("select").value,
+      task:r.children[4].innerText,
+      alarm:r.children[5].querySelector("input").checked
+    });
+  });
+  localStorage.setItem("dgc_admin_tasks",JSON.stringify(data));
+}
+
+function loadTasks(){
+  const saved=localStorage.getItem("dgc_admin_tasks");
+  if(!saved) return;
+  
+  todoBody.innerHTML="";
+  JSON.parse(saved).forEach(task=>{
+    addTask(task);
+  });
+  
+  renderTasks();
+}
+
+window.addEventListener("DOMContentLoaded",loadTasks);
+
+/* ===== ALARM SYSTEM ===== */
+
+let triggeredAlarms = new Set(); // Track already-triggered alarms this session
+
+function checkAlarms() {
+  const now = new Date();
+  const currentDate = now.toDateString();
+  const currentTime = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+  
+  const rows = document.querySelectorAll("#todoBody tr");
+  const activeAlarms = [];
+  
+  rows.forEach((row, index) => {
+    const alarmChecked = row.children[5].querySelector("input").checked;
+    if (!alarmChecked) return;
+    
+    const date = row.children[1].querySelector("input").value;
+    const time = row.children[2].querySelector("input").value;
+    const task = row.children[4].innerText || "Untitled Task";
+    
+    if (!date || !time) return;
+    
+    const taskDate = new Date(date).toDateString();
+    
+    // Check if alarm should trigger (same day and within current minute)
+    if (taskDate === currentDate && time === currentTime) {
+      const alarmKey = `${date}-${time}-${task}`;
+      
+      // Only trigger if not already triggered this session
+      if (!triggeredAlarms.has(alarmKey)) {
+        triggeredAlarms.add(alarmKey);
+        triggerAlarm(task, time, date);
+      }
+    }
+    
+    // Also collect all active alarms for today (for homepage badge)
+    if (taskDate === currentDate && time >= currentTime) {
+      activeAlarms.push({
+        task,
+        time,
+        date,
+        triggeredAt: now.toISOString()
+      });
+    }
+  });
+  
+  // Save active alarms for homepage to detect
+  if (activeAlarms.length > 0) {
+    localStorage.setItem("DGC_ACTIVE_ALARMS", JSON.stringify(activeAlarms));
+  }
+}
+
+function triggerAlarm(task, time, date) {
+  // Show popup notification
+  const popup = document.getElementById("alarmPopup");
+  document.getElementById("alarmTaskName").textContent = task;
+  document.getElementById("alarmTime").textContent = `${date} at ${time}`;
+  popup.classList.add("show");
+  
+  // Hide popup after 5 seconds
+  setTimeout(() => {
+    popup.classList.remove("show");
+  }, 5000);
+  
+  // Play notification sound (short beep)
+  const notifSound = new Audio("notification.mp3");
+  notifSound.play().catch(e => console.log("Audio play failed:", e));
+}
+
+// Check alarms every 10 seconds
+setInterval(checkAlarms, 10000);
+checkAlarms(); // Check immediately on load
+
+// Clear alarms when leaving this page (user has "opened" calendar)
+window.addEventListener("beforeunload", () => {
+  localStorage.removeItem("DGC_ACTIVE_ALARMS");
+});
+
+/* TASK DETAIL POPUP */
+const taskPopup=document.getElementById("taskPopup");
+const pdTask=document.getElementById("pdTask");
+const pdCode=document.getElementById("pdCode");
+const pdDate=document.getElementById("pdDate");
+const pdTime=document.getElementById("pdTime");
+
+function openTaskPopup(data){
+  pdTask.textContent=data.task;
+  pdCode.textContent=data.code.toUpperCase();
+  pdDate.textContent=data.date;
+  pdTime.textContent=data.time;
+  taskPopup.style.display="flex";
+}
+
+function closeTaskPopup(){
+  taskPopup.style.display="none";
+}
+
+taskPopup.addEventListener("click",e=>{
+  if(e.target===taskPopup) closeTaskPopup();
+});
+
+/* LOGOUT */
+logoutBtn.onclick=()=>{
+  if(confirm("Are you sure you want to logout?")){
+    window.location.href="login.html";
+  }
+};
+</script>
+
+</body>
+</html>

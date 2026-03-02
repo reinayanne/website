@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Manager Julie | Gift List</title>
+<link rel="icon" type="image/png" sizes="64x64" href="adminfavicon.ico">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{
+  --pink:#ff4fa3;
+  --pink-light:#ff7bbf;
+  --glass-bg:rgba(255,123,191,.18);
+  --glass-border:rgba(255,255,255,.25);
+  --text-main:#ffffff;
+  --shadow:0 8px 32px rgba(255,79,163,.3);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:url("adminbackground.png") center/cover fixed no-repeat;
+  color:var(--text-main);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+
+a{text-decoration:none;color:inherit}
+
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:rgba(255,79,163,.15)}
+::-webkit-scrollbar-thumb{
+  background:linear-gradient(180deg,#ff4fa3,#ff7bbf);
+  border-radius:10px;
+}
+
+/* LOADER */
+#loader{
+  position:fixed;inset:0;
+  background:var(--pink-light);
+  display:flex;align-items:center;justify-content:center;
+  z-index:9999;transition:.4s ease;
+}
+#loader.fade-out{opacity:0;visibility:hidden}
+.loader-content{display:flex;flex-direction:column;align-items:center}
+.loader-content img{width:190px;margin-bottom:18px}
+.arc-spinner{
+  width:38px;height:38px;border-radius:50%;
+  border:4px solid rgba(255,255,255,.25);
+  border-top-color:#fff;
+  animation:spin .65s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* HEADER */
+header{
+  position:sticky;top:0;z-index:1000;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:18px 26px;
+  backdrop-filter:blur(18px);
+  background:linear-gradient(270deg,#ff4fa3,#ff7bbf,#ffb3d9);
+  background-size:400% 400%;
+  animation:flow 12s ease infinite;
+}
+@keyframes flow{
+  0%{background-position:0%}
+  50%{background-position:100%}
+  100%{background-position:0%}
+}
+.header-left{display:flex;align-items:center;gap:14px}
+.header-left img{height:46px}
+.motto{font-size:18px;font-weight:600;font-style:italic;letter-spacing:.6px;display:flex;align-items:center;gap:8px}
+.motto i{font-size:17px;opacity:.95}
+
+.header-icons{display:flex;align-items:center}
+.header-icons a{
+  width:42px;height:42px;display:inline-flex;align-items:center;justify-content:center;
+  border-radius:14px;margin-left:10px;transition:.3s;position:relative;
+}
+.header-icons i{font-size:18px}
+.header-icons a:hover{box-shadow:0 0 14px rgba(255,79,163,.8)}
+
+/* NOTIFICATION BADGE */
+.notification-badge{
+  position:absolute;
+  top:-2px;
+  right:-2px;
+  width:20px;
+  height:20px;
+  background:#ff4757;
+  border-radius:50%;
+  border:2px solid #ff7bbf;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  font-size:11px;
+  font-weight:bold;
+  color:white;
+  animation:pulse 2s infinite;
+}
+
+.notification-badge.active{
+  display:flex;
+}
+
+@keyframes pulse{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.1)}
+  100%{transform:scale(1)}
+}
+
+/* MAIN CONTAINER */
+.container{
+  max-width:1400px;
+  margin:0 auto;
+  padding:30px 20px;
+  padding-bottom:120px;
+}
+
+/* GLASS CARDS */
+.glass-card{
+  background:var(--glass-bg);
+  backdrop-filter:blur(20px);
+  border:1px solid var(--glass-border);
+  border-radius:24px;
+  padding:28px;
+  margin-bottom:24px;
+  box-shadow:var(--shadow);
+  transition:transform .3s ease;
+}
+.glass-card:hover{transform:translateY(-4px)}
+
+h2{
+  font-family:'Orbitron',sans-serif;
+  font-size:24px;
+  margin-bottom:20px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  text-shadow:0 0 20px rgba(255,79,163,.5);
+}
+
+/* FORM GRID */
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:20px;
+  margin-bottom:20px;
+}
+
+.form-group{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+label{
+  font-size:14px;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  opacity:.9;
+}
+
+input,select,textarea{
+  padding:14px 18px;
+  border:2px solid rgba(255,255,255,.2);
+  border-radius:14px;
+  background:rgba(255,255,255,.1);
+  color:#fff;
+  font-size:15px;
+  outline:none;
+  transition:.3s;
+  font-family:inherit;
+  width:100%;
+}
+
+input:focus,select:focus,textarea:focus{
+  border-color:var(--pink);
+  background:rgba(255,255,255,.15);
+  box-shadow:0 0 20px rgba(255,79,163,.3);
+}
+
+input::placeholder{color:rgba(255,255,255,.6)}
+
+select option{background:#2a1f3d;color:#fff}
+
+textarea{min-height:80px;resize:vertical}
+
+/* BUDGET SLIDER */
+.budget-display{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-family:'Orbitron',sans-serif;
+  font-size:20px;
+  color:var(--pink-light);
+}
+
+input[type="range"]{
+  -webkit-appearance:none;
+  width:100%;
+  height:8px;
+  border-radius:10px;
+  background:rgba(255,255,255,.2);
+  outline:none;
+  margin:10px 0;
+}
+
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#ff4fa3,#ff7bbf);
+  cursor:pointer;
+  box-shadow:0 0 15px rgba(255,79,163,.6);
+  transition:.2s;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover{
+  transform:scale(1.2);
+  box-shadow:0 0 25px rgba(255,79,163,.8);
+}
+
+/* BUTTONS */
+.btn{
+  padding:14px 28px;
+  border:none;
+  border-radius:14px;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+  transition:.3s;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  font-family:inherit;
+  touch-action:manipulation;
+}
+
+.btn-primary{
+  background:linear-gradient(135deg,#ff4fa3,#ff7bbf);
+  color:#fff;
+  box-shadow:0 4px 20px rgba(255,79,163,.4);
+}
+
+.btn-primary:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 30px rgba(255,79,163,.6);
+}
+
+.btn-secondary{
+  background:rgba(255,255,255,.1);
+  border:2px solid rgba(255,255,255,.3);
+  color:#fff;
+}
+
+.btn-secondary:hover{
+  background:rgba(255,255,255,.2);
+}
+
+/* AI SUGGESTIONS */
+.ai-suggestions{
+  display:none;
+  margin-top:20px;
+  padding:20px;
+  background:rgba(255,255,255,.05);
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.1);
+}
+
+.ai-suggestions.active{display:block;animation:fadeIn .5s ease}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(-10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.suggestion-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:16px;
+  margin-top:16px;
+}
+
+.suggestion-card{
+  background:rgba(255,255,255,.1);
+  border-radius:16px;
+  padding:16px;
+  cursor:pointer;
+  transition:.3s;
+  border:2px solid transparent;
+  position:relative;
+  overflow:hidden;
+}
+
+.suggestion-card:hover{
+  border-color:var(--pink);
+  transform:translateY(-4px);
+  box-shadow:0 8px 25px rgba(255,79,163,.3);
+}
+
+.suggestion-card.selected{
+  border-color:#00ff88;
+  background:rgba(0,255,136,.1);
+}
+
+.suggestion-card::before{
+  content:'\f00c';
+  font-family:'Font Awesome 6 Free';
+  font-weight:900;
+  position:absolute;
+  top:10px;
+  right:10px;
+  color:#00ff88;
+  opacity:0;
+  transition:.3s;
+}
+
+.suggestion-card.selected::before{opacity:1}
+
+.gift-icon{
+  font-size:32px;
+  margin-bottom:10px;
+  display:block;
+  text-align:center;
+}
+
+.gift-name{
+  font-weight:600;
+  font-size:15px;
+  margin-bottom:6px;
+  text-align:center;
+}
+
+.gift-price{
+  color:var(--pink-light);
+  font-family:'Orbitron',sans-serif;
+  font-size:18px;
+  text-align:center;
+}
+
+.gift-desc{
+  font-size:12px;
+  opacity:.8;
+  text-align:center;
+  margin-top:6px;
+}
+
+/* GIFT LIST TABLE */
+.gifts-list{
+  margin-top:20px;
+}
+
+.list-header{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr 1fr 100px;
+  gap:16px;
+  padding:16px;
+  background:rgba(255,255,255,.1);
+  border-radius:14px;
+  margin-bottom:12px;
+  font-weight:600;
+  text-transform:uppercase;
+  font-size:13px;
+  letter-spacing:1px;
+}
+
+.list-item{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr 1fr 100px;
+  gap:16px;
+  padding:16px;
+  background:rgba(255,255,255,.05);
+  border-radius:14px;
+  margin-bottom:10px;
+  align-items:center;
+  transition:.3s;
+  animation:slideIn .4s ease;
+}
+
+@keyframes slideIn{
+  from{opacity:0;transform:translateX(-20px)}
+  to{opacity:1;transform:translateX(0)}
+}
+
+.list-item:hover{
+  background:rgba(255,255,255,.1);
+  transform:translateX(4px);
+}
+
+.recipient-info{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.recipient-name{
+  font-weight:600;
+  font-size:16px;
+}
+
+.recipient-meta{
+  font-size:13px;
+  opacity:.8;
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.age-badge,.gender-badge{
+  background:rgba(255,79,163,.3);
+  padding:2px 10px;
+  border-radius:20px;
+  font-size:11px;
+}
+
+.price-tag{
+  font-family:'Orbitron',sans-serif;
+  color:var(--pink-light);
+  font-size:18px;
+  font-weight:700;
+}
+
+.delete-btn{
+  width:36px;
+  height:36px;
+  border-radius:10px;
+  border:none;
+  background:rgba(255,71,87,.2);
+  color:#ff4757;
+  cursor:pointer;
+  transition:.3s;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.delete-btn:hover{
+  background:#ff4757;
+  color:#fff;
+  transform:rotate(90deg);
+}
+
+/* TOTAL BAR */
+.total-bar{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  width:calc(100% - 40px);
+  max-width:1360px;
+  background:linear-gradient(135deg,rgba(255,79,163,.95),rgba(255,123,191,.95));
+  backdrop-filter:blur(20px);
+  padding:20px 30px;
+  border-radius:20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 10px 40px rgba(255,79,163,.4);
+  border:1px solid rgba(255,255,255,.3);
+  animation:float 3s ease-in-out infinite;
+  z-index:100;
+}
+
+@keyframes float{
+  0%,100%{transform:translateX(-50%) translateY(0)}
+  50%{transform:translateX(-50%) translateY(-5px)}
+}
+
+.total-label{
+  font-size:14px;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  opacity:.9;
+}
+
+.total-amount{
+  font-family:'Orbitron',sans-serif;
+  font-size:32px;
+  font-weight:900;
+  text-shadow:0 0 20px rgba(255,255,255,.5);
+}
+
+.gift-count{
+  background:rgba(255,255,255,.2);
+  padding:8px 16px;
+  border-radius:20px;
+  font-size:14px;
+  font-weight:600;
+}
+
+/* EMPTY STATE */
+.empty-state{
+  text-align:center;
+  padding:60px 20px;
+  opacity:.6;
+}
+
+.empty-state i{
+  font-size:64px;
+  margin-bottom:20px;
+  display:block;
+}
+
+/* TOAST NOTIFICATION */
+.toast{
+  position:fixed;
+  top:80px;
+  right:20px;
+  background:linear-gradient(135deg,rgba(255,79,163,.95),rgba(255,123,191,.95));
+  backdrop-filter:blur(10px);
+  padding:16px 24px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.3);
+  box-shadow:0 8px 32px rgba(255,79,163,.4);
+  display:flex;
+  align-items:center;
+  gap:12px;
+  transform:translateX(400px);
+  transition:transform .3s ease;
+  z-index:2000;
+  max-width:300px;
+}
+
+.toast.show{
+  transform:translateX(0);
+}
+
+.toast i{
+  font-size:20px;
+}
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+  .container{
+    padding:20px 15px;
+    padding-bottom:140px;
+  }
+  
+  .glass-card{
+    padding:20px;
+  }
+  
+  h2{
+    font-size:20px;
+  }
+}
+
+@media(max-width:768px){
+  header{
+    padding:12px 16px;
+  }
+  
+  .header-left img{
+    height:36px;
+  }
+  
+  .motto{
+    font-size:14px;
+  }
+  
+  .header-icons a{
+    width:36px;
+    height:36px;
+    margin-left:6px;
+  }
+  
+  .container{
+    padding:15px 12px;
+    padding-bottom:140px;
+  }
+  
+  .glass-card{
+    padding:18px;
+    margin-bottom:16px;
+    border-radius:20px;
+  }
+  
+  h2{
+    font-size:18px;
+    margin-bottom:16px;
+  }
+  
+  .form-grid{
+    grid-template-columns:1fr;
+    gap:14px;
+  }
+  
+  .form-group label{
+    font-size:12px;
+  }
+  
+  input,select,textarea{
+    padding:12px 14px;
+    font-size:14px;
+    border-radius:12px;
+  }
+  
+  .budget-display{
+    font-size:18px;
+  }
+  
+  .btn{
+    padding:12px 20px;
+    font-size:14px;
+    width:100%;
+    justify-content:center;
+  }
+  
+  .ai-suggestions{
+    padding:15px;
+  }
+  
+  .suggestion-grid{
+    grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+    gap:10px;
+  }
+  
+  .suggestion-card{
+    padding:12px;
+  }
+  
+  .gift-icon{
+    font-size:24px;
+  }
+  
+  .gift-name{
+    font-size:13px;
+  }
+  
+  .gift-price{
+    font-size:16px;
+  }
+  
+  .list-header{display:none}
+  
+  .list-item{
+    grid-template-columns:1fr;
+    gap:12px;
+    padding:18px;
+    position:relative;
+  }
+  
+  .list-item > div{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  
+  .list-item > div::before{
+    content:attr(data-label);
+    font-size:11px;
+    text-transform:uppercase;
+    opacity:.6;
+    min-width:80px;
+    font-weight:600;
+  }
+  
+  .recipient-info{
+    flex-direction:row;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  
+  .recipient-info::before{
+    display:none !important;
+  }
+  
+  .recipient-name{
+    font-size:15px;
+    width:100%;
+    margin-bottom:4px;
+  }
+  
+  .recipient-meta{
+    width:100%;
+  }
+  
+  .delete-btn{
+    position:absolute;
+    top:10px;
+    right:10px;
+    width:32px;
+    height:32px;
+  }
+  
+  .total-bar{
+    width:calc(100% - 24px);
+    padding:15px 20px;
+    border-radius:16px;
+    flex-direction:column;
+    gap:8px;
+    text-align:center;
+    bottom:12px;
+  }
+  
+  .total-amount{
+    font-size:24px;
+  }
+  
+  .gift-count{
+    font-size:12px;
+    padding:6px 12px;
+  }
+  
+  .toast{
+    right:10px;
+    left:10px;
+    max-width:none;
+    top:auto;
+    bottom:100px;
+    transform:translateY(200px);
+  }
+  
+  .toast.show{
+    transform:translateY(0);
+  }
+}
+
+@media(max-width:480px){
+  .motto{
+    display:none;
+  }
+  
+  .suggestion-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+  
+  .recipient-meta{
+    gap:6px;
+  }
+  
+  .age-badge,.gender-badge{
+    font-size:10px;
+    padding:2px 8px;
+  }
+}
+
+@media(max-width:360px){
+  .header-left img{
+    height:32px;
+  }
+  
+  .suggestion-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+/* Landscape mode optimizations */
+@media(max-height:500px) and (orientation:landscape){
+  header{
+    padding:8px 16px;
+  }
+  
+  .container{
+    padding-bottom:100px;
+  }
+  
+  .total-bar{
+    padding:10px 20px;
+    flex-direction:row;
+  }
+}
+
+/* Tablet optimizations */
+@media(min-width:769px) and (max-width:1024px){
+  .form-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+  
+  .suggestion-grid{
+    grid-template-columns:repeat(3,1fr);
+  }
+}
+
+/* Dark mode support */
+@media(prefers-color-scheme:dark){
+  :root{
+    --glass-bg:rgba(255,123,191,.15);
+  }
+}
+
+/* Reduce motion for accessibility */
+@media(prefers-reduced-motion:reduce){
+  *{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+  }
+  
+  .total-bar{
+    animation:none;
+  }
+}
+
+/* SPARKLE ANIMATION */
+.sparkle{
+  position:fixed;
+  pointer-events:none;
+  animation:sparkle 1s ease-out forwards;
+  color:var(--pink-light);
+  font-size:20px;
+  z-index:9999;
+}
+
+@keyframes sparkle{
+  0%{transform:translate(0,0) scale(0);opacity:1}
+  100%{transform:translate(var(--tx),var(--ty)) scale(1.5);opacity:0}
+}
+
+/* Safe area for notched devices */
+@supports(padding:max(0px)){
+  header{
+    padding-top:max(18px,env(safe-area-inset-top));
+    padding-left:max(26px,env(safe-area-inset-left));
+    padding-right:max(26px,env(safe-area-inset-right));
+  }
+  
+  .container{
+    padding-left:max(20px,env(safe-area-inset-left));
+    padding-right:max(20px,env(safe-area-inset-right));
+    padding-bottom:max(120px,env(safe-area-inset-bottom));
+  }
+  
+  .total-bar{
+    bottom:max(20px,env(safe-area-inset-bottom));
+  }
+}
+</style>
+</head>
+<body>
+
+<audio id="bgMusic" src="coffee.mp3" loop></audio>
+<audio id="notifSound" src="notification.mp3" preload="auto"></audio>
+
+<div id="loader">
+  <div class="loader-content">
+    <img src="adminlogo.png">
+    <div class="arc-spinner"></div>
+  </div>
+</div>
+
+<header>
+  <div class="header-left">
+    <a href="homepage.html"><img src="adminlogo.png"></a>
+    <div class="motto" id="motto"></div>
+  </div>
+  <div class="header-icons">
+    <a href="homepage.html" id="homeLink">
+      <i class="fas fa-home"></i>
+      <span class="notification-badge" id="notifBadge"></span>
+    </a>
+    <a id="musicToggle"><i class="fas fa-music"></i></a>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ADD GIFT FORM -->
+  <div class="glass-card">
+    <h2><i class="fas fa-gift"></i> Add New Gift</h2>
+    
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Recipient Name</label>
+        <input type="text" id="recipientName" placeholder="e.g., Mama, Bestie, Crush">
+      </div>
+      
+      <div class="form-group">
+        <label>Relationship</label>
+        <select id="relationship">
+          <option value="">Select relationship...</option>
+          <option value="family">Family (Parent, Sibling)</option>
+          <option value="partner">Partner / Spouse</option>
+          <option value="friend">Friend / Bestie</option>
+          <option value="colleague">Colleague / Boss</option>
+          <option value="child">Child / Baby</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Age (Optional)</label>
+        <input type="number" id="age" placeholder="e.g., 25" min="0" max="120">
+      </div>
+      
+      <div class="form-group">
+        <label>Gender</label>
+        <select id="gender">
+          <option value="">Select...</option>
+          <option value="female">Female</option>
+          <option value="male">Male</option>
+          <option value="other">Other / Prefer not to say</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-bottom:20px;">
+      <label>Occasion</label>
+      <select id="occasion">
+        <option value="">Select occasion...</option>
+        <option value="birthday">Birthday</option>
+        <option value="christmas">Christmas / Holidays</option>
+        <option value="anniversary">Anniversary</option>
+        <option value="valentine">Valentine's Day</option>
+        <option value="graduation">Graduation</option>
+        <option value="wedding">Wedding</option>
+        <option value="babyshower">Baby Shower</option>
+        <option value="housewarming">House Warming</option>
+        <option value="thankyou">Thank You</option>
+        <option value="getwell">Get Well Soon</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+
+    <div class="form-group" style="margin-bottom:20px;">
+      <label>Interests / Hints (Optional)</label>
+      <textarea id="interests" placeholder="e.g., loves coffee, into skincare, gamer, bookworm, fitness enthusiast..."></textarea>
+    </div>
+
+    <div class="form-group" style="margin-bottom:20px;">
+      <label>Budget Range</label>
+      <div class="budget-display">
+        <i class="fas fa-peso-sign"></i>
+        <span id="budgetValue">1000</span>
+      </div>
+      <input type="range" id="budget" min="100" max="50000" step="100" value="1000">
+      <div style="display:flex;justify-content:space-between;font-size:12px;opacity:.7;margin-top:4px;">
+        <span>₱100</span>
+        <span>₱50,000</span>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="generateSuggestions()">
+      <i class="fas fa-sparkles"></i> AI Gift Suggestions
+    </button>
+
+    <!-- AI SUGGESTIONS AREA -->
+    <div id="aiSuggestions" class="ai-suggestions">
+      <h3 style="margin-bottom:10px;display:flex;align-items:center;gap:10px;">
+        <i class="fas fa-robot"></i> Smart Recommendations
+      </h3>
+      <p style="opacity:.8;font-size:14px;margin-bottom:16px;">
+        Based on <span id="profileSummary" style="color:var(--pink-light);font-weight:600;"></span>
+      </p>
+      <div id="suggestionGrid" class="suggestion-grid"></div>
+      
+      <div style="margin-top:20px;text-align:center;">
+        <button class="btn btn-secondary" onclick="closeSuggestions()">
+          <i class="fas fa-times"></i> Close
+        </button>
+        <button class="btn btn-primary" onclick="confirmSelection()" style="margin-left:10px;">
+          <i class="fas fa-check"></i> Add Selected Gift
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GIFT LIST -->
+  <div class="glass-card">
+    <h2><i class="fas fa-list"></i> My Gift List</h2>
+    
+    <div id="giftsList" class="gifts-list">
+      <div class="empty-state">
+        <i class="fas fa-gift"></i>
+        <p>No gifts added yet. Start by adding someone special above!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOTAL BAR -->
+  <div class="total-bar" id="totalBar" style="display:none;">
+    <div>
+      <div class="total-label">Total Budget</div>
+      <div class="total-amount" id="totalAmount">₱0</div>
+    </div>
+    <div class="gift-count" id="giftCount">0 gifts</div>
+  </div>
+
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" class="toast">
+  <i class="fas fa-bell"></i>
+  <span id="toastMessage">Notification</span>
+</div>
+
+<script>
+/* LOADER */
+window.addEventListener("load",()=>{
+  setTimeout(()=>loader.classList.add("fade-out"),250)
+})
+
+/* MOTTO */
+const titles=[
+ ['fas fa-bolt','Alam kong kaya mo yan Julie, Magiging Successful ka'],
+ ['fas fa-crown','You are a beautiful QUEEN JULIE'],
+ ['fas fa-money-bill','Yayaman ka Julie'],
+ ['fas fa-heart','I Love you Julie'],
+ ['fas fa-gift','The best gifts come from the heart, Julie']
+]
+const t=titles[Math.random()*titles.length|0]
+motto.innerHTML=`<i class="${t[0]}"></i>${t[1]}`
+
+/* MUSIC */
+let musicOn=false
+musicToggle.onclick=()=>{
+  musicOn=!musicOn
+  musicOn ? bgMusic.play() : bgMusic.pause()
+}
+
+/* BUDGET SLIDER */
+const budgetSlider=document.getElementById('budget')
+const budgetValue=document.getElementById('budgetValue')
+budgetSlider.oninput=()=>{
+  budgetValue.textContent=parseInt(budgetSlider.value).toLocaleString()
+}
+
+/* NOTIFICATION SYSTEM */
+const notifSound=document.getElementById('notifSound')
+const notifBadge=document.getElementById('notifBadge')
+const toast=document.getElementById('toast')
+const toastMessage=document.getElementById('toastMessage')
+
+function showNotification(message,playSound=true){
+  // Update badge
+  const currentCount=parseInt(notifBadge.textContent)||0
+  notifBadge.textContent=currentCount+1
+  notifBadge.classList.add('active')
+  
+  // Play sound
+  if(playSound){
+    notifSound.currentTime=0
+    notifSound.play().catch(e=>console.log('Audio play failed:',e))
+  }
+  
+  // Show toast
+  toastMessage.textContent=message
+  toast.classList.add('show')
+  setTimeout(()=>{
+    toast.classList.remove('show')
+  },3000)
+  
+  // Save notification state
+  saveData()
+}
+
+function clearNotifications(){
+  notifBadge.textContent=''
+  notifBadge.classList.remove('active')
+  saveData()
+}
+
+// Check for notifications on load
+function checkNotifications(){
+  const notifData=localStorage.getItem('julieNotifications')
+  if(notifData){
+    const data=JSON.parse(notifData)
+    if(data.count>0){
+      notifBadge.textContent=data.count
+      notifBadge.classList.add('active')
+    }
+  }
+}
+
+/* GIFT DATABASE - Intelligent Suggestions */
+const giftDatabase={
+  birthday:{
+    female:{
+      young:['Makeup Palette','K-pop Album','Starbucks Tumbler','Skincare Set','Jewelry Box','Instax Camera','Phone Case Collection'],
+      adult:['Designer Bag','Spa Day Voucher','Wine Set','Luxury Candle','Silk Pajamas','Fitness Tracker','Kindle'],
+      senior:['Tea Set','Gardening Tools','Photo Album','Massage Chair','Cookbook','Knitting Kit']
+    },
+    male:{
+      young:['Gaming Mouse','Sneakers','Bluetooth Speaker','Watch','Graphic Tee','Skateboard','Collectible Figures'],
+      adult:['Grilling Set','Whiskey Decanter','Golf Accessories','Leather Wallet','Smart Watch','Tool Set','Briefcase'],
+      senior:['Fishing Gear','Classic Novels','Bird Watching Kit','Comfortable Slippers','Coffee Maker','Puzzle Set']
+    }
+  },
+  christmas:{
+    general:['Holiday Mug','Scented Candle','Chocolate Box','Cozy Blanket','Wine','Gift Card','Ornament Set','Hot Cocoa Set']
+  },
+  anniversary:{
+    partner:['Couples Massage','Romantic Dinner','Memory Book','Matching Jewelry','Weekend Getaway','Love Letter Collection']
+  },
+  valentine:{
+    female:['Rose Bouquet','Chocolate Truffles','Teddy Bear','Perfume','Romantic Novel','Jewelry'],
+    male:['Gourmet Snacks','Whiskey','Leather Bracelet','Gaming Credits','Sports Tickets','Grooming Kit']
+  },
+  graduation:{
+    general:['Inspirational Book','Laptop','Professional Bag','Watch','Gift Card','Travel Voucher','Desk Organizer']
+  },
+  wedding:{
+    general:['Kitchen Appliance','Cash Gift','Home Decor','Wine Glasses','Bed Sheets','Slow Cooker','Air Fryer']
+  },
+  babyshower:{
+    general:['Diaper Cake','Baby Clothes Set','Stuffed Animals','Baby Monitor','Diaper Bag','Teething Toys','Memory Book']
+  },
+  housewarming:{
+    general:['Plant Set','Scented Candles','Coffee Maker','Throw Pillows','Wall Art','Tool Kit','Welcome Mat']
+  },
+  thankyou:{
+    general:['Gourmet Basket','Wine','Personalized Card','Flowers','Spa Products','Artisan Chocolates']
+  },
+  getwell:{
+    general:['Fruit Basket','Comfort Food','Cozy Socks','Healing Tea Set','Puzzle Book','Stuffed Animal']
+  }
+}
+
+const giftPrices={
+  'Makeup Palette':1500,'K-pop Album':800,'Starbucks Tumbler':1200,'Skincare Set':2000,'Jewelry Box':2500,
+  'Instax Camera':4500,'Phone Case Collection':800,'Designer Bag':15000,'Spa Day Voucher':3500,'Wine Set':2000,
+  'Luxury Candle':1200,'Silk Pajamas':2500,'Fitness Tracker':3500,'Kindle':8000,'Tea Set':1500,'Gardening Tools':1200,
+  'Photo Album':800,'Massage Chair':25000,'Cookbook':600,'Knitting Kit':900,'Gaming Mouse':2500,'Sneakers':4500,
+  'Bluetooth Speaker':1800,'Watch':5000,'Graphic Tee':800,'Skateboard':3500,'Collectible Figures':1500,'Grilling Set':3500,
+  'Whiskey Decanter':2000,'Golf Accessories':4000,'Leather Wallet':2500,'Smart Watch':8000,'Tool Set':3000,'Briefcase':4500,
+  'Fishing Gear':2500,'Classic Novels':1200,'Bird Watching Kit':1500,'Comfortable Slippers':800,'Coffee Maker':4500,
+  'Puzzle Set':600,'Holiday Mug':500,'Scented Candle':800,'Chocolate Box':600,'Cozy Blanket':1200,'Wine':1500,
+  'Gift Card':1000,'Ornament Set':700,'Hot Cocoa Set':900,'Couples Massage':5000,'Romantic Dinner':3500,
+  'Memory Book':600,'Matching Jewelry':4000,'Weekend Getaway':15000,'Love Letter Collection':300,'Rose Bouquet':1500,
+  'Chocolate Truffles':1200,'Teddy Bear':800,'Perfume':3500,'Romantic Novel':500,'Gourmet Snacks':1000,'Grooming Kit':1500,
+  'Inspirational Book':800,'Laptop':35000,'Professional Bag':4500,'Travel Voucher':10000,'Desk Organizer':1200,
+  'Kitchen Appliance':5000,'Cash Gift':5000,'Home Decor':2500,'Wine Glasses':1500,'Bed Sheets':2000,'Slow Cooker':3500,
+  'Air Fryer':4500,'Diaper Cake':1500,'Baby Clothes Set':1200,'Stuffed Animals':600,'Baby Monitor':4500,'Diaper Bag':2000,
+  'Teething Toys':800,'Memory Book':700,'Plant Set':1200,'Throw Pillows':900,'Wall Art':1500,'Tool Kit':2500,'Welcome Mat':600,
+  'Gourmet Basket':2500,'Flowers':1200,'Artisan Chocolates':1000,'Fruit Basket':1500,'Comfort Food':1000,'Cozy Socks':400,
+  'Healing Tea Set':800,'Puzzle Book':500,'Stuffed Animal':700,'Leather Bracelet':1200,'Gaming Credits':1000,
+  'Sports Tickets':2500
+}
+
+let selectedGift=null
+let gifts=[]
+
+// Storage keys
+const STORAGE_KEY='julieGifts'
+const NOTIF_KEY='julieNotifications'
+
+// Save data to localStorage
+function saveData(){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(gifts))
+  const notifCount=parseInt(notifBadge.textContent)||0
+  localStorage.setItem(NOTIF_KEY,JSON.stringify({count:notifCount,timestamp:Date.now()}))
+}
+
+// Load data from localStorage
+function loadData(){
+  const saved=localStorage.getItem(STORAGE_KEY)
+  if(saved){
+    try{
+      gifts=JSON.parse(saved)
+      renderGifts()
+    }catch(e){
+      console.error('Error loading gifts:',e)
+      gifts=[]
+    }
+  }
+  
+  checkNotifications()
+}
+
+function generateSuggestions(){
+  const name=document.getElementById('recipientName').value
+  const relationship=document.getElementById('relationship').value
+  const age=document.getElementById('age').value
+  const gender=document.getElementById('gender').value
+  const occasion=document.getElementById('occasion').value
+  const budget=parseInt(document.getElementById('budget').value)
+  const interests=document.getElementById('interests').value
+
+  if(!name||!occasion){
+    alert('Please fill in recipient name and occasion!')
+    return
+  }
+
+  // Determine age group
+  let ageGroup='adult'
+  if(age){
+    if(age<13)ageGroup='child'
+    else if(age<25)ageGroup='young'
+    else if(age>60)ageGroup='senior'
+  }
+
+  // Build profile summary
+  const profileParts=[name]
+  if(age)profileParts.push(`age ${age}`)
+  if(gender)profileParts.push(gender)
+  if(relationship)profileParts.push(relationship)
+  profileParts.push(`for ${occasion}`)
+  document.getElementById('profileSummary').textContent=profileParts.join(', ')
+
+  // Generate smart suggestions
+  let suggestions=[]
+  
+  // Get base suggestions from database
+  if(giftDatabase[occasion]){
+    if(gender&&giftDatabase[occasion][gender]){
+      if(ageGroup&&giftDatabase[occasion][gender][ageGroup]){
+        suggestions=[...giftDatabase[occasion][gender][ageGroup]]
+      }else{
+        suggestions=[...Object.values(giftDatabase[occasion][gender]).flat()]
+      }
+    }else if(giftDatabase[occasion].general){
+      suggestions=[...giftDatabase[occasion].general]
+    }else{
+      suggestions=[...Object.values(giftDatabase[occasion]).flat().flat()]
+    }
+  }
+
+  // Add interest-based suggestions
+  if(interests){
+    const interestMap={
+      'coffee':['Starbucks Tumbler','Coffee Maker','Gourmet Coffee Beans','Mug Warmer'],
+      'tea':['Tea Set','Healing Tea Set','Tea Infuser','Ceramic Teapot'],
+      'book':['Kindle','Book Light','Bookstore Gift Card','Bookmark Collection'],
+      'game':['Gaming Mouse','Gaming Credits','Gaming Chair','RGB Keyboard'],
+      'fitness':['Fitness Tracker','Yoga Mat','Resistance Bands','Protein Shaker'],
+      'skin':['Skincare Set','Face Roller','Sheet Masks','Serum Collection'],
+      'cook':['Cookbook','Kitchen Appliance','Air Fryer','Spice Set'],
+      'music':['Bluetooth Speaker','Vinyl Records','Concert Tickets','Headphones'],
+      'art':['Art Supplies','Sketchbook','Museum Pass','Wall Art'],
+      'travel':['Travel Pillow','Luggage Tag','Passport Holder','Travel Voucher']
+    }
+    
+    Object.keys(interestMap).forEach(key=>{
+      if(interests.toLowerCase().includes(key)){
+        suggestions=[...suggestions,...interestMap[key]]
+      }
+    })
+  }
+
+  // Filter by budget (allow up to 20% over budget for good options)
+  suggestions=suggestions.filter(gift=>{
+    const price=giftPrices[gift]||1000
+    return price<=budget*1.2
+  })
+
+  // Remove duplicates and limit
+  suggestions=[...new Set(suggestions)].slice(0,8)
+
+  // If no suggestions, generate generic ones based on budget
+  if(suggestions.length===0){
+    if(budget<1000)suggestions=['Gift Card','Flowers','Chocolate Box','Personalized Card']
+    else if(budget<3000)suggestions=['Scented Candle','Wine','Gourmet Basket','Cozy Blanket','Bluetooth Speaker']
+    else suggestions=['Spa Day Voucher','Designer Item','Smart Gadget','Weekend Experience','Luxury Set']
+  }
+
+  // Render suggestions
+  const grid=document.getElementById('suggestionGrid')
+  grid.innerHTML=suggestions.map(gift=>{
+    const price=giftPrices[gift]||Math.floor(budget*0.8)
+    const actualPrice=price<=budget?price:price
+    return `
+      <div class="suggestion-card" onclick="selectGift(this,'${gift}',${actualPrice})">
+        <i class="fas fa-gift gift-icon"></i>
+        <div class="gift-name">${gift}</div>
+        <div class="gift-price">₱${actualPrice.toLocaleString()}</div>
+        <div class="gift-desc">${price<=budget?'Within budget':'Slightly over'}</div>
+      </div>
+    `
+  }).join('')
+
+  document.getElementById('aiSuggestions').classList.add('active')
+  
+  // Sparkle effect
+  createSparkles(event.clientX,event.clientY)
+}
+
+function selectGift(card,gift,price){
+  document.querySelectorAll('.suggestion-card').forEach(c=>c.classList.remove('selected'))
+  card.classList.add('selected')
+  selectedGift={name:gift,price:price}
+}
+
+function closeSuggestions(){
+  document.getElementById('aiSuggestions').classList.remove('active')
+  selectedGift=null
+}
+
+function confirmSelection(){
+  if(!selectedGift){
+    alert('Please select a gift first!')
+    return
+  }
+  
+  const name=document.getElementById('recipientName').value
+  const age=document.getElementById('age').value
+  const gender=document.getElementById('gender').value
+  const occasion=document.getElementById('occasion').value
+  
+  const gift={
+    id:Date.now(),
+    recipient:name,
+    age:age||'-',
+    gender:gender||'-',
+    occasion:occasion,
+    gift:selectedGift.name,
+    price:selectedGift.price,
+    createdAt:new Date().toISOString()
+  }
+  
+  gifts.push(gift)
+  renderGifts()
+  clearForm()
+  closeSuggestions()
+  
+  // Show notification
+  showNotification(`Added gift for ${name}: ${selectedGift.name}`)
+  
+  createSparkles(window.innerWidth/2,window.innerHeight/2)
+  
+  // Save immediately
+  saveData()
+}
+
+function renderGifts(){
+  const list=document.getElementById('giftsList')
+  const totalBar=document.getElementById('totalBar')
+  
+  if(gifts.length===0){
+    list.innerHTML=`
+      <div class="empty-state">
+        <i class="fas fa-gift"></i>
+        <p>No gifts added yet. Start by adding someone special above!</p>
+      </div>
+    `
+    totalBar.style.display='none'
+    return
+  }
+  
+  const total=gifts.reduce((sum,g)=>sum+g.price,0)
+  
+  list.innerHTML=`
+    <div class="list-header">
+      <div>Recipient</div>
+      <div>Occasion</div>
+      <div>Gift</div>
+      <div>Price</div>
+      <div></div>
+    </div>
+    ${gifts.map(g=>`
+      <div class="list-item">
+        <div class="recipient-info" data-label="Recipient">
+          <div class="recipient-name">${g.recipient}</div>
+          <div class="recipient-meta">
+            ${g.age!=='-'?`<span class="age-badge">${g.age} yrs</span>`:''}
+            ${g.gender!=='-'?`<span class="gender-badge">${g.gender}</span>`:''}
+          </div>
+        </div>
+        <div data-label="Occasion"><i class="fas fa-${getOccasionIcon(g.occasion)}"></i> ${g.occasion}</div>
+        <div data-label="Gift">${g.gift}</div>
+        <div class="price-tag" data-label="Price">₱${g.price.toLocaleString()}</div>
+        <div>
+          <button class="delete-btn" onclick="deleteGift(${g.id})">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+    `).join('')}
+  `
+  
+  document.getElementById('totalAmount').textContent='₱'+total.toLocaleString()
+  document.getElementById('giftCount').textContent=gifts.length+' gift'+(gifts.length>1?'s':'')
+  totalBar.style.display='flex'
+}
+
+function getOccasionIcon(occasion){
+  const icons={
+    birthday:'birthday-cake',christmas:'tree',anniversary:'heart',
+    valentine:'heart',graduation:'graduation-cap',wedding:'rings',
+    babyshower:'baby',housewarming:'home',thankyou:'hands-helping',
+    getwell:'medkit',other:'gift'
+  }
+  return icons[occasion]||'gift'
+}
+
+function deleteGift(id){
+  if(confirm('Remove this gift?')){
+    const gift=gifts.find(g=>g.id===id)
+    gifts=gifts.filter(g=>g.id!==id)
+    renderGifts()
+    saveData()
+    
+    if(gift){
+      showNotification(`Removed gift for ${gift.recipient}`)
+    }
+  }
+}
+
+function clearForm(){
+  document.getElementById('recipientName').value=''
+  document.getElementById('relationship').value=''
+  document.getElementById('age').value=''
+  document.getElementById('gender').value=''
+  document.getElementById('occasion').value=''
+  document.getElementById('interests').value=''
+  document.getElementById('budget').value=1000
+  document.getElementById('budgetValue').textContent='1000'
+  selectedGift=null
+}
+
+function createSparkles(x,y){
+  for(let i=0;i<8;i++){
+    const sparkle=document.createElement('div')
+    sparkle.className='sparkle'
+    sparkle.innerHTML='<i class="fas fa-star"></i>'
+    sparkle.style.left=x+'px'
+    sparkle.style.top=y+'px'
+    sparkle.style.setProperty('--tx',(Math.random()-0.5)*100+'px')
+    sparkle.style.setProperty('--ty',(Math.random()-0.5)*100+'px')
+    document.body.appendChild(sparkle)
+    setTimeout(()=>sparkle.remove(),1000)
+  }
+}
+
+// Real-time sync across tabs
+window.addEventListener('storage',(e)=>{
+  if(e.key===STORAGE_KEY){
+    loadData()
+  }
+  if(e.key===NOTIF_KEY){
+    checkNotifications()
+  }
+})
+
+// Load data on startup
+window.addEventListener('DOMContentLoaded',()=>{
+  loadData()
+})
+
+// Save on page hide (mobile friendly)
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){
+    saveData()
+  }
+})
+
+// Handle online/offline
+window.addEventListener('online',()=>{
+  showNotification('Back online! Changes synced.',false)
+  loadData()
+})
+
+window.addEventListener('offline',()=>{
+  showNotification('You are offline. Changes saved locally.',false)
+})
+
+// Prevent accidental refresh data loss
+window.addEventListener('beforeunload',(e)=>{
+  saveData()
+  if(gifts.length>0){
+    // Modern browsers don't show custom message but this triggers the confirmation
+    e.preventDefault()
+    e.returnValue=''
+  }
+})
+
+// Touch feedback for mobile
+document.addEventListener('touchstart',function(){},true)
+
+// Handle resize for responsive adjustments
+let resizeTimer
+window.addEventListener('resize',()=>{
+  clearTimeout(resizeTimer)
+  resizeTimer=setTimeout(()=>{
+    // Re-render if needed for responsive changes
+    renderGifts()
+  },250)
+})
+</script>
+
+</body>
+</html>

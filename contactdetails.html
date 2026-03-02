@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Manager Julie | Contact Directory</title>
+
+<link rel="icon" type="image/png" sizes="64x64" href="adminfavicon.ico">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+:root{
+  --pink:#ff4fa3;
+  --pink-light:#ff7bbf;
+  --glass-bg:rgba(255,123,191,.18);
+  --glass-border:rgba(255,255,255,.25);
+  --text-main:#ffffff;
+  --shadow-glow:0 8px 32px rgba(255,79,163,.3);
+  --emergency-red:#ff2d55;
+  --emergency-orange:#ff9500;
+  --success-green:#2ecc71;
+  --danger-red:#e74c3c;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+html{font-size:16px}
+@media(max-width:320px){html{font-size:14px}}
+
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:url("adminbackground.png") center/cover fixed no-repeat;
+  color:var(--text-main);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  overflow-x:hidden;
+}
+
+a{text-decoration:none;color:inherit}
+a:focus,a:active{outline:none}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:rgba(255,79,163,.15)}
+::-webkit-scrollbar-thumb{
+  background:linear-gradient(180deg,#ff4fa3,#ff7bbf);
+  border-radius:10px;
+}
+
+/* LOADER */
+#loader{
+  position:fixed;
+  inset:0;
+  background:var(--pink-light);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  transition:.4s ease;
+}
+#loader.fade-out{opacity:0;visibility:hidden}
+
+.loader-content{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:20px;
+}
+.loader-content img{width:clamp(120px,30vw,190px);margin-bottom:18px}
+
+.arc-spinner{
+  width:38px;height:38px;border-radius:50%;
+  border:4px solid rgba(255,255,255,.25);
+  border-top-color:#fff;
+  border-left-color:transparent;
+  border-bottom-color:transparent;
+  animation:spin .65s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* HEADER */
+header{
+  position:sticky;top:0;z-index:1000;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:clamp(12px,3vw,18px) clamp(12px,4vw,26px);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  background:linear-gradient(270deg,#ff4fa3,#ff7bbf,#ffb3d9);
+  background-size:400% 400%;
+  animation:flow 12s ease infinite;
+}
+@keyframes flow{
+  0%{background-position:0%}
+  50%{background-position:100%}
+  100%{background-position:0%}
+}
+
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:clamp(8px,2vw,14px);
+  min-width:0;
+}
+.header-left img{height:clamp(36px,8vw,46px);width:auto}
+
+/* MOTTO */
+.motto{
+  font-size:clamp(14px,3vw,18px);
+  font-weight:600;
+  font-style:italic;
+  letter-spacing:.6px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.motto i{
+  opacity:.95;
+  font-size:clamp(14px,3vw,17px);
+  flex-shrink:0;
+}
+
+/* ICONS */
+.header-icons{display:flex;align-items:center;gap:clamp(6px,1.5vw,10px)}
+
+.header-icons a{
+  width:clamp(36px,10vw,42px);
+  height:clamp(36px,10vw,42px);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:14px;
+  transition:.3s;
+  position:relative;
+  flex-shrink:0;
+}
+
+.header-icons i{font-size:clamp(16px,4vw,18px)}
+.header-icons a:hover{box-shadow:0 0 14px rgba(255,79,163,.8)}
+
+/* NOTIFICATION BADGE */
+.notification-badge{
+  position:absolute;
+  top:-2px;
+  right:-2px;
+  width:clamp(18px,4vw,20px);
+  height:clamp(18px,4vw,20px);
+  background:#ff0066;
+  border-radius:50%;
+  border:2px solid #fff;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  font-size:clamp(10px,2.5vw,11px);
+  font-weight:700;
+  color:#fff;
+  animation:pulse-badge 2s infinite;
+  z-index:10;
+}
+.notification-badge.active{display:flex}
+@keyframes pulse-badge{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.1)}
+}
+
+/* MAIN CONTENT */
+main{
+  max-width:1200px;
+  margin:0 auto;
+  padding:clamp(20px,5vw,40px) clamp(12px,4vw,20px);
+}
+
+/* PAGE TITLE */
+.page-title{
+  text-align:center;
+  margin-bottom:clamp(24px,6vw,40px);
+}
+
+.page-title h1{
+  font-family:'Orbitron',sans-serif;
+  font-size:clamp(1.5rem,6vw,3rem);
+  font-weight:900;
+  margin-bottom:10px;
+  text-shadow:0 4px 20px rgba(255,79,163,.5);
+  line-height:1.2;
+}
+
+.page-title p{
+  opacity:.9;
+  font-size:clamp(0.95rem,3vw,1.1rem);
+}
+
+/* ADD CONTACT BUTTON */
+.add-contact-btn{
+  position:fixed;
+  bottom:clamp(20px,5vw,30px);
+  right:clamp(20px,5vw,30px);
+  width:clamp(56px,15vw,60px);
+  height:clamp(56px,15vw,60px);
+  background:linear-gradient(135deg,var(--pink),var(--pink-light));
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:clamp(20px,5vw,24px);
+  color:#fff;
+  border:none;
+  cursor:pointer;
+  box-shadow:0 8px 24px rgba(255,79,163,.5);
+  transition:all .3s ease;
+  z-index:100;
+  -webkit-tap-highlight-color:transparent;
+}
+
+.add-contact-btn:hover{
+  transform:scale(1.1) rotate(90deg);
+  box-shadow:0 12px 32px rgba(255,79,163,.6);
+}
+.add-contact-btn:active{transform:scale(0.95)}
+
+/* SECTION HEADERS */
+.section-header{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:clamp(24px,6vw,40px) 0 clamp(16px,4vw,20px);
+  padding-bottom:12px;
+  border-bottom:2px solid rgba(255,255,255,.2);
+  flex-wrap:wrap;
+}
+
+.section-header h2{
+  font-family:'Orbitron',sans-serif;
+  font-size:clamp(1.2rem,4vw,1.5rem);
+  font-weight:700;
+}
+
+.section-header i{
+  font-size:clamp(1.1rem,3.5vw,1.3rem);
+}
+
+.emergency-header{
+  color:var(--emergency-red);
+  border-bottom-color:var(--emergency-red);
+}
+
+/* CONTACT GRID */
+.contact-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));
+  gap:clamp(12px,3vw,20px);
+}
+
+/* CONTACT CARDS */
+.contact-card{
+  background:var(--glass-bg);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--glass-border);
+  border-radius:20px;
+  padding:clamp(18px,4vw,24px);
+  transition:all .3s ease;
+  position:relative;
+  overflow:hidden;
+  animation:fadeIn .5s ease;
+  width:100%;
+}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.contact-card:hover{
+  transform:translateY(-5px);
+  box-shadow:var(--shadow-glow);
+  border-color:rgba(255,255,255,.4);
+}
+
+.contact-card.emergency{
+  background:rgba(255,45,85,.15);
+  border-color:rgba(255,45,85,.3);
+}
+
+.contact-card.emergency:hover{
+  box-shadow:0 8px 32px rgba(255,45,85,.3);
+  border-color:var(--emergency-red);
+}
+
+/* CARD ACTIONS */
+.card-actions{
+  position:absolute;
+  top:12px;
+  right:12px;
+  display:flex;
+  gap:8px;
+  opacity:0;
+  transition:opacity .3s ease;
+}
+
+.contact-card:hover .card-actions{
+  opacity:1;
+}
+
+.card-action-btn{
+  width:32px;
+  height:32px;
+  border-radius:8px;
+  border:none;
+  background:rgba(255,255,255,.2);
+  color:#fff;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:all .2s ease;
+  font-size:14px;
+  -webkit-tap-highlight-color:transparent;
+}
+
+.card-action-btn:hover{transform:scale(1.1)}
+.card-action-btn.edit:hover{background:#3498db}
+.card-action-btn.delete:hover{background:var(--danger-red)}
+.card-action-btn:active{transform:scale(0.95)}
+
+.contact-header{
+  display:flex;
+  align-items:center;
+  gap:15px;
+  margin-bottom:16px;
+  padding-right:70px;
+  min-width:0;
+}
+
+.contact-avatar{
+  width:clamp(50px,12vw,60px);
+  height:clamp(50px,12vw,60px);
+  background:linear-gradient(135deg,var(--pink),var(--pink-light));
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:clamp(20px,4vw,24px);
+  font-weight:700;
+  color:#fff;
+  flex-shrink:0;
+}
+
+.contact-card.emergency .contact-avatar{
+  background:linear-gradient(135deg,var(--emergency-red),var(--emergency-orange));
+  animation:pulse 2s infinite;
+}
+
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(255,45,85,.4)}
+  50%{box-shadow:0 0 0 10px rgba(255,45,85,0)}
+}
+
+.contact-info{
+  min-width:0;
+  flex:1;
+}
+
+.contact-info h3{
+  font-size:clamp(1.1rem,3.5vw,1.2rem);
+  font-weight:700;
+  margin-bottom:4px;
+  word-break:break-word;
+  line-height:1.3;
+}
+
+.contact-info .relationship{
+  font-size:clamp(0.8rem,2.5vw,0.85rem);
+  opacity:.8;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.contact-details{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.contact-detail{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:clamp(0.9rem,2.8vw,0.95rem);
+  padding:8px 12px;
+  background:rgba(255,255,255,.1);
+  border-radius:10px;
+  transition:all .2s ease;
+  min-width:0;
+}
+
+.contact-detail:hover{background:rgba(255,255,255,.2)}
+
+.contact-detail i{
+  width:20px;
+  text-align:center;
+  opacity:.8;
+  flex-shrink:0;
+}
+
+.contact-detail a{
+  color:inherit;
+  flex:1;
+  word-break:break-all;
+  min-width:0;
+}
+
+.contact-detail span{
+  flex:1;
+  word-break:break-word;
+  min-width:0;
+}
+
+.contact-actions{
+  display:flex;
+  gap:10px;
+  margin-top:16px;
+}
+
+.action-btn{
+  flex:1;
+  padding:clamp(8px,2.5vw,10px);
+  border-radius:10px;
+  border:none;
+  background:rgba(255,255,255,.15);
+  color:#fff;
+  cursor:pointer;
+  font-size:clamp(0.85rem,2.5vw,0.9rem);
+  transition:all .3s ease;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  -webkit-tap-highlight-color:transparent;
+  font-weight:600;
+}
+
+.action-btn:hover{transform:scale(1.05)}
+.action-btn:active{transform:scale(0.98)}
+.action-btn.call{background:rgba(46,204,113,.2)}
+.action-btn.call:hover{background:#2ecc71}
+.action-btn.message{background:rgba(52,152,219,.2)}
+.action-btn.message:hover{background:#3498db}
+
+/* MODAL */
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.85);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  z-index:2000;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  overflow-y:auto;
+}
+
+.modal.active{
+  display:flex;
+}
+
+.modal-content{
+  background:linear-gradient(135deg,rgba(255,79,163,.95),rgba(255,123,191,.95));
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border-radius:24px;
+  padding:clamp(24px,6vw,32px);
+  width:100%;
+  max-width:500px;
+  max-height:85vh;
+  overflow-y:auto;
+  border:1px solid rgba(255,255,255,.3);
+  box-shadow:0 25px 50px rgba(0,0,0,.3);
+  animation:slideUp .3s ease;
+  margin:auto;
+}
+
+@keyframes slideUp{
+  from{opacity:0;transform:translateY(50px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.modal-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:24px;
+  gap:12px;
+}
+
+.modal-header h2{
+  font-family:'Orbitron',sans-serif;
+  font-size:clamp(1.2rem,4vw,1.5rem);
+  line-height:1.3;
+}
+
+.close-modal{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  background:rgba(255,255,255,.2);
+  border:none;
+  color:#fff;
+  font-size:20px;
+  cursor:pointer;
+  transition:all .3s ease;
+  flex-shrink:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.close-modal:hover{
+  background:rgba(255,255,255,.3);
+  transform:rotate(90deg);
+}
+.close-modal:active{transform:scale(0.9)}
+
+.form-group{
+  margin-bottom:20px;
+}
+
+.form-group label{
+  display:block;
+  margin-bottom:8px;
+  font-weight:600;
+  font-size:clamp(0.85rem,2.5vw,0.9rem);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea{
+  width:100%;
+  padding:clamp(12px,3vw,14px);
+  background:rgba(255,255,255,.15);
+  border:2px solid rgba(255,255,255,.2);
+  border-radius:12px;
+  color:#fff;
+  font-family:inherit;
+  font-size:clamp(0.95rem,3vw,1rem);
+  transition:all .3s ease;
+  -webkit-appearance:none;
+  appearance:none;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus{
+  outline:none;
+  border-color:#fff;
+  background:rgba(255,255,255,.25);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder{
+  color:rgba(255,255,255,.6);
+}
+
+.form-group select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='white'%3E%3Cpath d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 14px center;
+  padding-right:40px;
+}
+
+.form-group select option{
+  background:var(--pink);
+  color:#fff;
+}
+
+.checkbox-group{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-top:8px;
+}
+
+.checkbox-group input[type="checkbox"]{
+  width:20px;
+  height:20px;
+  accent-color:var(--emergency-red);
+  flex-shrink:0;
+}
+
+.form-actions{
+  display:flex;
+  gap:12px;
+  margin-top:24px;
+}
+
+.save-btn, .cancel-btn{
+  flex:1;
+  padding:clamp(14px,4vw,16px);
+  border:none;
+  border-radius:12px;
+  font-family:'Orbitron',sans-serif;
+  font-size:clamp(1rem,3vw,1.1rem);
+  font-weight:700;
+  cursor:pointer;
+  transition:all .3s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+
+.save-btn{
+  background:#fff;
+  color:var(--pink);
+}
+
+.save-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 30px rgba(0,0,0,.2);
+}
+.save-btn:active{transform:translateY(0)}
+
+.cancel-btn{
+  background:rgba(255,255,255,.2);
+  color:#fff;
+}
+
+.cancel-btn:hover{background:rgba(255,255,255,.3)}
+.cancel-btn:active{transform:scale(0.98)}
+
+.delete-confirm-btn{
+  width:100%;
+  padding:clamp(14px,4vw,16px);
+  background:var(--danger-red);
+  color:#fff;
+  border:none;
+  border-radius:12px;
+  font-family:'Orbitron',sans-serif;
+  font-size:clamp(1rem,3vw,1.1rem);
+  font-weight:700;
+  cursor:pointer;
+  transition:all .3s ease;
+  margin-top:12px;
+  -webkit-tap-highlight-color:transparent;
+}
+
+.delete-confirm-btn:hover{
+  background:#c0392b;
+  transform:translateY(-2px);
+}
+.delete-confirm-btn:active{transform:translateY(0)}
+
+/* DELETE CONFIRMATION MODAL */
+.delete-modal .modal-content{
+  text-align:center;
+  max-width:400px;
+}
+
+.delete-modal i{
+  font-size:clamp(48px,12vw,64px);
+  color:var(--danger-red);
+  margin-bottom:20px;
+}
+
+.delete-modal h3{
+  font-family:'Orbitron',sans-serif;
+  font-size:clamp(1.2rem,4vw,1.5rem);
+  margin-bottom:12px;
+}
+
+.delete-modal p{
+  opacity:.9;
+  margin-bottom:24px;
+  font-size:clamp(0.9rem,3vw,1rem);
+  line-height:1.5;
+}
+
+/* FOOTER */
+footer{
+  text-align:center;
+  padding:clamp(24px,6vw,40px) clamp(12px,4vw,20px);
+  opacity:.7;
+  font-size:clamp(0.85rem,2.5vw,0.9rem);
+  margin-bottom:80px;
+}
+
+/* TOAST NOTIFICATION */
+.toast{
+  position:fixed;
+  bottom:clamp(80px,20vw,100px);
+  left:50%;
+  transform:translateX(-50%) translateY(100px);
+  background:rgba(0,0,0,.9);
+  color:#fff;
+  padding:clamp(12px,3vw,16px) clamp(18px,5vw,24px);
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  opacity:0;
+  transition:all .3s ease;
+  z-index:3000;
+  border:1px solid var(--pink);
+  max-width:90vw;
+  font-size:clamp(0.9rem,2.8vw,1rem);
+}
+
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+.toast i{
+  color:var(--success-green);
+  flex-shrink:0;
+}
+
+.toast.error i{color:var(--danger-red)}
+
+/* RESPONSIVE TOUCH OPTIMIZATIONS */
+@media(hover:none){
+  .card-actions{opacity:1}
+  .contact-card:hover{transform:none}
+  .add-contact-btn:hover{transform:none}
+}
+
+@media(max-width:768px){
+  .header-left .motto{
+    display:none;
+  }
+  
+  .contact-grid{
+    grid-template-columns:1fr;
+  }
+  
+  .card-actions{
+    opacity:1;
+  }
+  
+  .form-actions{
+    flex-direction:column;
+  }
+  
+  .modal-content{
+    max-height:80vh;
+  }
+}
+
+/* Safe area for notched devices */
+@supports(padding:max(0px)){
+  header{
+    padding-left:max(clamp(12px,4vw,26px),env(safe-area-inset-left));
+    padding-right:max(clamp(12px,4vw,26px),env(safe-area-inset-right));
+    padding-top:max(clamp(12px,3vw,18px),env(safe-area-inset-top));
+  }
+  
+  .add-contact-btn{
+    bottom:max(clamp(20px,5vw,30px),env(safe-area-inset-bottom));
+    right:max(clamp(20px,5vw,30px),env(safe-area-inset-right));
+  }
+  
+  main{
+    padding-left:max(clamp(12px,4vw,20px),env(safe-area-inset-left));
+    padding-right:max(clamp(12px,4vw,20px),env(safe-area-inset-right));
+  }
+}
+
+/* Landscape mode optimizations */
+@media(max-height:500px) and (orientation:landscape){
+  .modal-content{
+    max-height:75vh;
+  }
+  
+  .page-title h1{
+    font-size:1.5rem;
+  }
+  
+  .add-contact-btn{
+    width:50px;
+    height:50px;
+  }
+}
+
+/* Dark mode support */
+@media(prefers-color-scheme:dark){
+  :root{
+    --glass-bg:rgba(255,123,191,.12);
+  }
+}
+
+/* Reduced motion */
+@media(prefers-reduced-motion:reduce){
+  *{
+    animation-duration:0.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.01ms !important;
+  }
+}
+
+/* Empty state */
+.empty-state{
+  text-align:center;
+  padding:40px 20px;
+  opacity:0.7;
+}
+
+.empty-state i{
+  font-size:48px;
+  margin-bottom:16px;
+  opacity:0.5;
+}
+
+/* Sync indicator */
+.sync-indicator{
+  position:fixed;
+  top:clamp(70px,15vw,80px);
+  right:20px;
+  background:rgba(0,0,0,.8);
+  color:#fff;
+  padding:8px 16px;
+  border-radius:20px;
+  font-size:12px;
+  display:none;
+  align-items:center;
+  gap:8px;
+  z-index:999;
+  backdrop-filter:blur(10px);
+}
+
+.sync-indicator.show{display:flex}
+.sync-indicator.syncing i{animation:spin 1s linear infinite}
+</style>
+</head>
+
+<body>
+
+<!-- AUDIO -->
+<audio id="bgMusic" src="coffee.mp3" loop></audio>
+<audio id="notificationSound" src="data:audio/wav;base64,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lzGwkEb+ulzGwkEX+ulzGwkEP+ulzGwkEL+ulzGwkEH+ulzGwkD/+ulzGwkD7+ulzGwkD3+ulzGwkDz+ulzGwkDv+ulzGwkDr+ulzGwkDn+ulzGwkDj+ulzGwkDf+ulzGwkDb+ulzGwkDX+ulzGwkDT+ulzGwkDP+ulzGwkDL+ulzGwkDH+ulzGwkDD+ulzGwkC/+ulzGwkC7+ulzGwkC3+ulzGwkCz+ulzGwkCv+ulzGwkCr+ulzGwkCn+ulzGwkCj+ulzGwkCf+ulzGwkCb+ulzGwkCX+ulzGwkCT+ulzGwkCP+ulzGwkCL+ulzGwkCH+ulzGwkCD+ulzGwkB/+ulzGwkB7+ulzGwkB3+ulzGwkBz+ulzGwkBv+ulzGwkBr+ulzGwkBn+ulzGwkBj+ulzGwkBf+ulzGwkBb+ulzGwkBX+ulzGwkBT+ulzGwkBP+ulzGwkBL+ulzGwkBH+ulzGwkBD+ulzGwkA/+ulzGwkA7+ulzGwkA3+ulzGwkAz+ulzGwkAv+ulzGwkAr+ulzGwkAn+ulzGwkAj+ulzGwkAf+ulzGwkAb+ulzGwkAX+ulzGwkAT+ulzGwkAP+ulzGwkAL+ulzGwkAH+ulzGwkAD+ulzGwkAA"></audio>
+
+<!-- SYNC INDICATOR -->
+<div class="sync-indicator" id="syncIndicator">
+  <i class="fas fa-sync"></i>
+  <span>Saving...</span>
+</div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-content">
+    <img src="adminlogo.png" alt="Logo">
+    <div class="arc-spinner"></div>
+  </div>
+</div>
+
+<header>
+  <div class="header-left">
+    <a href="homepage.html"><img src="adminlogo.png" alt="Logo"></a>
+    <div class="motto" id="motto"></div>
+  </div>
+
+  <div class="header-icons">
+    <a href="homepage.html" title="Home" id="homeLink">
+      <i class="fas fa-home"></i>
+      <span class="notification-badge" id="homeBadge"></span>
+    </a>
+    <a id="musicToggle" title="Toggle Music">
+      <i class="fas fa-music"></i>
+    </a>
+  </div>
+</header>
+
+<main>
+  <div class="page-title">
+    <h1><i class="fas fa-address-book"></i> Contact Directory</h1>
+    <p>My personal slambook & emergency contacts</p>
+  </div>
+
+  <!-- Emergency Contacts Section -->
+  <div class="section-header emergency-header">
+    <i class="fas fa-ambulance"></i>
+    <h2>Emergency Contacts (Philippines)</h2>
+  </div>
+  
+  <div class="contact-grid" id="emergencyGrid">
+    <!-- Populated by JS -->
+  </div>
+
+  <!-- Personal Contacts Section -->
+  <div class="section-header">
+    <i class="fas fa-users"></i>
+    <h2>My Contacts</h2>
+  </div>
+  
+  <div class="contact-grid" id="personalGrid">
+    <!-- Populated by JS -->
+  </div>
+</main>
+
+<footer>
+  <p>&copy; 2024 Manager Julie. Personal Contact Directory. <i class="fas fa-heart" style="color:var(--pink)"></i></p>
+</footer>
+
+<!-- Add/Edit Contact Button -->
+<button class="add-contact-btn" onclick="openModal()" title="Add New Contact">
+  <i class="fas fa-plus"></i>
+</button>
+
+<!-- Add/Edit Contact Modal -->
+<div class="modal" id="contactModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modalTitle"><i class="fas fa-user-plus"></i> Add New Contact</h2>
+      <button class="close-modal" onclick="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <form id="addContactForm">
+      <input type="hidden" id="editId" value="">
+      
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="contactName" placeholder="e.g., Juan Dela Cruz" required autocomplete="name">
+      </div>
+      
+      <div class="form-group">
+        <label>Relationship</label>
+        <select id="contactRelation" required>
+          <option value="">Select relationship...</option>
+          <option value="Family">Family</option>
+          <option value="Friend">Friend</option>
+          <option value="Best Friend">Best Friend</option>
+          <option value="Boyfriend">Boyfriend</option>
+          <option value="Girlfriend">Girlfriend</option>
+          <option value="Husband">Husband</option>
+          <option value="Wife">Wife</option>
+          <option value="Classmate">Classmate</option>
+          <option value="Officemate">Officemate</option>
+          <option value="Neighbor">Neighbor</option>
+          <option value="Doctor">Doctor</option>
+          <option value="Service">Service Provider</option>
+          <option value="Emergency">Emergency Service</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Phone Number</label>
+        <input type="tel" id="contactPhone" placeholder="09XX-XXX-XXXX" required autocomplete="tel">
+      </div>
+      
+      <div class="form-group">
+        <label>Secondary Phone (Optional)</label>
+        <input type="tel" id="contactPhone2" placeholder="Secondary number" autocomplete="tel">
+      </div>
+      
+      <div class="form-group">
+        <label>Address (Optional)</label>
+        <input type="text" id="contactAddress" placeholder="City, Province" autocomplete="street-address">
+      </div>
+      
+      <div class="form-group">
+        <label>Birthday (Optional)</label>
+        <input type="date" id="contactBirthday" autocomplete="bday">
+      </div>
+      
+      <div class="form-group">
+        <label>Email (Optional)</label>
+        <input type="email" id="contactEmail" placeholder="email@example.com" autocomplete="email">
+      </div>
+      
+      <div class="form-group">
+        <label>Social Media / Notes</label>
+        <textarea id="contactNotes" rows="3" placeholder="Facebook link, nickname, favorites, etc..."></textarea>
+      </div>
+      
+      <div class="form-group">
+        <div class="checkbox-group">
+          <input type="checkbox" id="isEmergency">
+          <label for="isEmergency" style="margin:0;">Mark as Emergency Contact</label>
+        </div>
+      </div>
+      
+      <div class="form-actions">
+        <button type="button" class="cancel-btn" onclick="closeModal()">Cancel</button>
+        <button type="submit" class="save-btn">
+          <i class="fas fa-save"></i> <span id="saveBtnText">Save Contact</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal delete-modal" id="deleteModal">
+  <div class="modal-content">
+    <i class="fas fa-exclamation-circle"></i>
+    <h3>Delete Contact?</h3>
+    <p>Are you sure you want to delete this contact? This action cannot be undone.</p>
+    <button class="cancel-btn" onclick="closeDeleteModal()" style="width:100%; margin-bottom:12px;">Cancel</button>
+    <button class="delete-confirm-btn" onclick="deleteContact()">
+      <i class="fas fa-trash"></i> Yes, Delete
+    </button>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast" id="toast">
+  <i class="fas fa-check-circle"></i>
+  <span id="toastMessage">Contact saved successfully!</span>
+</div>
+
+<script>
+// Data Management with localStorage
+const STORAGE_KEY = 'julie_contacts_data'
+const NOTIFICATION_KEY = 'julie_notifications'
+
+let contacts = new Map()
+let deleteTargetId = null
+let isEditing = false
+let notificationCount = 0
+
+// Default emergency contacts
+const defaultEmergencyContacts = [
+  {
+    id: 'emergency-911',
+    name: 'Emergency Hotline',
+    relation: 'Emergency',
+    phones: ['911'],
+    address: '',
+    birthday: '',
+    email: '',
+    notes: 'National Emergency',
+    isEmergency: true,
+    isDefault: true
+  },
+  {
+    id: 'emergency-pnp',
+    name: 'Philippine National Police',
+    relation: 'Emergency',
+    phones: ['117', '0917-555-6677'],
+    address: '',
+    birthday: '',
+    email: '',
+    notes: 'Police Assistance',
+    isEmergency: true,
+    isDefault: true
+  },
+  {
+    id: 'emergency-bfp',
+    name: 'Bureau of Fire Protection',
+    relation: 'Emergency',
+    phones: ['160', '0920-647-2587'],
+    address: '',
+    birthday: '',
+    email: '',
+    notes: 'Fire Emergency',
+    isEmergency: true,
+    isDefault: true
+  },
+  {
+    id: 'emergency-redcross',
+    name: 'Philippine Red Cross',
+    relation: 'Emergency',
+    phones: ['143', '0917-8900-143'],
+    address: '',
+    birthday: '',
+    email: '',
+    notes: 'Medical Emergency',
+    isEmergency: true,
+    isDefault: true
+  },
+  {
+    id: 'emergency-ndrrmc',
+    name: 'NDRRMC',
+    relation: 'Emergency',
+    phones: ['(02) 911-1406', '0917-890-4376'],
+    address: '',
+    birthday: '',
+    email: '',
+    notes: 'Disaster Response',
+    isEmergency: true,
+    isDefault: true
+  },
+  {
+    id: 'emergency-poison',
+    name: 'Poison Control',
+    relation: 'Emergency',
+    phones: ['(02) 524-1078'],
+    address: '',
+    birthday: '',
+    email: '',
+    notes: 'Poison Emergency',
+    isEmergency: true,
+    isDefault: true
+  }
+]
+
+// Sample personal contacts
+const defaultPersonalContacts = [
+  {
+    id: 'personal-1',
+    name: 'Mama',
+    relation: 'Family',
+    phones: ['0917-123-4567'],
+    address: 'Manila, Philippines',
+    birthday: '03-15',
+    email: '',
+    notes: 'Favorite: Flowers, Cooking',
+    isEmergency: false,
+    isDefault: true
+  },
+  {
+    id: 'personal-2',
+    name: 'John Doe',
+    relation: 'Best Friend',
+    phones: ['0918-987-6543'],
+    address: '',
+    birthday: '12-25',
+    email: '',
+    notes: 'Nickname: JD, Johnny | facebook.com/johndoe',
+    isEmergency: false,
+    isDefault: true
+  }
+]
+
+/* INITIALIZATION */
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    loader.classList.add("fade-out")
+    initializeData()
+  }, 250)
+})
+
+function initializeData() {
+  // Load contacts from localStorage
+  const savedData = localStorage.getItem(STORAGE_KEY)
+  if (savedData) {
+    try {
+      const parsed = JSON.parse(savedData)
+      parsed.forEach(contact => contacts.set(contact.id, contact))
+    } catch (e) {
+      console.error('Error loading contacts:', e)
+      loadDefaults()
+    }
+  } else {
+    loadDefaults()
+  }
+  
+  renderAllContacts()
+  loadNotifications()
+  setupRealtimeSync()
+}
+
+function loadDefaults() {
+  defaultEmergencyContacts.forEach(c => contacts.set(c.id, c))
+  defaultPersonalContacts.forEach(c => contacts.set(c.id, c))
+  saveToStorage()
+}
+
+function saveToStorage() {
+  const data = Array.from(contacts.values())
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+  showSyncIndicator()
+}
+
+function showSyncIndicator() {
+  const indicator = document.getElementById('syncIndicator')
+  indicator.classList.add('show', 'syncing')
+  setTimeout(() => {
+    indicator.classList.remove('syncing')
+    setTimeout(() => indicator.classList.remove('show'), 1000)
+  }, 500)
+}
+
+/* REALTIME SYNC ACROSS TABS */
+function setupRealtimeSync() {
+  window.addEventListener('storage', (e) => {
+    if (e.key === STORAGE_KEY) {
+      // Reload contacts from storage
+      contacts.clear()
+      const savedData = localStorage.getItem(STORAGE_KEY)
+      if (savedData) {
+        const parsed = JSON.parse(savedData)
+        parsed.forEach(contact => contacts.set(contact.id, contact))
+        renderAllContacts()
+        showToast('Data updated from another device', 'success')
+        playNotificationSound()
+      }
+    }
+    
+    if (e.key === NOTIFICATION_KEY) {
+      updateNotificationBadge()
+    }
+  })
+}
+
+/* NOTIFICATION SYSTEM */
+function addNotification(type = 'general') {
+  const notifications = JSON.parse(localStorage.getItem(NOTIFICATION_KEY) || '[]')
+  notifications.push({
+    id: Date.now(),
+    type: type,
+    timestamp: new Date().toISOString(),
+    read: false
+  })
+  localStorage.setItem(NOTIFICATION_KEY, JSON.stringify(notifications))
+  updateNotificationBadge()
+  playNotificationSound()
+}
+
+function loadNotifications() {
+  updateNotificationBadge()
+}
+
+function updateNotificationBadge() {
+  const notifications = JSON.parse(localStorage.getItem(NOTIFICATION_KEY) || '[]')
+  const unreadCount = notifications.filter(n => !n.read).length
+  const badge = document.getElementById('homeBadge')
+  
+  if (unreadCount > 0) {
+    badge.textContent = unreadCount > 9 ? '9+' : unreadCount
+    badge.classList.add('active')
+  } else {
+    badge.classList.remove('active')
+  }
+}
+
+function clearNotifications() {
+  localStorage.removeItem(NOTIFICATION_KEY)
+  updateNotificationBadge()
+}
+
+function playNotificationSound() {
+  const sound = document.getElementById('notificationSound')
+  sound.volume = 0.5
+  sound.play().catch(e => {
+    // Auto-play blocked, ignore error
+    console.log('Audio play blocked:', e)
+  })
+}
+
+/* RENDERING */
+function renderAllContacts() {
+  const emergencyGrid = document.getElementById('emergencyGrid')
+  const personalGrid = document.getElementById('personalGrid')
+  
+  emergencyGrid.innerHTML = ''
+  personalGrid.innerHTML = ''
+  
+  contacts.forEach(contact => {
+    const card = createContactCard(contact)
+    if (contact.isEmergency) {
+      emergencyGrid.appendChild(card)
+    } else {
+      personalGrid.appendChild(card)
+    }
+  })
+  
+  // Show empty state if no personal contacts
+  if (!Array.from(contacts.values()).some(c => !c.isEmergency)) {
+    personalGrid.innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1;">
+        <i class="fas fa-user-plus"></i>
+        <p>No personal contacts yet. Add your first contact!</p>
+      </div>
+    `
+  }
+}
+
+function createContactCard(contact) {
+  const card = document.createElement('div')
+  card.className = `contact-card ${contact.isEmergency ? 'emergency' : ''}`
+  card.dataset.id = contact.id
+  
+  const initials = contact.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
+  
+  let detailsHTML = ''
+  contact.phones.forEach((p, idx) => {
+    if (p) {
+      detailsHTML += `
+        <div class="contact-detail">
+          <i class="fas fa-${idx === 0 ? 'phone' : 'mobile-alt'}"></i>
+          <a href="tel:${p.replace(/[^0-9+]/g, '')}">${p}</a>
+        </div>
+      `
+    }
+  })
+  
+  if (contact.email) {
+    detailsHTML += `
+      <div class="contact-detail">
+        <i class="fas fa-envelope"></i>
+        <a href="mailto:${contact.email}">${contact.email}</a>
+      </div>
+    `
+  }
+  
+  if (contact.address) {
+    detailsHTML += `
+      <div class="contact-detail">
+        <i class="fas fa-map-marker-alt"></i>
+        <span>${contact.address}</span>
+      </div>
+    `
+  }
+  
+  if (contact.birthday) {
+    const bdayText = formatBirthday(contact.birthday)
+    detailsHTML += `
+      <div class="contact-detail">
+        <i class="fas fa-birthday-cake"></i>
+        <span>${bdayText}</span>
+      </div>
+    `
+  }
+  
+  if (contact.notes) {
+    detailsHTML += `
+      <div class="contact-detail">
+        <i class="fas fa-sticky-note"></i>
+        <span>${contact.notes}</span>
+      </div>
+    `
+  }
+  
+  const relationIcon = contact.isEmergency ? 'exclamation-circle' : 'user'
+  const avatarBg = contact.isEmergency ? 
+    'background:linear-gradient(135deg,var(--emergency-red),var(--emergency-orange))' : ''
+  
+  card.innerHTML = `
+    <div class="card-actions">
+      <button class="card-action-btn edit" onclick="editContact('${contact.id}')" title="Edit">
+        <i class="fas fa-pen"></i>
+      </button>
+      <button class="card-action-btn delete" onclick="confirmDelete('${contact.id}')" title="Delete">
+        <i class="fas fa-trash"></i>
+      </button>
+    </div>
+    <div class="contact-header">
+      <div class="contact-avatar" style="${avatarBg}">${contact.isEmergency ? initials.substring(0,2) : initials}</div>
+      <div class="contact-info">
+        <h3>${escapeHtml(contact.name)}</h3>
+        <span class="relationship"><i class="fas fa-${relationIcon}"></i> ${contact.relation}</span>
+      </div>
+    </div>
+    <div class="contact-details">
+      ${detailsHTML}
+    </div>
+    <div class="contact-actions">
+      <button class="action-btn call" onclick="window.location.href='tel:${contact.phones[0]?.replace(/[^0-9+]/g, '') || ''}'">
+        <i class="fas fa-phone"></i> Call
+      </button>
+      ${!contact.isEmergency ? `
+      <button class="action-btn message" onclick="window.location.href='sms:${contact.phones[0]?.replace(/[^0-9+]/g, '') || ''}'">
+        <i class="fas fa-comment"></i> Text
+      </button>
+      ` : ''}
+    </div>
+  `
+  
+  return card
+}
+
+function formatBirthday(bday) {
+  if (!bday) return ''
+  if (bday.includes('-')) {
+    const [month, day] = bday.split('-')
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    const monthIndex = parseInt(month) - 1
+    return `${months[monthIndex]} ${day}`
+  }
+  return bday
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div')
+  div.textContent = text
+  return div.innerHTML
+}
+
+/* MOTTO */
+const titles = [
+  ['fas fa-bolt', 'Alam kong kaya mo yan Julie, Magiging Successful ka'],
+  ['fas fa-crown', 'You are a beautiful QUEEN JULIE'],
+  ['fas fa-money-bill', 'Yayaman ka Julie'],
+  ['fas fa-heart', 'I Love you Julie']
+]
+const t = titles[Math.random() * titles.length | 0]
+motto.innerHTML = `<i class="${t[0]}"></i>${t[1]}`
+
+/* MUSIC */
+let musicOn = false
+musicToggle.onclick = () => {
+  musicOn = !musicOn
+  musicOn ? bgMusic.play() : bgMusic.pause()
+  musicToggle.style.background = musicOn ? 'rgba(255,255,255,.3)' : ''
+}
+
+/* MODAL FUNCTIONS */
+function openModal() {
+  isEditing = false
+  document.getElementById('modalTitle').innerHTML = '<i class="fas fa-user-plus"></i> Add New Contact'
+  document.getElementById('saveBtnText').textContent = 'Save Contact'
+  document.getElementById('editId').value = ''
+  document.getElementById('addContactForm').reset()
+  document.getElementById('contactModal').classList.add('active')
+  document.body.style.overflow = 'hidden'
+}
+
+function openEditModal() {
+  document.getElementById('modalTitle').innerHTML = '<i class="fas fa-user-edit"></i> Edit Contact'
+  document.getElementById('saveBtnText').textContent = 'Update Contact'
+  document.getElementById('contactModal').classList.add('active')
+  document.body.style.overflow = 'hidden'
+}
+
+function closeModal() {
+  document.getElementById('contactModal').classList.remove('active')
+  document.body.style.overflow = ''
+  setTimeout(() => {
+    if (!isEditing) {
+      document.getElementById('addContactForm').reset()
+      document.getElementById('editId').value = ''
+    }
+    isEditing = false
+  }, 300)
+}
+
+function closeDeleteModal() {
+  document.getElementById('deleteModal').classList.remove('active')
+  document.body.style.overflow = ''
+  deleteTargetId = null
+}
+
+// Close modals when clicking outside
+document.getElementById('contactModal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('contactModal')) {
+    closeModal()
+  }
+})
+
+document.getElementById('deleteModal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('deleteModal')) {
+    closeDeleteModal()
+  }
+})
+
+/* EDIT CONTACT */
+function editContact(id) {
+  const contact = contacts.get(id)
+  if (!contact) return
+  
+  isEditing = true
+  document.getElementById('editId').value = id
+  document.getElementById('contactName').value = contact.name
+  document.getElementById('contactRelation').value = contact.relation
+  document.getElementById('contactPhone').value = contact.phones[0] || ''
+  document.getElementById('contactPhone2').value = contact.phones[1] || ''
+  document.getElementById('contactAddress').value = contact.address
+  document.getElementById('contactBirthday').value = contact.birthday
+  document.getElementById('contactEmail').value = contact.email
+  document.getElementById('contactNotes').value = contact.notes
+  document.getElementById('isEmergency').checked = contact.isEmergency
+  
+  openEditModal()
+}
+
+/* CONFIRM DELETE */
+function confirmDelete(id) {
+  deleteTargetId = id
+  document.getElementById('deleteModal').classList.add('active')
+  document.body.style.overflow = 'hidden'
+}
+
+/* DELETE CONTACT */
+function deleteContact() {
+  if (!deleteTargetId) return
+  
+  const card = document.querySelector(`[data-id="${deleteTargetId}"]`)
+  if (card) {
+    card.style.animation = 'fadeOut .3s ease forwards'
+    setTimeout(() => {
+      contacts.delete(deleteTargetId)
+      saveToStorage()
+      renderAllContacts()
+      showToast('Contact deleted successfully', 'success')
+      addNotification('delete')
+    }, 300)
+  }
+  
+  closeDeleteModal()
+}
+
+/* FORM SUBMISSION */
+document.getElementById('addContactForm').addEventListener('submit', function(e) {
+  e.preventDefault()
+  
+  const editId = document.getElementById('editId').value
+  const name = document.getElementById('contactName').value.trim()
+  const relation = document.getElementById('contactRelation').value
+  const phone = document.getElementById('contactPhone').value.trim()
+  const phone2 = document.getElementById('contactPhone2').value.trim()
+  const address = document.getElementById('contactAddress').value.trim()
+  const birthday = document.getElementById('contactBirthday').value
+  const email = document.getElementById('contactEmail').value.trim()
+  const notes = document.getElementById('contactNotes').value.trim()
+  const isEmergency = document.getElementById('isEmergency').checked
+  
+  const phones = [phone]
+  if (phone2) phones.push(phone2)
+  
+  // Format birthday for storage
+  let bdayFormatted = ''
+  if (birthday) {
+    const date = new Date(birthday)
+    bdayFormatted = `${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+  }
+  
+  if (editId) {
+    // UPDATE EXISTING
+    const existing = contacts.get(editId)
+    const updatedContact = {
+      ...existing,
+      name,
+      relation,
+      phones,
+      address,
+      birthday: bdayFormatted,
+      email,
+      notes,
+      isEmergency
+    }
+    contacts.set(editId, updatedContact)
+    saveToStorage()
+    renderAllContacts()
+    showToast('Contact updated successfully!', 'success')
+    addNotification('update')
+  } else {
+    // CREATE NEW
+    const newId = 'contact-' + Date.now()
+    const newContact = {
+      id: newId,
+      name,
+      relation,
+      phones,
+      address,
+      birthday: bdayFormatted,
+      email,
+      notes,
+      isEmergency,
+      isDefault: false
+    }
+    contacts.set(newId, newContact)
+    saveToStorage()
+    renderAllContacts()
+    showToast('Contact added successfully!', 'success')
+    addNotification('add')
+  }
+  
+  closeModal()
+})
+
+/* TOAST NOTIFICATION */
+function showToast(message, type = 'success') {
+  const toast = document.getElementById('toast')
+  const toastMessage = document.getElementById('toastMessage')
+  const icon = toast.querySelector('i')
+  
+  toastMessage.textContent = message
+  
+  if (type === 'error') {
+    icon.className = 'fas fa-exclamation-circle'
+    toast.classList.add('error')
+  } else {
+    icon.className = 'fas fa-check-circle'
+    toast.classList.remove('error')
+  }
+  
+  toast.classList.add('show')
+  
+  setTimeout(() => {
+    toast.classList.remove('show')
+  }, 3000)
+}
+
+// Add fadeOut animation
+const style = document.createElement('style')
+style.textContent = `
+  @keyframes fadeOut{
+    to{
+      opacity:0;
+      transform:scale(0.9);
+    }
+  }
+`
+document.head.appendChild(style)
+
+// Handle page visibility for real-time updates
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) {
+    // Check for updates when tab becomes visible
+    const savedData = localStorage.getItem(STORAGE_KEY)
+    if (savedData) {
+      const parsed = JSON.parse(savedData)
+      const currentIds = Array.from(contacts.keys()).sort().join(',')
+      const savedIds = parsed.map(c => c.id).sort().join(',')
+      
+      if (currentIds !== savedIds) {
+        contacts.clear()
+        parsed.forEach(contact => contacts.set(contact.id, contact))
+        renderAllContacts()
+      }
+    }
+    updateNotificationBadge()
+  }
+})
+</script>
+
+</body>
+</html>
