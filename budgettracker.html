@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -321,11 +322,11 @@ button.delete-btn:hover i{color:var(--pink);}
     <canvas id="donutChart"></canvas>
   </div>
 
-  <!-- SAVINGS CARD -->
+  <!-- SAVINGS CARD - UPDATED -->
   <div class="savings-card">
     <h2>TOTAL SAVINGS</h2>
     <p id="totalSavings">₱0</p>
-    <p id="savingsPercent">0% increase</p>
+    <p id="yearlySavingsInfo">This Year: ₱0</p>
   </div>
 </div>
 
@@ -389,23 +390,27 @@ const STORAGE_KEYS = {
   CATEGORIES: 'julie_budget_categories',
   INCOMES: 'julie_budget_incomes',
   EXPENSES: 'julie_budget_expenses',
-  NOTIFICATIONS: 'julie_budget_notifications'
+  NOTIFICATIONS: 'julie_budget_notifications',
+  SAVINGS_DATA: 'julie_budget_savings_data'
 };
 
 function saveToStorage(){
   localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(categories));
   localStorage.setItem(STORAGE_KEYS.INCOMES, JSON.stringify(incomes));
   localStorage.setItem(STORAGE_KEYS.EXPENSES, JSON.stringify(expenses));
+  localStorage.setItem(STORAGE_KEYS.SAVINGS_DATA, JSON.stringify(savingsData));
 }
 
 function loadFromStorage(){
   const savedCategories = localStorage.getItem(STORAGE_KEYS.CATEGORIES);
   const savedIncomes = localStorage.getItem(STORAGE_KEYS.INCOMES);
   const savedExpenses = localStorage.getItem(STORAGE_KEYS.EXPENSES);
+  const savedSavings = localStorage.getItem(STORAGE_KEYS.SAVINGS_DATA);
   
   if(savedCategories) categories = JSON.parse(savedCategories);
   if(savedIncomes) incomes = JSON.parse(savedIncomes);
   if(savedExpenses) expenses = JSON.parse(savedExpenses);
+  if(savedSavings) savingsData = JSON.parse(savedSavings);
 }
 
 // NOTIFICATION SYSTEM
@@ -414,7 +419,6 @@ const homeBadge = document.getElementById("homeBadge");
 let notifications = JSON.parse(localStorage.getItem(STORAGE_KEYS.NOTIFICATIONS) || '[]');
 
 function showNotification(title, message, type='info'){
-  // Create visual notification
   const container = document.getElementById("notif-container");
   const notif = document.createElement("div");
   notif.className = "notif-item";
@@ -432,15 +436,12 @@ function showNotification(title, message, type='info'){
   
   container.appendChild(notif);
   
-  // Play sound
   notifSound.currentTime = 0;
   notifSound.volume = 0.5;
   notifSound.play().catch(e => console.log('Audio play failed:', e));
   
-  // Show badge on homepage icon
   homeBadge.classList.add("show");
   
-  // Save notification
   notifications.push({
     title,
     message,
@@ -450,7 +451,6 @@ function showNotification(title, message, type='info'){
   });
   localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify(notifications));
   
-  // Remove after 5 seconds
   setTimeout(() => {
     notif.remove();
   }, 5000);
@@ -462,7 +462,6 @@ function clearNotifications(){
   homeBadge.classList.remove("show");
 }
 
-// Check for existing notifications on load
 function checkExistingNotifications(){
   const unread = notifications.filter(n => !n.read).length;
   if(unread > 0 || notifications.length > 0){
@@ -474,6 +473,9 @@ function checkExistingNotifications(){
 let categories=['Bills','Needs','Wants','Savings'];
 let incomes=[];
 let expenses=[];
+
+// Savings data structure: { year: totalSavingsForThatYear }
+let savingsData = {};
 
 // Load saved data
 loadFromStorage();
@@ -570,10 +572,70 @@ function animateValue(id, start, end, duration){
     let now=new Date().getTime();
     let remaining=Math.max((endTime-now)/duration,0);
     let value=Math.round(end - (remaining*range));
-    if(id==="totalSavings") obj.textContent="₱"+value.toLocaleString();
-    else obj.textContent=value.toFixed(1)+"% increase";
+    obj.textContent="₱"+value.toLocaleString();
     if(value===end) clearInterval(timer);
   },stepTime);
+}
+
+// Get current year
+function getCurrentYear() {
+  return new Date().getFullYear();
+}
+
+// Calculate savings for a specific year (only from "Savings" category)
+function calculateYearlySavings(year) {
+  let yearSavings = 0;
+  expenses.forEach(e => {
+    const expenseDate = new Date(e.date);
+    const expenseYear = expenseDate.getFullYear();
+    const expenseMonth = expenseDate.getMonth();
+    
+    // Only count if it's the "Savings" category and matches the year
+    if(e.category === 'Savings' && expenseYear === year) {
+      yearSavings += e.amount;
+    }
+  });
+  return yearSavings;
+}
+
+// Calculate total accumulated savings up to current year
+function calculateTotalAccumulatedSavings() {
+  const currentYear = getCurrentYear();
+  let total = 0;
+  
+  // Sum all savings from previous years (stored in savingsData) + current year
+  for(let year in savingsData) {
+    if(parseInt(year) < currentYear) {
+      total += savingsData[year];
+    }
+  }
+  
+  // Add current year savings
+  const currentYearSavings = calculateYearlySavings(currentYear);
+  total += currentYearSavings;
+  
+  return total;
+}
+
+// Check if we need to archive previous year savings (reset on January 1st)
+function checkYearReset() {
+  const currentYear = getCurrentYear();
+  const currentMonth = new Date().getMonth();
+  
+  // If it's January and we haven't archived last year's savings yet
+  if(currentMonth === 0) {
+    const lastYear = currentYear - 1;
+    
+    // If last year hasn't been archived yet
+    if(!savingsData[lastYear] || savingsData[lastYear] === 0) {
+      // Calculate last year's total savings
+      const lastYearSavings = calculateYearlySavings(lastYear);
+      if(lastYearSavings > 0) {
+        savingsData[lastYear] = lastYearSavings;
+        saveToStorage();
+      }
+    }
+  }
 }
 
 function renderBudget(){
@@ -622,16 +684,21 @@ function renderBudget(){
     options:{plugins:{legend:{position:'bottom'}},responsive:true}
   });
 
-  // TOTAL SAVINGS
-  const yearlyIncome = incomes.reduce((acc,i)=>acc+i.amount,0);
-  const yearlyExpenses = expenses.reduce((acc,e)=>acc+e.amount,0);
-  const totalSavings = yearlyIncome - yearlyExpenses;
-  animateValue("totalSavings", 0, totalSavings, 1000);
+  // Check for year reset (archive previous year if needed)
+  checkYearReset();
 
-  // AUTOMATIC PERCENTAGE CHANGE
-  const prevSavings = yearlyIncome - yearlyExpenses - balance;
-  const percent = prevSavings>0 ? ((totalSavings-prevSavings)/prevSavings)*100 : 0;
-  animateValue("savingsPercent", 0, percent, 1000);
+  // Calculate savings
+  const currentYear = getCurrentYear();
+  const currentYearSavings = calculateYearlySavings(currentYear);
+  const totalAccumulatedSavings = calculateTotalAccumulatedSavings();
+
+  // Update savings display with animation
+  const savingsElement = document.getElementById("totalSavings");
+  const currentDisplay = parseInt(savingsElement.textContent.replace(/[^0-9]/g, '')) || 0;
+  animateValue("totalSavings", currentDisplay, totalAccumulatedSavings, 1000);
+
+  // Show current year savings info
+  document.getElementById("yearlySavingsInfo").textContent = `This Year (${currentYear}): ₱${currentYearSavings.toLocaleString()}`;
 }
 
 // Check for existing notifications on page load
@@ -640,16 +707,15 @@ checkExistingNotifications();
 // Initial render
 renderBudget();
 
-// Real-time update every 30 seconds (in case of multi-tab usage)
+// Real-time update every 30 seconds
 setInterval(() => {
   loadFromStorage();
   renderBudget();
 }, 30000);
 
-// Clear badge when clicking home (simulate reading notifications)
+// Clear badge when clicking home
 document.getElementById("homeBtn").addEventListener("click", function(e){
   if(notifications.length > 0){
-    // Mark all as read
     notifications.forEach(n => n.read = true);
     localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify(notifications));
     homeBadge.classList.remove("show");
