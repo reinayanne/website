@@ -6,8 +6,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Queen Julie | Dynamic Habit Tracker</title>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css ">
+<script src="https://cdn.jsdelivr.net/npm/chart.js "></script>
 
 <style>
 :root {
@@ -152,26 +152,28 @@ header{
   color:#ffb3d9;
 }
 
-/* Routine Tracker Title */
+/* Routine Tracker Title - BIGGER */
 .routine-title {
-  font-size: 28px;
-  font-weight: 700;
+  font-size: 30px; /* Increased from 28px */
+  font-weight: 800; /* Increased weight */
   text-align: center;
-  text-shadow: 0 0 10px #ff69b4;
+  text-shadow: 0 0 20px #ff69b4, 0 0 40px #ff69b4; /* Enhanced glow */
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
   margin-bottom: 5px;
+  letter-spacing: 2px; /* Added spacing */
 }
 
-/* Digital Clock */
+/* Digital Clock - BIGGER */
 #digitalClock{
-  font-size: 24px;
-  font-weight: 600;
+  font-size: 42px; /* Increased from 24px */
+  font-weight: 700; /* Increased weight */
   color: #fff;
-  text-shadow: 0 0 8px rgba(255, 79, 163, 0.8);
-  padding: 10px 20px;
-  background: rgba(255, 79, 163, 0.2);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 79, 163, 0.4);
+  text-shadow: 0 0 15px rgba(255, 79, 163, 0.9), 0 0 30px rgba(255, 79, 163, 0.6); /* Enhanced glow */
+  padding: 15px 30px; /* Increased padding */
+  background: rgba(255, 79, 163, 0.25); /* Slightly more opaque */
+  border-radius: 15px; /* Slightly larger radius */
+  border: 2px solid rgba(255, 79, 163, 0.6); /* Thicker border */
+  letter-spacing: 3px; /* Added spacing for digital look */
 }
 
 /* Button Groups - now in right section */
@@ -250,7 +252,7 @@ header{
 #monthSelect{
   background-image:
     linear-gradient(135deg,#ff4fa3,#ff7bbf),
-    url("data:image/svg+xml;utf8,<svg fill='white' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+    url("data:image/svg+xml;utf8,<svg fill='white' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg '><path d='M7 10l5 5 5-5z'/></svg>");
   background-repeat:no-repeat,no-repeat;
   background-position:0 0, right 10px center;
   background-size:100% 100%,16px;
@@ -449,30 +451,33 @@ header{
   overflow-x: auto;
 }
 
-/* Custom scrollbar styling - PINK */
+/* Custom scrollbar styling - PINK (KULAY PINK) */
 .table-container::-webkit-scrollbar {
-  height: 12px;
+  height: 16px; /* Slightly thicker */
 }
 
 .table-container::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 10px;
+  border: 2px solid rgba(255, 79, 163, 0.3); /* Pink border */
 }
 
 .table-container::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #ff4fa3, #ff7bbf);
+  background: linear-gradient(135deg, #ff1493, #ff4fa3, #ff7bbf); /* Hot pink to light pink gradient */
   border-radius: 10px;
-  border: 2px solid rgba(255, 255, 255, 0.1);
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 10px rgba(255, 20, 147, 0.5); /* Pink glow */
 }
 
 .table-container::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #ff7bbf, #ffb3d9);
+  background: linear-gradient(135deg, #ff69b4, #ff1493, #ff4fa3); /* Brighter pink on hover */
+  box-shadow: 0 0 15px rgba(255, 105, 180, 0.8); /* Stronger pink glow */
 }
 
-/* Firefox scrollbar */
+/* Firefox scrollbar - PINK */
 .table-container {
   scrollbar-width: thin;
-  scrollbar-color: #ff4fa3 rgba(255, 255, 255, 0.1);
+  scrollbar-color: #ff1493 rgba(255, 255, 255, 0.1);
 }
 
 /* MIDDLE */
@@ -729,6 +734,15 @@ tr.routine-row td:first-child {
   #progressChart {
     max-height: 200px !important;
   }
+  
+  /* Mobile adjustments for bigger title and clock */
+  .routine-title {
+    font-size: 36px; /* Slightly smaller on tablet */
+  }
+  
+  #digitalClock {
+    font-size: 32px; /* Slightly smaller on tablet */
+  }
 }
 
 @media screen and (max-width: 768px) {
@@ -753,7 +767,12 @@ tr.routine-row td:first-child {
   }
   
   .routine-title {
-    font-size: 24px;
+    font-size: 28px; /* Smaller on mobile */
+  }
+  
+  #digitalClock {
+    font-size: 24px; /* Smaller on mobile */
+    padding: 10px 20px;
   }
   
   .dgc-btn {
@@ -817,8 +836,13 @@ tr.routine-row td:first-child {
     width: 100%;
   }
   
+  .routine-title {
+    font-size: 24px; /* Smallest on very small screens */
+  }
+  
   #digitalClock {
-    font-size: 18px;
+    font-size: 20px; /* Smallest on very small screens */
+    padding: 8px 15px;
   }
   
   .chibi-image {
@@ -867,6 +891,14 @@ tr.routine-row td:first-child {
   
   .table-container {
     order: 3;
+  }
+  
+  .routine-title {
+    font-size: 32px;
+  }
+  
+  #digitalClock {
+    font-size: 28px;
   }
 }
 </style>
