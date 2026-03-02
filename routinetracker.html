@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,7 +7,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Queen Julie | Dynamic Habit Tracker</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -20,7 +21,7 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 
 body{
-  font-family:'Orbitron',sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
   background:url('adminbackground.png') center/cover no-repeat fixed;
   color:#fff;
   min-height:100vh;
@@ -143,6 +144,8 @@ h1{
   text-align:center;
   margin-bottom:15px;
   text-shadow:0 0 10px #ff69b4;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 700;
 }
 
 .dgc-btn{
@@ -153,6 +156,8 @@ h1{
   border-radius:18px;
   cursor:pointer;
   margin-bottom:10px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 600;
 }
 
 .dgc-btn:hover{
@@ -161,12 +166,13 @@ h1{
   border:2px solid #ff4fa3;
 }
 
-/* TABLE */
+/* TABLE - White background with black text */
 .table-wrapper {
   overflow-x:auto;
   -webkit-overflow-scrolling: touch;
   border-radius:10px;
-  background:rgba(255,255,255,0.05);
+  background:#ffffff;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
 table{
@@ -174,17 +180,87 @@ table{
   border-collapse:collapse;
   font-size:12px;
   min-width:600px;
+  background:#ffffff;
+  color:#000000;
 }
 
 th,td{
-  border:1px solid #ff7bbf;
+  border:1px solid #ddd;
   padding:6px;
   text-align:center;
+  color:#000000;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 th{
   background:linear-gradient(135deg,#ff4fa3,#ff7bbf);
   position:sticky; top:0;
+  color:#ffffff;
+  font-weight: 700;
+}
+
+/* Day of week header row styling */
+.day-of-week-header {
+  background: #ffb3d9 !important;
+  color: #000000 !important;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px;
+}
+
+.day-of-week-header.week-2-header {
+  background: #ff4fa3 !important;
+  color: #ffffff !important;
+}
+
+td{
+  background:#ffffff;
+  color:#000000;
+}
+
+/* Alternating week colors for checkboxes - Baby pink pastel */
+.week-1 input[type="checkbox"]{
+  accent-color: #ffb3d9;
+}
+
+.week-2 input[type="checkbox"]{
+  accent-color: #ff4fa3;
+}
+
+/* Week header styling - alternating colors */
+.week-1-header {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+.week-2-header {
+  background: #ff4fa3 !important;
+  color: #ffffff !important;
+}
+
+/* Week 3 onwards - vice versa (alternating pattern continues) */
+.week-3-header {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+.week-4-header {
+  background: #ff4fa3 !important;
+  color: #ffffff !important;
+}
+
+.week-5-header {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* Checkbox styling for baby pink pastel */
+.week-1 td input[type="checkbox"]:checked{
+  accent-color: #ffb3d9;
+}
+
+.week-2 td input[type="checkbox"]:checked{
+  accent-color: #ff4fa3;
 }
 
 td input[type="checkbox"]{
@@ -223,8 +299,9 @@ td input[type="checkbox"]:checked{
   border:2px solid #ff7bbf;
   padding:8px 35px 8px 15px;
   border-radius:18px;
-  font-family:'Orbitron',sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size:13px;
+  font-weight: 600;
   cursor:pointer;
   transition:.3s;
   box-shadow:0 0 10px rgba(255,105,180,0.4);
@@ -251,12 +328,11 @@ td input[type="checkbox"]:checked{
   background-size:100% 100%,16px;
 }
 
-/* Chibi image styling */
+/* Chibi image styling - NO PINK GLOW */
 .chibi-image {
   width: 100%;
   max-width: 200px;
   border-radius: 15px;
-  box-shadow: 0 0 15px rgba(255, 105, 180, 0.5);
 }
 
 /* Save indicator */
@@ -273,6 +349,7 @@ td input[type="checkbox"]:checked{
   transition: opacity 0.3s;
   z-index: 9999;
   backdrop-filter: blur(10px);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .save-indicator.show {
@@ -465,7 +542,7 @@ td input[type="checkbox"]:checked{
 <div class="left-panel">
   <div id="digitalClock"></div>
   <div class="calendar" id="miniCalendar"></div>
-  <!-- Chibi image added after mini calendar -->
+  <!-- Chibi image added after mini calendar - NO PINK GLOW -->
   <img src="adminchibli.png" alt="Chibi" class="chibi-image">
 </div>
 
@@ -644,7 +721,10 @@ function createRow(time = '--:--', activity = 'New Routine', checks = []) {
   
   for(let i = 0; i < days; i++) {
     const isChecked = checks[i] ? 'checked' : '';
-    row.innerHTML += `<td><input type="checkbox" ${isChecked}></td>`;
+    // Determine week number (0-indexed week)
+    const weekNum = Math.floor(i / 7);
+    const weekClass = weekNum % 2 === 0 ? 'week-1' : 'week-2';
+    row.innerHTML += `<td class="${weekClass}"><input type="checkbox" ${isChecked}></td>`;
   }
   
   habitBody.appendChild(row);
@@ -678,18 +758,61 @@ const habitHead=document.getElementById("habitHead");
 const habitBody=document.getElementById("habitBody");
 const year=2026;
 
+// Days of week array
+const daysOfWeek = ['M', 'T', 'W', 'TH', 'F', 'S', 'S'];
+
 function generateTable(month){
 habitHead.innerHTML="";
 const days=new Date(year,month,0).getDate();
-let header=`<tr>
+
+// First row - Days of week (M T W TH F S S)
+let dayOfWeekRow = `<tr>
 <th style="width:40px;"></th>
 <th>Time</th>
 <th>Activity</th>`;
+
 for(let i=1;i<=days;i++){
-header+=`<th>${i}</th>`;
+  // Calculate day of week (0 = Sunday, 1 = Monday, etc.)
+  const date = new Date(year, month-1, i);
+  let dayIndex = date.getDay();
+  // Convert to 0=Monday format
+  dayIndex = dayIndex === 0 ? 6 : dayIndex - 1;
+  const dayLetter = daysOfWeek[dayIndex];
+  
+  // Determine week number for styling
+  const weekNum = Math.floor((i-1) / 7);
+  let headerClass;
+  if (weekNum % 2 === 0) {
+    headerClass = 'day-of-week-header';
+  } else {
+    headerClass = 'day-of-week-header week-2-header';
+  }
+  
+  dayOfWeekRow += `<th class="${headerClass}">${dayLetter}</th>`;
 }
-header+="</tr>";
-habitHead.innerHTML=header;
+dayOfWeekRow += "</tr>";
+
+// Second row - Day numbers
+let dayNumberRow = `<tr>
+<th style="width:40px;"></th>
+<th>Date</th>
+<th>To Do</th>`;
+
+for(let i=1;i<=days;i++){
+  // Determine week number for styling
+  const weekNum = Math.floor((i-1) / 7);
+  let headerClass;
+  if (weekNum % 2 === 0) {
+    headerClass = 'week-1-header';
+  } else {
+    headerClass = 'week-2-header';
+  }
+  
+  dayNumberRow += `<th class="${headerClass}">${i}</th>`;
+}
+dayNumberRow += "</tr>";
+
+habitHead.innerHTML = dayOfWeekRow + dayNumberRow;
 
 // Load saved data for this month
 loadTable(month);
@@ -731,7 +854,7 @@ function initChart() {
           labels: {
             color: '#fff',
             font: {
-              family: 'Orbitron',
+              family: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif',
               size: 10
             }
           }
@@ -741,7 +864,7 @@ function initChart() {
           text: 'Monthly Progress',
           color: '#fff',
           font: {
-            family: 'Orbitron',
+            family: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif',
             size: 14
           }
         }
