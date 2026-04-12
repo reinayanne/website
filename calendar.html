@@ -109,12 +109,9 @@ header{
              0 0 14px rgba(255,79,163,.6)
 }
 
+/* Task pills on calendar - dynamic colors */
 .task-pill{font-size:10px;font-weight:700;color:#fff;border-radius:10px;padding:3px 6px;text-align:center;cursor:pointer;transition:.25s}
 .task-pill:hover{transform:scale(1.05);box-shadow:0 0 10px rgba(0,0,0,.25)}
-.task-myself{background:#ff4fa3}
-.task-edit{background:#4fa3ff}
-.task-vsquad{background:#8a4fff}
-.task-tlobby{background:#ff4f4f}
 
 .task-pill{
   align-self:flex-start;
@@ -124,15 +121,489 @@ header{
   text-overflow:ellipsis;
 }
 
-/* TODO */
-.todo-section{grid-column:1/-1;background:rgba(255,255,255,.35);border-radius:20px;padding:20px;margin-top:20px;color:#7a2f4d;overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:600px}
-th,td{border:1px dotted #fff;padding:6px;font-size:13px;text-align:left}
-th{background:rgba(255,79,163,0.2)}
-td input[type="date"],td input[type="time"],td select{width:100%;padding:4px;border-radius:6px;border:none;font-size:12px}
-td[contenteditable]{min-width:120px}
-.dgc-btn{margin-top:10px;background:linear-gradient(135deg,#ff4fa3,#ff7bbf);color:#fff;border:none;padding:12px 22px;border-radius:18px;font-weight:600;cursor:pointer;width:100%;max-width:200px;transition:.3s}
-.dgc-btn:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(255,79,163,0.4)}
+/* TODO SECTION */
+.todo-section{grid-column:1/-1;background:rgba(255,255,255,.35);border-radius:20px;padding:20px;margin-top:20px;color:#7a2f4d}
+
+/* BUTTON CONTAINER - 2 COLUMNS */
+.button-container{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+  margin-top:20px;
+}
+
+.toggle-btn{
+  background:linear-gradient(135deg,#ff4fa3,#ff7bbf);
+  color:#fff;
+  border:none;
+  padding:15px 20px;
+  border-radius:16px;
+  font-weight:700;
+  font-size:15px;
+  cursor:pointer;
+  transition:.3s;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  box-shadow:0 4px 15px rgba(255,79,163,0.3);
+}
+.toggle-btn:hover{
+  transform:translateY(-3px);
+  box-shadow:0 6px 20px rgba(255,79,163,0.5);
+}
+.toggle-btn.active{
+  background:linear-gradient(135deg,#ff7bbf,#ffb3d9);
+  box-shadow:0 0 20px rgba(255,79,163,0.6);
+}
+.toggle-btn i{font-size:16px}
+
+/* TOGGLE TABLES */
+.toggle-table-container{
+  margin-top:20px;
+  display:none;
+  animation:fadeIn 0.3s ease;
+}
+.toggle-table-container.active{
+  display:block;
+}
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(-10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* TODAY TABLE STYLES */
+.today-table{
+  width:100%;
+  border-collapse:collapse;
+}
+.today-table th,.today-table td{
+  border:1px dotted #fff;
+  padding:12px;
+  font-size:14px;
+  text-align:left;
+}
+.today-table th{
+  background:rgba(255,79,163,0.2);
+  font-weight:700;
+}
+.today-table td{
+  background:rgba(255,255,255,0.1);
+}
+
+/* CHECKBOX STYLES */
+.today-checkbox{
+  width:24px;
+  height:24px;
+  border-radius:6px;
+  border:2px solid rgba(255,255,255,.6);
+  background:transparent;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0 auto;
+  transition:.2s;
+}
+.today-checkbox:hover{
+  border-color:#ff4fa3;
+  transform:scale(1.1);
+}
+.today-checkbox.checked{
+  background:#ff4fa3;
+  border-color:#ff4fa3;
+}
+.today-checkbox.checked::after{
+  content:'\f00c';
+  font-family:'Font Awesome 6 Free';
+  font-weight:900;
+  font-size:14px;
+  color:#fff;
+}
+
+/* CODE CELL WITH COLOR PICKER */
+.code-cell-container{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  justify-content:center;
+}
+
+.code-color-picker{
+  width:30px;
+  height:30px;
+  border:none;
+  border-radius:50%;
+  cursor:pointer;
+  padding:0;
+  overflow:hidden;
+}
+
+.code-color-picker::-webkit-color-swatch-wrapper{
+  padding:0;
+}
+
+.code-color-picker::-webkit-color-swatch{
+  border:none;
+  border-radius:50%;
+}
+
+.code-text{
+  font-weight:700;
+  text-transform:uppercase;
+  font-size:12px;
+  padding:4px 8px;
+  border-radius:6px;
+  color:#fff;
+  min-width:60px;
+  text-align:center;
+}
+
+/* Editable task cell */
+.today-table td[contenteditable]{
+  background:#fff;
+  color:#7a2f4d;
+  padding:8px;
+  border-radius:8px;
+  cursor:text;
+}
+.today-table td[contenteditable]:focus{
+  outline:2px solid #ff4fa3;
+}
+
+.add-task-btn{
+  margin-top:15px;
+  background:linear-gradient(135deg,#ff4fa3,#ff7bbf);
+  color:#fff;
+  border:none;
+  padding:12px 24px;
+  border-radius:14px;
+  font-weight:600;
+  cursor:pointer;
+  transition:.3s;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  width:fit-content;
+}
+.add-task-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 4px 15px rgba(255,79,163,0.4);
+}
+
+/* PLAN TABLE STYLES */
+.plan-table{
+  width:100%;
+  border-collapse:collapse;
+}
+.plan-table th,.plan-table td{
+  border:1px dotted #fff;
+  padding:10px;
+  font-size:13px;
+  text-align:left;
+}
+.plan-table th{
+  background:rgba(255,79,163,0.2);
+  font-weight:700;
+}
+.plan-table td{
+  background:rgba(255,255,255,0.1);
+}
+
+.plan-table input[type="date"],
+.plan-table input[type="time"]{
+  width:100%;
+  padding:8px;
+  border-radius:8px;
+  border:none;
+  font-size:13px;
+  background:#fff;
+  color:#7a2f4d;
+}
+
+.plan-table td[contenteditable]{
+  background:#fff;
+  color:#7a2f4d;
+  padding:8px;
+  border-radius:8px;
+  min-width:100px;
+}
+.plan-table td[contenteditable]:focus{
+  outline:2px solid #ff4fa3;
+}
+
+/* Color picker in plan table */
+.plan-color-cell{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.plan-color-picker{
+  width:28px;
+  height:28px;
+  border:none;
+  border-radius:50%;
+  cursor:pointer;
+  padding:0;
+  overflow:hidden;
+  flex-shrink:0;
+}
+
+.plan-color-picker::-webkit-color-swatch-wrapper{
+  padding:0;
+}
+
+.plan-color-picker::-webkit-color-swatch{
+  border:none;
+  border-radius:50%;
+}
+
+.plan-code-text{
+  font-weight:600;
+  text-transform:uppercase;
+  font-size:12px;
+  padding:4px 8px;
+  border-radius:6px;
+  color:#fff;
+  flex:1;
+  text-align:center;
+}
+
+/* REWARDS BUTTON */
+.rewards-btn{
+  background:linear-gradient(135deg,#ffd700,#ffed4e);
+  color:#7a2f4d;
+  border:none;
+  padding:10px 20px;
+  border-radius:12px;
+  font-weight:700;
+  font-size:14px;
+  cursor:pointer;
+  transition:.3s;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-left:15px;
+  box-shadow:0 4px 15px rgba(255,215,0,0.4);
+  animation:glow 2s ease-in-out infinite alternate;
+}
+.rewards-btn:hover{
+  transform:translateY(-2px) scale(1.05);
+  box-shadow:0 6px 20px rgba(255,215,0,0.6);
+}
+.rewards-btn i{font-size:16px}
+
+/* REWARDS POPUP */
+#rewardsPopup{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.6);
+  z-index:99999;
+  padding:20px;
+}
+#rewardsPopup .popup-box{
+  background:rgba(255,215,0,.95);
+  backdrop-filter:blur(20px);
+  border-radius:24px;
+  padding:30px;
+  width:100%;
+  max-width:500px;
+  max-height:80vh;
+  overflow-y:auto;
+  color:#7a2f4d;
+  text-align:left;
+  border:3px solid #ffd700;
+  box-shadow:0 0 50px rgba(255,215,0,.8);
+  animation:pop .3s ease;
+}
+#rewardsPopup .popup-title{
+  font-size:22px;
+  font-weight:900;
+  margin-bottom:20px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:#ff4fa3;
+  text-shadow:0 0 10px rgba(255,79,163,.5);
+}
+.rewards-list{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  margin-bottom:20px;
+}
+.reward-item{
+  background:rgba(255,255,255,.9);
+  border-radius:12px;
+  padding:12px 16px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  transition:.25s;
+  border:2px solid transparent;
+}
+.reward-item:hover{
+  border-color:#ff4fa3;
+  transform:translateX(5px);
+}
+.reward-item input[type="checkbox"]{
+  width:20px;
+  height:20px;
+  cursor:pointer;
+}
+.reward-item .reward-text{
+  flex:1;
+  font-weight:600;
+  font-size:14px;
+}
+.reward-item .reward-text[contenteditable]{
+  background:#fff;
+  padding:4px 8px;
+  border-radius:6px;
+  outline:none;
+  border:2px solid #ff4fa3;
+}
+.reward-delete{
+  background:#ff4f4f;
+  color:#fff;
+  border:none;
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:.2s;
+}
+.reward-delete:hover{
+  background:#ff2f2f;
+  transform:scale(1.1);
+}
+.add-reward-btn{
+  background:linear-gradient(135deg,#ff4fa3,#ff7bbf);
+  color:#fff;
+  border:none;
+  padding:12px 20px;
+  border-radius:12px;
+  font-weight:700;
+  cursor:pointer;
+  width:100%;
+  transition:.3s;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+.add-reward-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 4px 15px rgba(255,79,163,0.4);
+}
+.popup-close{
+  margin-top:15px;
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  background:#7a2f4d;
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+  transition:.3s;
+}
+.popup-close:hover{
+  background:#5a1f3d;
+}
+
+/* REWARD DETAILS - ALIVE TEXT */
+.reward-details{
+  margin-top:20px;
+  padding:20px;
+  background:linear-gradient(135deg,rgba(255,79,163,.2),rgba(255,215,0,.2));
+  border-radius:16px;
+  border:2px solid #ffd700;
+  display:none;
+}
+.reward-details.show{
+  display:block;
+  animation:glowPulse 2s ease-in-out infinite;
+}
+.reward-details-title{
+  font-size:18px;
+  font-weight:900;
+  color:#ff4fa3;
+  margin-bottom:10px;
+  text-align:center;
+  animation:aliveText 1.5s ease-in-out infinite alternate;
+}
+.reward-details-text{
+  font-size:16px;
+  color:#7a2f4d;
+  text-align:center;
+  font-weight:600;
+  animation:aliveText 1.5s ease-in-out infinite alternate;
+  animation-delay:0.3s;
+}
+
+/* ALIVE TEXT ANIMATION */
+@keyframes aliveText{
+  from{
+    text-shadow:0 0 5px #fff,0 0 10px #fff,0 0 20px #ff4fa3,0 0 30px #ff4fa3;
+    transform:scale(1);
+  }
+  to{
+    text-shadow:0 0 10px #fff,0 0 20px #fff,0 0 30px #ff7bbf,0 0 40px #ff7bbf,0 0 50px #ffd700;
+    transform:scale(1.02);
+  }
+}
+
+@keyframes glowPulse{
+  0%,100%{
+    box-shadow:0 0 20px rgba(255,215,0,.5),0 0 40px rgba(255,79,163,.3);
+  }
+  50%{
+    box-shadow:0 0 30px rgba(255,215,0,.8),0 0 60px rgba(255,79,163,.5);
+  }
+}
+
+@keyframes glow{
+  from{
+    box-shadow:0 0 5px #ffd700,0 0 10px #ffd700;
+  }
+  to{
+    box-shadow:0 0 20px #ffd700,0 0 30px #ffed4e;
+  }
+}
+
+/* PROGRESS BAR */
+.progress-container{
+  margin:15px 0;
+  background:rgba(255,255,255,.3);
+  border-radius:10px;
+  padding:4px;
+  display:none;
+}
+.progress-container.show{
+  display:block;
+}
+.progress-bar{
+  height:20px;
+  background:linear-gradient(90deg,#ff4fa3,#ffd700);
+  border-radius:8px;
+  transition:width 0.5s ease;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  font-weight:700;
+  font-size:12px;
+  text-shadow:0 1px 2px rgba(0,0,0,.3);
+}
 
 /* MOBILE RESPONSIVE */
 @media(max-width:1024px){
@@ -147,22 +618,47 @@ td[contenteditable]{min-width:120px}
   .motto{font-size:11px}
   .header-icons a{width:36px;height:36px;border-radius:12px}
   .header-icons a i{font-size:14px}
-  
+
   .calendar-grid{grid-auto-rows:80px;gap:4px}
   .day{min-height:60px;padding:4px}
   .day span{font-size:11px;top:4px;left:6px}
   .day-tasks{margin-top:18px;gap:2px}
   .day-sticker{width:24px;right:4px;bottom:4px}
   .task-pill{font-size:9px;padding:2px 4px;border-radius:6px}
-  
+
   .days{font-size:10px}
   .days div{padding:4px 2px}
-  
+
   .sidebar{padding:15px}
   .sidebar h3{font-size:13px}
-  
-  table{font-size:12px}
-  th,td{padding:4px}
+
+  .button-container{gap:10px}
+  .toggle-btn{padding:12px 15px;font-size:13px}
+  .toggle-btn i{font-size:14px}
+
+  .today-table th,.today-table td,
+  .plan-table th,.plan-table td{padding:8px;font-size:12px}
+
+  .code-color-picker, .plan-color-picker{
+    width:24px;
+    height:24px;
+  }
+
+  .code-text, .plan-code-text{
+    font-size:11px;
+    padding:3px 6px;
+  }
+
+  .rewards-btn{
+    padding:8px 15px;
+    font-size:12px;
+    margin-left:10px;
+  }
+
+  #rewardsPopup .popup-box{
+    padding:20px;
+    margin:10px;
+  }
 }
 
 @media(max-width:480px){
@@ -173,11 +669,39 @@ td[contenteditable]{min-width:120px}
   .day span{font-size:10px}
   .day-sticker{width:20px}
   .task-pill{font-size:8px;padding:1px 3px}
-  
+
   .todo-section{padding:10px}
-  table{min-width:500px;font-size:11px}
-  
-  .dgc-btn{padding:10px 16px;font-size:14px}
+
+  .button-container{grid-template-columns:1fr;gap:8px}
+  .toggle-btn{width:100%}
+
+  .plan-table, .today-table{font-size:11px}
+  .plan-table input,.today-table td[contenteditable]{font-size:11px;padding:6px}
+
+  .add-task-btn{width:100%;padding:10px 16px;font-size:14px}
+
+  .code-cell-container, .plan-color-cell{
+    flex-direction:column;
+    gap:4px;
+  }
+
+  .code-text, .plan-code-text{
+    font-size:10px;
+    min-width:auto;
+    width:100%;
+  }
+
+  .rewards-btn{
+    margin-left:0;
+    margin-top:10px;
+    width:100%;
+    justify-content:center;
+  }
+
+  .today-header{
+    flex-direction:column;
+    align-items:flex-start !important;
+  }
 }
 
 /* SCROLL */
@@ -221,18 +745,6 @@ td[contenteditable]{min-width:120px}
   font-size:13px;
   margin-bottom:6px;
 }
-.popup-close{
-  margin-top:16px;
-  width:100%;
-  padding:10px;
-  border:none;
-  border-radius:14px;
-  background:linear-gradient(135deg,#ff4fa3,#ff7bbf);
-  color:#fff;
-  font-weight:600;
-  cursor:pointer;
-  transition:.3s;
-}
 .popup-close:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(255,79,163,0.4)}
 
 /* ALARM NOTIFICATION POPUP */
@@ -264,12 +776,23 @@ td[contenteditable]{min-width:120px}
 @media(hover:none){
   .task-pill:hover{transform:none}
   .header-icons a:hover{transform:none;box-shadow:none}
-  .dgc-btn:hover{transform:none;box-shadow:none}
+  .toggle-btn:hover{transform:none;box-shadow:0 4px 15px rgba(255,79,163,0.3)}
+  .today-checkbox:hover{transform:none;border-color:rgba(255,255,255,.6)}
 }
 
 /* PREVENT HORIZONTAL SCROLL ON BODY */
 body{overflow-x:hidden}
+
+/* TODAY HEADER FLEX */
+.today-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  margin-bottom:15px;
+}
 </style>
+<base target="_blank">
 </head>
 
 <body>
@@ -320,15 +843,90 @@ body{overflow-x:hidden}
       <div class="calendar-grid" id="calendar"></div>
     </section>
 
+    <!-- TODO SECTION -->
     <section class="todo-section">
       <h3>TO DO LIST</h3>
-      <table>
-        <thead>
-          <tr><th>✔</th><th>Date</th><th>Time</th><th>Code</th><th>Task</th><th>⏰</th></tr>
-        </thead>
-        <tbody id="todoBody"></tbody>
-      </table>
-      <button class="dgc-btn" onclick="addTask()">+ Add Task</button>
+
+      <!-- 2 COLUMN BUTTONS -->
+      <div class="button-container">
+        <button class="toggle-btn" id="todayBtn" onclick="toggleSection('today')">
+          <i class="fas fa-calendar-day"></i>
+          TODAY
+        </button>
+        <button class="toggle-btn" id="planBtn" onclick="toggleSection('plan')">
+          <i class="fas fa-calendar-alt"></i>
+          PLAN
+        </button>
+      </div>
+
+      <!-- TODAY TABLE (Hidden by default) -->
+      <div class="toggle-table-container" id="todaySection">
+        <div class="today-header">
+          <h4 style="color:#7a2f4d;margin:0;"><i class="fas fa-clipboard-check"></i> Today's Tasks</h4>
+          <button class="rewards-btn" onclick="openRewardsPopup()">
+            <i class="fas fa-gift"></i>
+            REWARDS
+          </button>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-container" id="progressContainer">
+          <div class="progress-bar" id="progressBar">0%</div>
+        </div>
+
+        <table class="today-table">
+          <thead>
+            <tr>
+              <th style="width:80px;text-align:center;">Done</th>
+              <th style="width:150px;text-align:center;">Code + Color</th>
+              <th>Task</th>
+            </tr>
+          </thead>
+          <tbody id="todayTableBody">
+            <!-- Dynamic content -->
+          </tbody>
+        </table>
+        <p id="noTodayTasks" style="text-align:center;padding:30px;color:#7a2f4d;display:none;">
+          <i class="fas fa-clipboard" style="font-size:40px;display:block;margin-bottom:10px;opacity:0.5;"></i>
+          No tasks for today!
+        </p>
+        <button class="add-task-btn" onclick="addTodayTask()">
+          <i class="fas fa-plus"></i> Add Task
+        </button>
+
+        <!-- Reward Details (shows when all tasks complete) -->
+        <div class="reward-details" id="rewardDetails">
+          <div class="reward-details-title">🎉 ALL TASKS COMPLETED! 🎉</div>
+          <div class="reward-details-text" id="rewardDetailsText">
+            Click the REWARDS button to claim your prize!
+          </div>
+        </div>
+      </div>
+
+      <!-- PLAN TABLE (Hidden by default) -->
+      <div class="toggle-table-container" id="planSection">
+        <h4 style="margin-bottom:15px;color:#7a2f4d;"><i class="fas fa-tasks"></i> Plan Tasks (Future Dates Only)</h4>
+        <div style="overflow-x:auto;">
+          <table class="plan-table">
+            <thead>
+              <tr>
+                <th style="width:50px;">Done</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Code + Color</th>
+                <th>Task</th>
+                <th>Alarm</th>
+              </tr>
+            </thead>
+            <tbody id="planTableBody">
+              <!-- Dynamic content -->
+            </tbody>
+          </table>
+        </div>
+        <button class="add-task-btn" onclick="addPlanTask()">
+          <i class="fas fa-plus"></i> Add Task
+        </button>
+      </div>
     </section>
   </div>
 </div>
@@ -348,6 +946,23 @@ body{overflow-x:hidden}
     <div class="popup-row"><strong>Date:</strong> <span id="pdDate"></span></div>
     <div class="popup-row"><strong>Time:</strong> <span id="pdTime"></span></div>
     <button class="popup-close" onclick="closeTaskPopup()">Close</button>
+  </div>
+</div>
+
+<!-- REWARDS POPUP -->
+<div id="rewardsPopup">
+  <div class="popup-box">
+    <div class="popup-title">
+      <i class="fas fa-trophy"></i>
+      My Rewards
+    </div>
+    <div class="rewards-list" id="rewardsList">
+      <!-- Dynamic content -->
+    </div>
+    <button class="add-reward-btn" onclick="addReward()">
+      <i class="fas fa-plus"></i> Add Reward
+    </button>
+    <button class="popup-close" onclick="closeRewardsPopup()">Close</button>
   </div>
 </div>
 
@@ -416,196 +1031,500 @@ function buildCalendar(){
 monthSelect.onchange=yearInput.onchange=buildCalendar;
 buildCalendar();
 
-/* ADD TASK */
-function addTask(data={}){
-  const r=document.createElement("tr");
+/* ===== TOGGLE SECTIONS ===== */
+let activeSection = null;
 
-  r.innerHTML=`
-    <td><input type="checkbox" ${data.done?"checked":""}></td>
-    <td><input type="date" value="${data.date||""}"></td>
-    <td><input type="time" value="${data.time||""}"></td>
-    <td>
-      <select>
-        <option value="myself">Myself</option>
-        <option value="edit">Edit</option>
-        <option value="vsquad">VSquad</option>
-        <option value="tlobby">TLobby</option>
-      </select>
-    </td>
-    <td contenteditable="true"></td>
-    <td><input type="checkbox" class="alarm-check" ${data.alarm?"checked":""}></td>
-  `;
+function toggleSection(section) {
+  const todaySection = document.getElementById('todaySection');
+  const planSection = document.getElementById('planSection');
+  const todayBtn = document.getElementById('todayBtn');
+  const planBtn = document.getElementById('planBtn');
 
-  if(data.code) r.children[3].querySelector("select").value=data.code;
-  if(data.task) r.children[4].innerText=data.task;
+  if (activeSection === section) {
+    todaySection.classList.remove('active');
+    planSection.classList.remove('active');
+    todayBtn.classList.remove('active');
+    planBtn.classList.remove('active');
+    activeSection = null;
+  } else {
+    todaySection.classList.remove('active');
+    planSection.classList.remove('active');
+    todayBtn.classList.remove('active');
+    planBtn.classList.remove('active');
 
-  r.querySelectorAll("input,select").forEach(el=>{
-    el.addEventListener("change",()=>{
-      saveTasks();
-      renderTasks();
-    });
-  });
+    if (section === 'today') {
+      todaySection.classList.add('active');
+      todayBtn.classList.add('active');
+      renderTodayTable();
+    } else if (section === 'plan') {
+      planSection.classList.add('active');
+      planBtn.classList.add('active');
+      renderPlanTable();
+    }
+    activeSection = section;
+  }
+}
 
-  r.children[4].addEventListener("input", saveTasks);
+/* ===== HELPER: Get stored color for code ===== */
+function getCodeColor(code) {
+  const codeColors = JSON.parse(localStorage.getItem("dgc_code_colors") || "{}");
+  const lowerCode = code.toLowerCase().trim();
 
-  r.children[0].querySelector("input").onchange=()=>{
-    r.remove();
-    saveTasks();
-    renderTasks();
+  const defaultColors = {
+    'myself': '#ff4fa3',
+    'edit': '#4fa3ff',
+    'vsquad': '#8a4fff',
+    'tlobby': '#ff4f4f'
   };
 
-  todoBody.appendChild(r);
-  saveTasks();
+  return codeColors[lowerCode] || defaultColors[lowerCode] || '#999999';
+}
+
+function saveCodeColor(code, color) {
+  const codeColors = JSON.parse(localStorage.getItem("dgc_code_colors") || "{}");
+  codeColors[code.toLowerCase().trim()] = color;
+  localStorage.setItem("dgc_code_colors", JSON.stringify(codeColors));
+}
+
+/* ===== REWARDS SYSTEM ===== */
+function getRewards() {
+  return JSON.parse(localStorage.getItem("dgc_rewards") || "[]");
+}
+
+function saveRewards(rewards) {
+  localStorage.setItem("dgc_rewards", JSON.stringify(rewards));
+}
+
+function openRewardsPopup() {
+  const rewards = getRewards();
+  const rewardsList = document.getElementById('rewardsList');
+
+  if (rewards.length === 0) {
+    rewardsList.innerHTML = '<p style="text-align:center;color:#7a2f4d;padding:20px;">No rewards yet. Add one!</p>';
+  } else {
+    rewardsList.innerHTML = rewards.map((reward, index) => `
+      <div class="reward-item">
+        <input type="checkbox" ${reward.claimed ? 'checked' : ''} onchange="toggleReward(${index})" title="Mark as claimed">
+        <div class="reward-text" contenteditable="true" onblur="updateRewardText(${index}, this.innerText)" title="Click to edit">${reward.text}</div>
+        <button class="reward-delete" onclick="deleteReward(${index})" title="Delete reward">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    `).join('');
+  }
+
+  document.getElementById('rewardsPopup').style.display = 'flex';
+}
+
+function closeRewardsPopup() {
+  document.getElementById('rewardsPopup').style.display = 'none';
+}
+
+function addReward() {
+  const rewards = getRewards();
+  rewards.push({
+    text: 'New Reward',
+    claimed: false
+  });
+  saveRewards(rewards);
+  openRewardsPopup();
+}
+
+function toggleReward(index) {
+  const rewards = getRewards();
+  rewards[index].claimed = !rewards[index].claimed;
+  saveRewards(rewards);
+  openRewardsPopup();
+}
+
+function updateRewardText(index, newText) {
+  const rewards = getRewards();
+  rewards[index].text = newText.trim();
+  saveRewards(rewards);
+}
+
+function deleteReward(index) {
+  const rewards = getRewards();
+  rewards.splice(index, 1);
+  saveRewards(rewards);
+  openRewardsPopup();
+}
+
+function checkAllTasksComplete() {
+  const today = new Date();
+  const todayStr = today.toISOString().split('T')[0];
+  const tasks = JSON.parse(localStorage.getItem("dgc_plan_tasks") || "[]");
+  const todayTasks = tasks.filter(task => task.date === todayStr);
+
+  const rewardDetails = document.getElementById('rewardDetails');
+  const rewardDetailsText = document.getElementById('rewardDetailsText');
+
+  if (todayTasks.length === 0) {
+    rewardDetails.classList.remove('show');
+    return;
+  }
+
+  const allDone = todayTasks.every(task => task.done);
+  const rewards = getRewards();
+  const unclaimedRewards = rewards.filter(r => !r.claimed);
+
+  if (allDone) {
+    rewardDetails.classList.add('show');
+    if (unclaimedRewards.length > 0) {
+      const randomReward = unclaimedRewards[Math.floor(Math.random() * unclaimedRewards.length)];
+      rewardDetailsText.innerHTML = `🎁 Your reward: <strong>${randomReward.text}</strong> 🎁<br><small>Check the REWARDS button to claim!</small>`;
+    } else {
+      rewardDetailsText.innerHTML = '🎉 Great job! All tasks completed!<br><small>Add more rewards for next time!</small>';
+    }
+  } else {
+    rewardDetails.classList.remove('show');
+  }
+}
+
+/* ===== TODAY TABLE FUNCTIONS ===== */
+function updateProgress() {
+  const today = new Date();
+  const todayStr = today.toISOString().split('T')[0];
+  const tasks = JSON.parse(localStorage.getItem("dgc_plan_tasks") || "[]");
+  const todayTasks = tasks.filter(task => task.date === todayStr);
+
+  const progressContainer = document.getElementById('progressContainer');
+  const progressBar = document.getElementById('progressBar');
+
+  if (todayTasks.length === 0) {
+    progressContainer.classList.remove('show');
+    return;
+  }
+
+  progressContainer.classList.add('show');
+  const doneCount = todayTasks.filter(task => task.done).length;
+  const percent = Math.round((doneCount / todayTasks.length) * 100);
+  progressBar.style.width = percent + '%';
+  progressBar.textContent = percent + '%';
+}
+
+function renderTodayTable() {
+  const tbody = document.getElementById('todayTableBody');
+  const noTasksMsg = document.getElementById('noTodayTasks');
+  const today = new Date();
+  const todayStr = today.toISOString().split('T')[0];
+
+  const planTasks = JSON.parse(localStorage.getItem("dgc_plan_tasks") || "[]");
+
+  const todayTasksWithIndices = [];
+  planTasks.forEach((task, originalIndex) => {
+    if (task.date === todayStr) {
+      todayTasksWithIndices.push({
+        task: task,
+        originalIndex: originalIndex
+      });
+    }
+  });
+
+  todayTasksWithIndices.sort((a, b) => {
+    const timeA = a.task.time || "23:59";
+    const timeB = b.task.time || "23:59";
+    return timeA.localeCompare(timeB);
+  });
+
+  if (todayTasksWithIndices.length === 0) {
+    tbody.innerHTML = '';
+    noTasksMsg.style.display = 'block';
+  } else {
+    noTasksMsg.style.display = 'none';
+
+    let html = '';
+    for (let i = 0; i < todayTasksWithIndices.length; i++) {
+      const item = todayTasksWithIndices[i];
+      const task = item.task;
+      const originalIndex = item.originalIndex;
+      const codeColor = getCodeColor(task.code);
+
+      html += `
+      <tr>
+        <td style="text-align:center;">
+          <div class="today-checkbox ${task.done ? 'checked' : ''}" 
+               onclick="toggleTodayTaskDone(${originalIndex})"
+               title="Click to mark done and remove">
+          </div>
+        </td>
+        <td style="text-align:center;">
+          <div class="code-cell-container">
+            <input type="color" class="code-color-picker" value="${codeColor}" 
+                   onchange="updateTodayTaskColor(${originalIndex}, this.value)"
+                   title="Click to change color">
+            <span class="code-text" contenteditable="true" 
+                  onblur="updateTodayTaskCode(${originalIndex}, this.innerText)"
+                  style="background-color:${codeColor}">${task.code.toUpperCase()}</span>
+          </div>
+        </td>
+        <td contenteditable="true" 
+            onblur="updateTodayTaskName(${originalIndex}, this.innerText)">${task.task}</td>
+      </tr>
+      `;
+    }
+
+    tbody.innerHTML = html;
+  }
+
+  updateProgress();
+  checkAllTasksComplete();
+}
+
+function addTodayTask() {
+  const today = new Date();
+  const todayStr = today.toISOString().split('T')[0];
+
+  const tasks = JSON.parse(localStorage.getItem("dgc_plan_tasks") || "[]");
+  tasks.push({
+    done: false,
+    date: todayStr,
+    time: '',
+    code: 'myself',
+    task: '',
+    alarm: false
+  });
+  localStorage.setItem("dgc_plan_tasks", JSON.stringify(tasks));
+  renderTodayTable();
   renderTasks();
 }
 
-/* RENDER TASKS */
+function toggleTodayTaskDone(index) {
+  const tasks = JSON.parse(localStorage.getItem("dgc_plan_tasks") || "[]");
+  if (tasks[index]) {
+    tasks[index].done = !tasks[index].done;
+    localStorage.setItem("dgc_plan_tasks", JSON.stringify(tasks));
+    renderTodayTable();
+    renderPlanTable();
+    renderTasks();
+    checkAllTasksComplete();
+  }
+}
+
+function updateTodayTaskColor(index, newColor) {
+  const tasks = JSON.parse(localStorage.getItem("dgc_plan_tasks") || "[]");
+  if (tasks[index]) {
+    const code = tasks[index].code;
+    saveCodeColor(code, newColor);
+    renderTodayTable();
+    renderPlanTable();
+    renderTasks();
+  }
+}
+
+function updateTodayTaskCode(index, newCode) {
+  const tasks = JSON.parse(localStorage.getItem("dgc_plan_tasks") || "[]");
+  if (tasks[index]) {
+    const oldCode = tasks[index].code;
+    const cleanCode = newCode.trim().toLowerCase();
+    tasks[index].code = cleanCode;
+    localStorage.setItem("dgc_plan_tasks", JSON.stringify(tasks));
+
+    const codeColors = JSON.parse(localStorage.getItem("dgc_code_colors") || "{}");
+    if (codeColors[oldCode]) {
+      codeColors[cleanCode] = codeColors[oldCode];
+      localStorage.setItem("dgc_code_colors", JSON.stringify(codeColors));
+    }
+
+    renderTodayTable();
+    renderPlanTable();
+    renderTasks();
+  }
+}
+
+function updateTodayTaskName(index, newName) {
+  const tasks = JSON.parse(localStorage.getItem("dgc_plan_tasks") || "[]");
+  if (tasks[index]) {
+    tasks[index].task = newName.trim();
+    localStorage.setItem("dgc_plan_tasks", JSON.stringify(tasks));
+    renderPlanTable();
+  }
+}
+
+/* ===== PLAN TABLE FUNCTIONS ===== */
+function renderPlanTable() {
+  const tbody = document.getElementById('planTableBody');
+  const tasks = JSON.parse(localStorage.getItem("dgc_plan_tasks") || "[]");
+  const today = new Date();
+  const todayStr = today.toISOString().split('T')[0];
+
+  const planTasksOnly = tasks.map((task, index) => ({ task, index }))
+    .filter(({ task }) => task.date !== todayStr);
+
+  planTasksOnly.sort((a, b) => {
+    if (!a.task.date) return 1;
+    if (!b.task.date) return -1;
+    const dateCompare = a.task.date.localeCompare(b.task.date);
+    if (dateCompare !== 0) return dateCompare;
+    return (a.task.time || "23:59").localeCompare(b.task.time || "23:59");
+  });
+
+  tbody.innerHTML = planTasksOnly.map(({ task, index }) => {
+    const codeColor = getCodeColor(task.code);
+    return `
+    <tr data-index="${index}">
+      <td style="text-align:center;"><input type="checkbox" ${task.done ? 'checked' : ''} onchange="togglePlanDone(${index})"></td>
+      <td><input type="date" value="${task.date || ''}" onchange="updatePlanTask(${index}, 'date', this.value)"></td>
+      <td><input type="time" value="${task.time || ''}" onchange="updatePlanTask(${index}, 'time', this.value)"></td>
+      <td>
+        <div class="plan-color-cell">
+          <input type="color" class="plan-color-picker" value="${codeColor}" 
+                 onchange="updatePlanTaskColor(${index}, this.value)"
+                 title="Click to change color">
+          <span class="plan-code-text" contenteditable="true" 
+                onblur="updatePlanTask(${index}, 'code', this.innerText.toLowerCase().trim())"
+                style="background-color:${codeColor}">${task.code.toUpperCase()}</span>
+        </div>
+      </td>
+      <td contenteditable="true" onblur="updatePlanTask(${index}, 'task', this.innerText)">${task.task || ''}</td>
+      <td style="text-align:center;"><input type="checkbox" ${task.alarm ? 'checked' : ''} onchange="updatePlanTask(${index}, 'alarm', this.checked)"></td>
+    </tr>
+  `}).join('');
+
+  renderTasks();
+}
+
+function addPlanTask() {
+  const tasks = JSON.parse(localStorage.getItem("dgc_plan_tasks") || "[]");
+  tasks.push({
+    done: false,
+    date: '',
+    time: '',
+    code: 'myself',
+    task: '',
+    alarm: false
+  });
+  localStorage.setItem("dgc_plan_tasks", JSON.stringify(tasks));
+  renderPlanTable();
+}
+
+function updatePlanTask(index, field, value) {
+  const tasks = JSON.parse(localStorage.getItem("dgc_plan_tasks") || "[]");
+  if (tasks[index]) {
+    tasks[index][field] = value;
+    localStorage.setItem("dgc_plan_tasks", JSON.stringify(tasks));
+
+    if (field === 'date') {
+      renderPlanTable();
+      renderTodayTable();
+    } else if (field === 'time' || field === 'code') {
+      renderPlanTable();
+      renderTodayTable();
+    }
+    renderTasks();
+  }
+}
+
+function updatePlanTaskColor(index, newColor) {
+  const tasks = JSON.parse(localStorage.getItem("dgc_plan_tasks") || "[]");
+  if (tasks[index]) {
+    const code = tasks[index].code;
+    saveCodeColor(code, newColor);
+    renderPlanTable();
+    renderTodayTable();
+    renderTasks();
+  }
+}
+
+function togglePlanDone(index) {
+  const tasks = JSON.parse(localStorage.getItem("dgc_plan_tasks") || "[]");
+  if (tasks[index]) {
+    // Auto-delete when checked in plan table
+    tasks.splice(index, 1);
+    localStorage.setItem("dgc_plan_tasks", JSON.stringify(tasks));
+    renderPlanTable();
+    renderTodayTable();
+    renderTasks();
+  }
+}
+
+/* ===== RENDER TASKS TO CALENDAR ===== */
 function renderTasks(){
   document.querySelectorAll(".day-tasks").forEach(c=>c.innerHTML="");
 
-  const rows=[...document.querySelectorAll("#todoBody tr")];
+  const tasks = JSON.parse(localStorage.getItem("dgc_plan_tasks") || "[]");
 
-  rows.sort((a,b)=>{
-    const da=a.children[1].querySelector("input").value;
-    const ta=a.children[2].querySelector("input").value || "23:59";
-    const db=b.children[1].querySelector("input").value;
-    const tb=b.children[2].querySelector("input").value || "23:59";
+  tasks.forEach(task=>{
+    if(!task.date) return;
 
-    if(!da) return 1;
-    if(!db) return -1;
-
-    return new Date(`${da}T${ta}`) - new Date(`${db}T${tb}`);
-  });
-
-  rows.forEach(r=>todoBody.appendChild(r));
-
-  rows.forEach(row=>{
-    const date=row.children[1].querySelector("input").value;
-    if(!date) return;
-
-    const [y,m,d]=date.split("-");
+    const [y,m,d]=task.date.split("-");
     const cell=document.querySelector(`.day[data-date="${+y}-${+m}-${+d}"]`);
     if(!cell) return;
 
-    const code=row.children[3].querySelector("select").value;
-    const task=row.children[4].innerText || "No task name";
-    const time=row.children[2].querySelector("input").value || "—";
+    const codeColor = getCodeColor(task.code);
 
     const p=document.createElement("div");
-    p.className=`task-pill task-${code}`;
-    p.textContent=code.toUpperCase();
-
+    p.className='task-pill';
+    p.style.backgroundColor = codeColor;
+    p.textContent=task.code.toUpperCase();
     p.onclick=()=>{
-      openTaskPopup({task,code,date,time});
+      openTaskPopup({
+        task: task.task || "No task name",
+        code: task.code,
+        date: task.date,
+        time: task.time || "—"
+      });
     };
-
     cell.querySelector(".day-tasks").appendChild(p);
   });
 }
 
-function saveTasks(){
-  const data=[];
-  document.querySelectorAll("#todoBody tr").forEach(r=>{
-    data.push({
-      done:r.children[0].querySelector("input").checked,
-      date:r.children[1].querySelector("input").value,
-      time:r.children[2].querySelector("input").value,
-      code:r.children[3].querySelector("select").value,
-      task:r.children[4].innerText,
-      alarm:r.children[5].querySelector("input").checked
-    });
-  });
-  localStorage.setItem("dgc_admin_tasks",JSON.stringify(data));
-}
-
-function loadTasks(){
-  const saved=localStorage.getItem("dgc_admin_tasks");
-  if(!saved) return;
-  
-  todoBody.innerHTML="";
-  JSON.parse(saved).forEach(task=>{
-    addTask(task);
-  });
-  
-  renderTasks();
-}
-
-window.addEventListener("DOMContentLoaded",loadTasks);
-
 /* ===== ALARM SYSTEM ===== */
-
-let triggeredAlarms = new Set(); // Track already-triggered alarms this session
+let triggeredAlarms = new Set();
 
 function checkAlarms() {
   const now = new Date();
   const currentDate = now.toDateString();
   const currentTime = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
-  
-  const rows = document.querySelectorAll("#todoBody tr");
+
+  const tasks = JSON.parse(localStorage.getItem("dgc_plan_tasks") || "[]");
   const activeAlarms = [];
-  
-  rows.forEach((row, index) => {
-    const alarmChecked = row.children[5].querySelector("input").checked;
-    if (!alarmChecked) return;
-    
-    const date = row.children[1].querySelector("input").value;
-    const time = row.children[2].querySelector("input").value;
-    const task = row.children[4].innerText || "Untitled Task";
-    
-    if (!date || !time) return;
-    
-    const taskDate = new Date(date).toDateString();
-    
-    // Check if alarm should trigger (same day and within current minute)
-    if (taskDate === currentDate && time === currentTime) {
-      const alarmKey = `${date}-${time}-${task}`;
-      
-      // Only trigger if not already triggered this session
+
+  tasks.forEach(task => {
+    if (!task.alarm || !task.date || !task.time) return;
+
+    const taskDate = new Date(task.date).toDateString();
+
+    if (taskDate === currentDate && task.time === currentTime) {
+      const alarmKey = `${task.date}-${task.time}-${task.task}`;
       if (!triggeredAlarms.has(alarmKey)) {
         triggeredAlarms.add(alarmKey);
-        triggerAlarm(task, time, date);
+        triggerAlarm(task.task, task.time, task.date);
       }
     }
-    
-    // Also collect all active alarms for today (for homepage badge)
-    if (taskDate === currentDate && time >= currentTime) {
+
+    if (taskDate === currentDate && task.time >= currentTime) {
       activeAlarms.push({
-        task,
-        time,
-        date,
+        task: task.task,
+        time: task.time,
+        date: task.date,
         triggeredAt: now.toISOString()
       });
     }
   });
-  
-  // Save active alarms for homepage to detect
+
   if (activeAlarms.length > 0) {
     localStorage.setItem("DGC_ACTIVE_ALARMS", JSON.stringify(activeAlarms));
   }
 }
 
 function triggerAlarm(task, time, date) {
-  // Show popup notification
   const popup = document.getElementById("alarmPopup");
   document.getElementById("alarmTaskName").textContent = task;
   document.getElementById("alarmTime").textContent = `${date} at ${time}`;
   popup.classList.add("show");
-  
-  // Hide popup after 5 seconds
+
   setTimeout(() => {
     popup.classList.remove("show");
   }, 5000);
-  
-  // Play notification sound (short beep)
+
   const notifSound = new Audio("notification.mp3");
   notifSound.play().catch(e => console.log("Audio play failed:", e));
 }
 
-// Check alarms every 10 seconds
 setInterval(checkAlarms, 10000);
-checkAlarms(); // Check immediately on load
+checkAlarms();
 
-// Clear alarms when leaving this page (user has "opened" calendar)
 window.addEventListener("beforeunload", () => {
   localStorage.removeItem("DGC_ACTIVE_ALARMS");
 });
@@ -639,6 +1558,9 @@ logoutBtn.onclick=()=>{
     window.location.href="login.html";
   }
 };
+
+// Initial render
+renderTasks();
 </script>
 
 </body>
