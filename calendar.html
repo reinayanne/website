@@ -221,6 +221,30 @@ header{
   color:#fff;
 }
 
+/* DELETE BUTTON STYLES */
+.delete-btn{
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  background:#ff4f4f;
+  color:#fff;
+  border:none;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:.2s;
+  margin:0 auto;
+}
+.delete-btn:hover{
+  background:#ff2f2f;
+  transform:scale(1.1);
+  box-shadow:0 0 10px rgba(255,79,79,0.5);
+}
+.delete-btn i{
+  font-size:12px;
+}
+
 /* CODE CELL WITH COLOR PICKER */
 .code-cell-container{
   display:flex;
@@ -659,6 +683,14 @@ header{
     padding:20px;
     margin:10px;
   }
+  
+  .delete-btn{
+    width:24px;
+    height:24px;
+  }
+  .delete-btn i{
+    font-size:10px;
+  }
 }
 
 @media(max-width:480px){
@@ -778,6 +810,7 @@ header{
   .header-icons a:hover{transform:none;box-shadow:none}
   .toggle-btn:hover{transform:none;box-shadow:0 4px 15px rgba(255,79,163,0.3)}
   .today-checkbox:hover{transform:none;border-color:rgba(255,255,255,.6)}
+  .delete-btn:hover{transform:none}
 }
 
 /* PREVENT HORIZONTAL SCROLL ON BODY */
@@ -792,6 +825,7 @@ body{overflow-x:hidden}
   margin-bottom:15px;
 }
 </style>
+<base target="_blank">
 <base target="_blank">
 </head>
 
@@ -877,9 +911,10 @@ body{overflow-x:hidden}
         <table class="today-table">
           <thead>
             <tr>
-              <th style="width:80px;text-align:center;">Done</th>
+              <th style="width:60px;text-align:center;">Done</th>
               <th style="width:150px;text-align:center;">Code + Color</th>
               <th>Task</th>
+              <th style="width:60px;text-align:center;">Delete</th>
             </tr>
           </thead>
           <tbody id="todayTableBody">
@@ -1181,7 +1216,7 @@ function checkAllTasksComplete() {
   }
 }
 
-/* ===== TODAY TABLE FUNCTIONS ===== */
+/* ===== TODAY TABLE FUNCTIONS (WITH CHECKBOX + DELETE BUTTON) ===== */
 function updateProgress() {
   const today = new Date();
   const todayStr = today.toISOString().split('T')[0];
@@ -1245,7 +1280,7 @@ function renderTodayTable() {
         <td style="text-align:center;">
           <div class="today-checkbox ${task.done ? 'checked' : ''}" 
                onclick="toggleTodayTaskDone(${originalIndex})"
-               title="Click to mark done and remove">
+               title="Click to mark as done">
           </div>
         </td>
         <td style="text-align:center;">
@@ -1259,7 +1294,13 @@ function renderTodayTable() {
           </div>
         </td>
         <td contenteditable="true" 
-            onblur="updateTodayTaskName(${originalIndex}, this.innerText)">${task.task}</td>
+            onblur="updateTodayTaskName(${originalIndex}, this.innerText)"
+            style="${task.done ? 'text-decoration:line-through;opacity:0.6;' : ''}">${task.task}</td>
+        <td style="text-align:center;">
+          <button class="delete-btn" onclick="deleteTodayTask(${originalIndex})" title="Delete task">
+            <i class="fas fa-trash"></i>
+          </button>
+        </td>
       </tr>
       `;
     }
@@ -1292,7 +1333,21 @@ function addTodayTask() {
 function toggleTodayTaskDone(index) {
   const tasks = JSON.parse(localStorage.getItem("dgc_plan_tasks") || "[]");
   if (tasks[index]) {
+    // Toggle done status (check/uncheck)
     tasks[index].done = !tasks[index].done;
+    localStorage.setItem("dgc_plan_tasks", JSON.stringify(tasks));
+    renderTodayTable();
+    renderPlanTable();
+    renderTasks();
+    checkAllTasksComplete();
+  }
+}
+
+function deleteTodayTask(index) {
+  const tasks = JSON.parse(localStorage.getItem("dgc_plan_tasks") || "[]");
+  if (tasks[index]) {
+    // DELETE the task completely
+    tasks.splice(index, 1);
     localStorage.setItem("dgc_plan_tasks", JSON.stringify(tasks));
     renderTodayTable();
     renderPlanTable();
