@@ -124,10 +124,10 @@ header{
 /* TODO SECTION */
 .todo-section{grid-column:1/-1;background:rgba(255,255,255,.35);border-radius:20px;padding:20px;margin-top:20px;color:#7a2f4d}
 
-/* BUTTON CONTAINER - 2 COLUMNS */
+/* BUTTON CONTAINER - 3 COLUMNS */
 .button-container{
   display:grid;
-  grid-template-columns:1fr 1fr;
+  grid-template-columns:1fr 1fr 1fr;
   gap:15px;
   margin-top:20px;
 }
@@ -629,6 +629,76 @@ header{
   text-shadow:0 1px 2px rgba(0,0,0,.3);
 }
 
+/* ===== ROUTINE SECTION STYLES ===== */
+.routine-tabs{
+  display:flex;
+  gap:8px;
+  margin-bottom:15px;
+  flex-wrap:wrap;
+}
+.routine-tab{
+  flex:1;
+  min-width:70px;
+  background:rgba(255,255,255,.5);
+  border:none;
+  padding:10px 14px;
+  border-radius:12px;
+  font-weight:700;
+  font-size:13px;
+  color:#7a2f4d;
+  cursor:pointer;
+  transition:.3s;
+}
+.routine-tab:hover{
+  background:rgba(255,79,163,.3);
+  color:#fff;
+}
+.routine-tab.active{
+  background:linear-gradient(135deg,#ff4fa3,#ff7bbf);
+  color:#fff;
+  box-shadow:0 4px 15px rgba(255,79,163,0.4);
+}
+
+.routine-table{
+  width:100%;
+  border-collapse:collapse;
+}
+.routine-table th,.routine-table td{
+  border:1px dotted #fff;
+  padding:10px;
+  font-size:13px;
+  text-align:left;
+}
+.routine-table th{
+  background:rgba(255,79,163,0.2);
+  font-weight:700;
+}
+.routine-table td{
+  background:rgba(255,255,255,0.1);
+}
+
+.routine-table select,
+.routine-table input[type="number"]{
+  width:100%;
+  padding:8px;
+  border-radius:8px;
+  border:none;
+  font-size:13px;
+  background:#fff;
+  color:#7a2f4d;
+}
+
+.routine-table td[contenteditable]{
+  background:#fff;
+  color:#7a2f4d;
+  padding:8px;
+  border-radius:8px;
+  min-width:100px;
+}
+.routine-table td[contenteditable]:focus{
+  outline:2px solid #ff4fa3;
+}
+
 /* MOBILE RESPONSIVE */
 @media(max-width:1024px){
   .calendar-wrapper{grid-template-columns:1fr}
@@ -661,7 +731,8 @@ header{
   .toggle-btn i{font-size:14px}
 
   .today-table th,.today-table td,
-  .plan-table th,.plan-table td{padding:8px;font-size:12px}
+  .plan-table th,.plan-table td,
+  .routine-table th,.routine-table td{padding:8px;font-size:12px}
 
   .code-color-picker, .plan-color-picker{
     width:24px;
@@ -691,6 +762,12 @@ header{
   .delete-btn i{
     font-size:10px;
   }
+  
+  .routine-tab{
+    padding:8px 10px;
+    font-size:12px;
+    min-width:60px;
+  }
 }
 
 @media(max-width:480px){
@@ -707,8 +784,8 @@ header{
   .button-container{grid-template-columns:1fr;gap:8px}
   .toggle-btn{width:100%}
 
-  .plan-table, .today-table{font-size:11px}
-  .plan-table input,.today-table td[contenteditable]{font-size:11px;padding:6px}
+  .plan-table, .today-table, .routine-table{font-size:11px}
+  .plan-table input,.today-table td[contenteditable],.routine-table td[contenteditable]{font-size:11px;padding:6px}
 
   .add-task-btn{width:100%;padding:10px 16px;font-size:14px}
 
@@ -733,6 +810,11 @@ header{
   .today-header{
     flex-direction:column;
     align-items:flex-start !important;
+  }
+  
+  .routine-tabs{
+    display:grid;
+    grid-template-columns:1fr 1fr;
   }
 }
 
@@ -881,7 +963,7 @@ body{overflow-x:hidden}
     <section class="todo-section">
       <h3>TO DO LIST</h3>
 
-      <!-- 2 COLUMN BUTTONS -->
+      <!-- 3 COLUMN BUTTONS -->
       <div class="button-container">
         <button class="toggle-btn" id="todayBtn" onclick="toggleSection('today')">
           <i class="fas fa-calendar-day"></i>
@@ -890,6 +972,10 @@ body{overflow-x:hidden}
         <button class="toggle-btn" id="planBtn" onclick="toggleSection('plan')">
           <i class="fas fa-calendar-alt"></i>
           PLAN
+        </button>
+        <button class="toggle-btn" id="routineBtn" onclick="toggleSection('routine')">
+          <i class="fas fa-sync-alt"></i>
+          ROUTINE
         </button>
       </div>
 
@@ -962,6 +1048,34 @@ body{overflow-x:hidden}
           <i class="fas fa-plus"></i> Add Task
         </button>
       </div>
+
+      <!-- ROUTINE TABLE (Hidden by default) -->
+      <div class="toggle-table-container" id="routineSection">
+        <h4 style="margin-bottom:15px;color:#7a2f4d;"><i class="fas fa-sync-alt"></i> Routine Tasks (Auto Calendar)</h4>
+        
+        <!-- Routine Type Tabs -->
+        <div class="routine-tabs">
+          <button class="routine-tab active" onclick="switchRoutineTab('daily', this)">Daily</button>
+          <button class="routine-tab" onclick="switchRoutineTab('weekly', this)">Weekly</button>
+          <button class="routine-tab" onclick="switchRoutineTab('monthly', this)">Monthly</button>
+          <button class="routine-tab" onclick="switchRoutineTab('yearly', this)">Yearly</button>
+        </div>
+        
+        <div style="overflow-x:auto;">
+          <div id="routineTables">
+            <!-- Dynamic content -->
+          </div>
+        </div>
+        
+        <button class="add-task-btn" onclick="addRoutine()">
+          <i class="fas fa-plus"></i> Add Routine
+        </button>
+        
+        <p style="margin-top:15px;font-size:12px;color:#7a2f4d;opacity:0.8;">
+          <i class="fas fa-info-circle"></i> 
+          Routines automatically appear on the calendar. Daily = every day, Weekly = same day every week, Monthly = same date every month, Yearly = same date every year.
+        </p>
+      </div>
     </section>
   </div>
 </div>
@@ -1028,6 +1142,7 @@ scrollBtn.onclick=()=>scrollTo({top:0,behavior:"smooth"});
 
 /* CALENDAR */
 const monthNames=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const dayNames=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 const today=new Date();
 monthNames.forEach((m,i)=>monthSelect.innerHTML+=`<option value="${i}">${m}</option>`);
 monthSelect.value=today.getMonth();
@@ -1072,20 +1187,26 @@ let activeSection = null;
 function toggleSection(section) {
   const todaySection = document.getElementById('todaySection');
   const planSection = document.getElementById('planSection');
+  const routineSection = document.getElementById('routineSection');
   const todayBtn = document.getElementById('todayBtn');
   const planBtn = document.getElementById('planBtn');
+  const routineBtn = document.getElementById('routineBtn');
 
   if (activeSection === section) {
     todaySection.classList.remove('active');
     planSection.classList.remove('active');
+    routineSection.classList.remove('active');
     todayBtn.classList.remove('active');
     planBtn.classList.remove('active');
+    routineBtn.classList.remove('active');
     activeSection = null;
   } else {
     todaySection.classList.remove('active');
     planSection.classList.remove('active');
+    routineSection.classList.remove('active');
     todayBtn.classList.remove('active');
     planBtn.classList.remove('active');
+    routineBtn.classList.remove('active');
 
     if (section === 'today') {
       todaySection.classList.add('active');
@@ -1095,6 +1216,10 @@ function toggleSection(section) {
       planSection.classList.add('active');
       planBtn.classList.add('active');
       renderPlanTable();
+    } else if (section === 'routine') {
+      routineSection.classList.add('active');
+      routineBtn.classList.add('active');
+      renderRoutineTable();
     }
     activeSection = section;
   }
@@ -1333,7 +1458,6 @@ function addTodayTask() {
 function toggleTodayTaskDone(index) {
   const tasks = JSON.parse(localStorage.getItem("dgc_plan_tasks") || "[]");
   if (tasks[index]) {
-    // Toggle done status (check/uncheck)
     tasks[index].done = !tasks[index].done;
     localStorage.setItem("dgc_plan_tasks", JSON.stringify(tasks));
     renderTodayTable();
@@ -1346,7 +1470,6 @@ function toggleTodayTaskDone(index) {
 function deleteTodayTask(index) {
   const tasks = JSON.parse(localStorage.getItem("dgc_plan_tasks") || "[]");
   if (tasks[index]) {
-    // DELETE the task completely
     tasks.splice(index, 1);
     localStorage.setItem("dgc_plan_tasks", JSON.stringify(tasks));
     renderTodayTable();
@@ -1484,13 +1607,249 @@ function updatePlanTaskColor(index, newColor) {
 function togglePlanDone(index) {
   const tasks = JSON.parse(localStorage.getItem("dgc_plan_tasks") || "[]");
   if (tasks[index]) {
-    // Auto-delete when checked in plan table
     tasks.splice(index, 1);
     localStorage.setItem("dgc_plan_tasks", JSON.stringify(tasks));
     renderPlanTable();
     renderTodayTable();
     renderTasks();
   }
+}
+
+/* ===== ROUTINE SYSTEM ===== */
+let currentRoutineTab = 'daily';
+
+function getRoutines() {
+  return JSON.parse(localStorage.getItem("dgc_routines") || "[]");
+}
+
+function saveRoutines(routines) {
+  localStorage.setItem("dgc_routines", JSON.stringify(routines));
+}
+
+function switchRoutineTab(type, btn) {
+  currentRoutineTab = type;
+  document.querySelectorAll('.routine-tab').forEach(tab => tab.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  else {
+    const tabs = document.querySelectorAll('.routine-tab');
+    const typeMap = { daily: 0, weekly: 1, monthly: 2, yearly: 3 };
+    if (tabs[typeMap[type]]) tabs[typeMap[type]].classList.add('active');
+  }
+  renderRoutineTable();
+}
+
+function getRoutineColspan() {
+  const typeCols = { daily: 3, weekly: 4, monthly: 4, yearly: 4 };
+  return typeCols[currentRoutineTab];
+}
+
+function renderRoutineTable() {
+  const container = document.getElementById('routineTables');
+  const routines = getRoutines().filter(r => r.type === currentRoutineTab);
+  
+  let html = `<table class="routine-table">
+    <thead>
+      <tr>
+        ${currentRoutineTab === 'weekly' ? '<th style="width:100px;">Day</th>' : ''}
+        ${currentRoutineTab === 'monthly' ? '<th style="width:100px;">Day</th>' : ''}
+        ${currentRoutineTab === 'yearly' ? '<th style="width:140px;">Date</th>' : ''}
+        <th style="width:150px;text-align:center;">Code + Color</th>
+        <th>Task</th>
+        <th style="width:60px;text-align:center;">Delete</th>
+      </tr>
+    </thead>
+    <tbody>`;
+  
+  if (routines.length === 0) {
+    html += `<tr><td colspan="${getRoutineColspan()}" style="text-align:center;padding:30px;color:#7a2f4d;">
+      <i class="fas fa-clipboard" style="font-size:40px;display:block;margin-bottom:10px;opacity:0.5;"></i>
+      No ${currentRoutineTab} routines yet!
+    </td></tr>`;
+  } else {
+    routines.forEach((routine) => {
+      const codeColor = getCodeColor(routine.code);
+      html += `<tr>
+        ${getRoutineTypeCell(routine)}
+        <td style="text-align:center;">
+          <div class="code-cell-container">
+            <input type="color" class="code-color-picker" value="${codeColor}" 
+                   onchange="updateRoutineColor('${routine.id}', this.value)"
+                   title="Click to change color">
+            <span class="code-text" contenteditable="true" 
+                  onblur="updateRoutineCode('${routine.id}', this.innerText)"
+                  style="background-color:${codeColor}">${routine.code.toUpperCase()}</span>
+          </div>
+        </td>
+        <td contenteditable="true" onblur="updateRoutineTask('${routine.id}', this.innerText)">${routine.task}</td>
+        <td style="text-align:center;">
+          <button class="delete-btn" onclick="deleteRoutine('${routine.id}')" title="Delete routine">
+            <i class="fas fa-trash"></i>
+          </button>
+        </td>
+      </tr>`;
+    });
+  }
+  
+  html += `</tbody></table>`;
+  container.innerHTML = html;
+}
+
+function getRoutineTypeCell(routine) {
+  if (routine.type === 'weekly') {
+    return `<td>
+      <select onchange="updateRoutineField('${routine.id}', 'day', this.value)" style="width:100%;padding:8px;border-radius:8px;border:none;font-size:13px;background:#fff;color:#7a2f4d;">
+        ${dayNames.map((d,i) => `<option value="${i}" ${routine.day == i ? 'selected' : ''}>${d}</option>`).join('')}
+      </select>
+    </td>`;
+  }
+  if (routine.type === 'monthly') {
+    return `<td><input type="number" min="1" max="31" value="${routine.day}" 
+             onchange="updateRoutineField('${routine.id}', 'day', this.value)"
+             style="width:100%;padding:8px;border-radius:8px;border:none;font-size:13px;text-align:center;background:#fff;color:#7a2f4d;"></td>`;
+  }
+  if (routine.type === 'yearly') {
+    return `<td>
+      <div style="display:flex;gap:8px;">
+        <select onchange="updateRoutineField('${routine.id}', 'month', this.value)" style="flex:1;padding:8px;border-radius:8px;border:none;font-size:13px;background:#fff;color:#7a2f4d;">
+          ${monthNames.map((m,i) => `<option value="${i}" ${routine.month == i ? 'selected' : ''}>${m}</option>`).join('')}
+        </select>
+        <input type="number" min="1" max="31" value="${routine.day}" 
+               onchange="updateRoutineField('${routine.id}', 'day', this.value)"
+               style="width:60px;padding:8px;border-radius:8px;border:none;font-size:13px;text-align:center;background:#fff;color:#7a2f4d;">
+      </div>
+    </td>`;
+  }
+  return '';
+}
+
+function addRoutine() {
+  const routines = getRoutines();
+  const newRoutine = {
+    id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
+    type: currentRoutineTab,
+    code: 'myself',
+    task: 'New Routine',
+    enabled: true
+  };
+  
+  if (currentRoutineTab === 'weekly') newRoutine.day = 1;
+  if (currentRoutineTab === 'monthly') newRoutine.day = 1;
+  if (currentRoutineTab === 'yearly') { newRoutine.month = 0; newRoutine.day = 1; }
+  
+  routines.push(newRoutine);
+  saveRoutines(routines);
+  renderRoutineTable();
+  renderTasks();
+}
+
+function updateRoutineField(id, field, value) {
+  const routines = getRoutines();
+  const routine = routines.find(r => r.id === id);
+  if (routine) {
+    if (field === 'code') {
+      routine[field] = value.trim().toLowerCase();
+    } else if (field === 'task') {
+      routine[field] = value.trim();
+    } else {
+      routine[field] = parseInt(value);
+    }
+    saveRoutines(routines);
+    renderRoutineTable();
+    renderTasks();
+  }
+}
+
+function updateRoutineColor(id, color) {
+  const routines = getRoutines();
+  const routine = routines.find(r => r.id === id);
+  if (routine) {
+    saveCodeColor(routine.code, color);
+    renderRoutineTable();
+    renderTasks();
+  }
+}
+
+function updateRoutineCode(id, newCode) {
+  const routines = getRoutines();
+  const routine = routines.find(r => r.id === id);
+  if (routine) {
+    const oldCode = routine.code;
+    routine.code = newCode.trim().toLowerCase();
+    saveRoutines(routines);
+    const codeColors = JSON.parse(localStorage.getItem("dgc_code_colors") || "{}");
+    if (codeColors[oldCode]) {
+      codeColors[routine.code] = codeColors[oldCode];
+      localStorage.setItem("dgc_code_colors", JSON.stringify(codeColors));
+    }
+    renderRoutineTable();
+    renderTasks();
+  }
+}
+
+function updateRoutineTask(id, newTask) {
+  const routines = getRoutines();
+  const routine = routines.find(r => r.id === id);
+  if (routine) {
+    routine.task = newTask.trim();
+    saveRoutines(routines);
+    renderTasks();
+  }
+}
+
+function deleteRoutine(id) {
+  const routines = getRoutines().filter(r => r.id !== id);
+  saveRoutines(routines);
+  renderRoutineTable();
+  renderTasks();
+}
+
+/* ===== RENDER ROUTINES TO CALENDAR ===== */
+function renderRoutinePills() {
+  const routines = getRoutines();
+  const m = +monthSelect.value;
+  const y = +yearInput.value;
+  const daysInMonth = new Date(y, m + 1, 0).getDate();
+  
+  routines.forEach(routine => {
+    if (!routine.enabled) return;
+    
+    for (let d = 1; d <= daysInMonth; d++) {
+      const date = new Date(y, m, d);
+      let match = false;
+      
+      if (routine.type === 'daily') {
+        match = true;
+      } else if (routine.type === 'weekly') {
+        match = date.getDay() === routine.day;
+      } else if (routine.type === 'monthly') {
+        match = d === routine.day;
+      } else if (routine.type === 'yearly') {
+        match = date.getMonth() === routine.month && d === routine.day;
+      }
+      
+      if (match) {
+        const cell = document.querySelector(`.day[data-date="${y}-${m+1}-${d}"]`);
+        if (cell) {
+          const codeColor = getCodeColor(routine.code);
+          const p = document.createElement("div");
+          p.className = 'task-pill';
+          p.style.backgroundColor = codeColor;
+          p.style.opacity = '0.9';
+          p.innerHTML = `<i class="fas fa-sync-alt" style="font-size:8px;margin-right:3px;opacity:0.8;"></i>${routine.code.toUpperCase()}`;
+          p.title = `[ROUTINE - ${routine.type.toUpperCase()}] ${routine.task}`;
+          p.onclick = () => {
+            openTaskPopup({
+              task: `[ROUTINE] ${routine.task}`,
+              code: routine.code,
+              date: `${monthNames[m]} ${d}, ${y} (${routine.type})`,
+              time: 'Recurring'
+            });
+          };
+          cell.querySelector(".day-tasks").appendChild(p);
+        }
+      }
+    }
+  });
 }
 
 /* ===== RENDER TASKS TO CALENDAR ===== */
@@ -1522,6 +1881,9 @@ function renderTasks(){
     };
     cell.querySelector(".day-tasks").appendChild(p);
   });
+  
+  // Render routine pills after plan tasks
+  renderRoutinePills();
 }
 
 /* ===== ALARM SYSTEM ===== */
