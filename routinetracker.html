@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,11 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Queen Julie | Habit Tracker</title>
 
-<!-- FAVICON -->
 <link rel="icon" type="image/png" sizes="64x64" href="adminfavicon.ico">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css ">
-<script src="https://cdn.jsdelivr.net/npm/chart.js "></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 :root {
@@ -30,7 +27,6 @@ body{
   overflow-x:hidden;
 }
 
-/* HEADER */
 header{
   position:sticky; top:0; z-index:1000;
   display:flex; justify-content:space-between; align-items:center;
@@ -63,10 +59,9 @@ header{
   text-shadow:0 0 8px #ff69b4;
 }
 
-/* NEW VERTICAL CONTROL PANEL - Desktop side-by-side layout */
 .control-panel-container {
   display: flex;
-  flex-direction: row; /* Horizontal on desktop - side by side */
+  flex-direction: row;
   gap: 20px;
   background: var(--glass-bg);
   backdrop-filter: blur(12px);
@@ -78,23 +73,20 @@ header{
   justify-content: space-between;
 }
 
-/* LEFT section: Calendar + Chibi side by side */
 .control-left {
   display: flex;
-  flex-direction: row; /* Side by side */
+  flex-direction: row;
   align-items: flex-start;
   gap: 15px;
   min-width: 280px;
 }
 
-/* Calendar wrapper */
 .calendar-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-/* Chibi image styling - Now beside calendar */
 .chibi-image {
   width: 180px;
   height: auto;
@@ -102,7 +94,6 @@ header{
   object-fit: contain;
 }
 
-/* MIDDLE section: Title, Time ONLY (centered) */
 .control-middle {
   display: flex;
   flex-direction: column;
@@ -114,16 +105,14 @@ header{
   padding-top: 20px;
 }
 
-/* RIGHT section: Buttons + Progress side by side */
 .control-right {
   display: flex;
-  flex-direction: row; /* Buttons and Progress side by side */
+  flex-direction: row;
   align-items: flex-start;
   gap: 20px;
   min-width: 400px;
 }
 
-/* Buttons container - stacked vertically */
 .buttons-container {
   display: flex;
   flex-direction: column;
@@ -131,7 +120,6 @@ header{
   min-width: 180px;
 }
 
-/* Mini Calendar Styles */
 .calendar{
   display:grid;
   grid-template-columns: repeat(7, 30px);
@@ -155,31 +143,28 @@ header{
   color:#ffb3d9;
 }
 
-/* Routine Tracker Title - BIGGER */
 .routine-title {
-  font-size: 30px; /* Increased from 28px */
-  font-weight: 800; /* Increased weight */
+  font-size: 30px;
+  font-weight: 800;
   text-align: center;
-  text-shadow: 0 0 20px #ff69b4, 0 0 40px #ff69b4; /* Enhanced glow */
+  text-shadow: 0 0 20px #ff69b4, 0 0 40px #ff69b4;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
   margin-bottom: 5px;
-  letter-spacing: 2px; /* Added spacing */
+  letter-spacing: 2px;
 }
 
-/* Digital Clock - BIGGER */
 #digitalClock{
-  font-size: 42px; /* Increased from 24px */
-  font-weight: 700; /* Increased weight */
+  font-size: 42px;
+  font-weight: 700;
   color: #fff;
-  text-shadow: 0 0 15px rgba(255, 79, 163, 0.9), 0 0 30px rgba(255, 79, 163, 0.6); /* Enhanced glow */
-  padding: 15px 30px; /* Increased padding */
-  background: rgba(255, 79, 163, 0.25); /* Slightly more opaque */
-  border-radius: 15px; /* Slightly larger radius */
-  border: 2px solid rgba(255, 79, 163, 0.6); /* Thicker border */
-  letter-spacing: 3px; /* Added spacing for digital look */
+  text-shadow: 0 0 15px rgba(255, 79, 163, 0.9), 0 0 30px rgba(255, 79, 163, 0.6);
+  padding: 15px 30px;
+  background: rgba(255, 79, 163, 0.25);
+  border-radius: 15px;
+  border: 2px solid rgba(255, 79, 163, 0.6);
+  letter-spacing: 3px;
 }
 
-/* Button Groups - now in right section */
 .button-group {
   display: flex;
   flex-direction: column;
@@ -221,7 +206,6 @@ header{
   border: 2px solid #ff4fa3;
 }
 
-/* Month Dropdown */
 #monthSelect{
   appearance: none;
   -webkit-appearance: none;
@@ -255,26 +239,24 @@ header{
 #monthSelect{
   background-image:
     linear-gradient(135deg,#ff4fa3,#ff7bbf),
-    url("data:image/svg+xml;utf8,<svg fill='white' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg '><path d='M7 10l5 5 5-5z'/></svg>");
+    url("data:image/svg+xml;utf8,<svg fill='white' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
   background-repeat:no-repeat,no-repeat;
   background-position:0 0, right 10px center;
   background-size:100% 100%,16px;
 }
 
-/* Progress Chart Container - Same size as mini calendar */
 .progress-container {
-  width: 200px; /* Fixed width to match mini calendar */
-  height: 200px; /* Fixed height to match mini calendar */
+  width: 200px;
+  height: 200px;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 15px;
   padding: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0; /* Prevent shrinking */
+  flex-shrink: 0;
 }
 
-/* Category Selector Dropdown */
 .category-selector {
   display: none;
   background: rgba(255, 255, 255, 0.95);
@@ -285,9 +267,7 @@ header{
   width: 100%;
 }
 
-.category-selector.show {
-  display: block;
-}
+.category-selector.show { display: block; }
 
 .category-selector label {
   color: #333;
@@ -331,7 +311,6 @@ header{
   color: #333;
 }
 
-/* Category Manager Styles */
 .category-manager {
   display: none;
   background: rgba(255, 255, 255, 0.95);
@@ -343,9 +322,7 @@ header{
   max-width: 300px;
 }
 
-.category-manager.show {
-  display: block;
-}
+.category-manager.show { display: block; }
 
 .category-manager h3 {
   color: #333;
@@ -441,7 +418,131 @@ header{
   font-weight: 600;
 }
 
-/* TABLE CONTAINER - Below the control panel */
+/* ===== COPY MONTH MODAL ===== */
+.copy-month-modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+}
+
+.copy-month-modal.show {
+  display: flex;
+}
+
+.copy-month-content {
+  background: linear-gradient(135deg, #ff4fa3, #ff7bbf);
+  border-radius: 20px;
+  padding: 25px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+
+.copy-month-content h3 {
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 18px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.copy-month-content label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.copy-month-content select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 2px solid #fff;
+  margin-bottom: 15px;
+  font-family: inherit;
+  font-size: 14px;
+  background: rgba(255,255,255,0.9);
+  color: #333;
+}
+
+.copy-month-content select:focus {
+  outline: none;
+  border-color: #ffb3d9;
+}
+
+.copy-options {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.copy-options label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.copy-options input[type="radio"] {
+  accent-color: #ff1493;
+  width: 16px; height: 16px;
+}
+
+.copy-month-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.copy-month-buttons button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.btn-copy-confirm {
+  background: #fff;
+  color: #ff4fa3;
+}
+
+.btn-copy-confirm:hover {
+  background: #ffb3d9;
+  transform: translateY(-2px);
+}
+
+.btn-copy-cancel {
+  background: rgba(255,255,255,0.3);
+  color: #fff;
+  border: 2px solid #fff;
+}
+
+.btn-copy-cancel:hover {
+  background: rgba(255,255,255,0.5);
+}
+
+/* ===== BATCH CHECK HINT ===== */
+.batch-hint {
+  font-size: 11px;
+  color: #ffb3d9;
+  text-align: center;
+  margin-top: 5px;
+  font-style: italic;
+}
+
+.checkbox-dragging {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+}
+
+/* TABLE CONTAINER */
 .table-container {
   display: flex;
   gap: 20px;
@@ -454,39 +555,35 @@ header{
   overflow-x: auto;
 }
 
-/* Custom scrollbar styling - PINK (KULAY PINK) */
 .table-container::-webkit-scrollbar {
-  height: 16px; /* Slightly thicker */
+  height: 16px;
 }
 
 .table-container::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 10px;
-  border: 2px solid rgba(255, 79, 163, 0.3); /* Pink border */
+  border: 2px solid rgba(255, 79, 163, 0.3);
 }
 
 .table-container::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #ff1493, #ff4fa3, #ff7bbf); /* Hot pink to light pink gradient */
+  background: linear-gradient(135deg, #ff1493, #ff4fa3, #ff7bbf);
   border-radius: 10px;
   border: 3px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 0 10px rgba(255, 20, 147, 0.5); /* Pink glow */
+  box-shadow: 0 0 10px rgba(255, 20, 147, 0.5);
 }
 
 .table-container::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #ff69b4, #ff1493, #ff4fa3); /* Brighter pink on hover */
-  box-shadow: 0 0 15px rgba(255, 105, 180, 0.8); /* Stronger pink glow */
+  background: linear-gradient(135deg, #ff69b4, #ff1493, #ff4fa3);
+  box-shadow: 0 0 15px rgba(255, 105, 180, 0.8);
 }
 
-/* Firefox scrollbar - PINK */
 .table-container {
   scrollbar-width: thin;
   scrollbar-color: #ff1493 rgba(255, 255, 255, 0.1);
 }
 
-/* MIDDLE */
 .middle-panel{flex:1; min-width:0;}
 
-/* TABLE - White background with black text */
 .table-wrapper {
   overflow-x:auto;
   -webkit-overflow-scrolling: touch;
@@ -519,7 +616,6 @@ th{
   font-weight: 700;
 }
 
-/* Day of week header row styling */
 .day-of-week-header {
   background: #ffb3d9 !important;
   color: #000000 !important;
@@ -538,7 +634,6 @@ td{
   color:#000000;
 }
 
-/* LEFT ALIGN for Time and Activity columns */
 td:nth-child(2), td:nth-child(3) {
   text-align: left;
   padding-left: 10px;
@@ -549,7 +644,6 @@ th:nth-child(2), th:nth-child(3) {
   padding-left: 10px;
 }
 
-/* Category Header Row */
 .category-header {
   background: linear-gradient(135deg, #ff4fa3, #ff7bbf) !important;
   color: #ffffff !important;
@@ -561,7 +655,6 @@ th:nth-child(2), th:nth-child(3) {
   letter-spacing: 1px;
 }
 
-/* Alternating week colors for checkboxes - Baby pink pastel */
 .week-1 input[type="checkbox"]{
   accent-color: #ffb3d9;
 }
@@ -570,7 +663,6 @@ th:nth-child(2), th:nth-child(3) {
   accent-color: #ff4fa3;
 }
 
-/* Week header styling - alternating colors */
 .week-1-header {
   background: #ffffff !important;
   color: #000000 !important;
@@ -581,7 +673,6 @@ th:nth-child(2), th:nth-child(3) {
   color: #ffffff !important;
 }
 
-/* Week 3 onwards - vice versa (alternating pattern continues) */
 .week-3-header {
   background: #ffffff !important;
   color: #000000 !important;
@@ -597,7 +688,6 @@ th:nth-child(2), th:nth-child(3) {
   color: #000000 !important;
 }
 
-/* Checkbox styling for baby pink pastel */
 .week-1 td input[type="checkbox"]:checked{
   accent-color: #ffb3d9;
 }
@@ -613,6 +703,11 @@ td input[type="checkbox"]{
 
 td input[type="checkbox"]:checked{
   accent-color:var(--pink);
+}
+
+td.batch-selected {
+  background: #ffe6f2 !important;
+  transition: background 0.1s;
 }
 
 .delete-btn {
@@ -633,24 +728,22 @@ td input[type="checkbox"]:checked{
   transform:scale(1.2);
 }
 
-/* Drag Handle - Hidden by default, visible only in edit mode */
 .drag-handle {
   cursor: grab;
   color: #999;
   margin-right: 8px;
   font-size: 14px;
-  display: none; /* Hidden by default */
+  display: none;
 }
 
 .drag-handle.visible {
-  display: inline-block; /* Show only in edit mode */
+  display: inline-block;
 }
 
 .drag-handle:active {
   cursor: grabbing;
 }
 
-/* Drag and Drop Styles */
 tr.routine-row {
   transition: all 0.2s;
 }
@@ -672,7 +765,6 @@ tr.routine-row td:first-child {
   border: none;
 }
 
-/* Save indicator */
 .save-indicator {
   position: fixed;
   bottom: 20px;
@@ -693,7 +785,6 @@ tr.routine-row td:first-child {
   opacity: 1;
 }
 
-/* ===== MOBILE RESPONSIVE ===== */
 @media screen and (max-width: 1024px) {
   .control-panel-container {
     flex-direction: column;
@@ -701,50 +792,49 @@ tr.routine-row td:first-child {
     padding: 15px;
     align-items: center;
   }
-  
+
   .control-left {
-    flex-direction: column; /* Stack on mobile */
+    flex-direction: column;
     align-items: center;
     width: 100%;
   }
-  
+
   .chibi-image {
     max-width: 150px;
   }
-  
+
   .control-right {
-    flex-direction: column; /* Stack on mobile */
+    flex-direction: column;
     align-items: center;
     width: 100%;
     min-width: unset;
   }
-  
+
   .buttons-container {
     width: 100%;
     max-width: 300px;
   }
-  
+
   .progress-container {
     margin-top: 20px;
   }
-  
+
   .table-container {
     flex-direction: column;
     margin: 15px;
     padding: 15px;
   }
-  
+
   #progressChart {
     max-height: 200px !important;
   }
-  
-  /* Mobile adjustments for bigger title and clock */
+
   .routine-title {
-    font-size: 36px; /* Slightly smaller on tablet */
+    font-size: 36px;
   }
-  
+
   #digitalClock {
-    font-size: 32px; /* Slightly smaller on tablet */
+    font-size: 32px;
   }
 }
 
@@ -754,54 +844,54 @@ tr.routine-row td:first-child {
     flex-wrap: wrap;
     gap: 10px;
   }
-  
+
   .header-left img {
     height: 36px;
   }
-  
+
   .motto {
     font-size: 14px;
     gap: 8px;
   }
-  
+
   .header-icons i {
     font-size: 18px;
     margin-left: 15px;
   }
-  
+
   .routine-title {
-    font-size: 28px; /* Smaller on mobile */
+    font-size: 28px;
   }
-  
+
   #digitalClock {
-    font-size: 24px; /* Smaller on mobile */
+    font-size: 24px;
     padding: 10px 20px;
   }
-  
+
   .dgc-btn {
     width: 100%;
     padding: 12px;
     font-size: 14px;
   }
-  
+
   table {
     font-size: 11px;
   }
-  
+
   th, td {
     padding: 4px;
   }
-  
+
   td input[type="checkbox"] {
     width: 14px;
     height: 14px;
   }
-  
+
   .delete-btn {
     opacity: 1;
     pointer-events: auto;
   }
-  
+
   .drag-handle {
     display: none;
   }
@@ -814,62 +904,61 @@ tr.routine-row td:first-child {
     gap: 5px;
     text-align: center;
   }
-  
+
   .header-left {
     flex-direction: column;
     gap: 8px;
   }
-  
+
   .calendar-day {
     width: 25px;
     height: 25px;
     font-size: 11px;
   }
-  
+
   .calendar {
     grid-template-columns: repeat(7, 25px);
     gap: 4px;
   }
-  
+
   .weekday-header {
     font-size: 11px;
   }
-  
+
   #monthSelect {
     width: 100%;
   }
-  
+
   .routine-title {
-    font-size: 24px; /* Smallest on very small screens */
+    font-size: 24px;
   }
-  
+
   #digitalClock {
-    font-size: 20px; /* Smallest on very small screens */
+    font-size: 20px;
     padding: 8px 15px;
   }
-  
+
   .chibi-image {
     width: 120px;
   }
 }
 
-/* Touch device optimizations */
 @media (hover: none) {
   .delete-btn:hover {
     transform: none;
   }
-  
+
   .delete-btn:active {
     transform: scale(1.2);
     color: red;
   }
-  
+
   .dgc-btn:hover {
     background: linear-gradient(135deg,#ff4fa3,#ff7bbf);
     color: #fff;
     border: none;
   }
-  
+
   .dgc-btn:active {
     background: #fff;
     color: #ff4fa3;
@@ -877,34 +966,34 @@ tr.routine-row td:first-child {
   }
 }
 
-/* Landscape mode optimization */
 @media screen and (max-height: 500px) and (orientation: landscape) {
   .control-panel-container {
     flex-direction: row;
     flex-wrap: wrap;
   }
-  
+
   .control-left {
     flex-direction: row;
   }
-  
+
   .control-left, .control-right {
     flex: 1;
   }
-  
+
   .table-container {
     order: 3;
   }
-  
+
   .routine-title {
     font-size: 32px;
   }
-  
+
   #digitalClock {
     font-size: 28px;
   }
 }
 </style>
+<base target="_blank">
 </head>
 
 <body>
@@ -923,10 +1012,52 @@ tr.routine-row td:first-child {
 <audio id="bgMusic" src="coffee.mp3"></audio>
 </header>
 
-<!-- NEW VERTICAL CONTROL PANEL - Side by side on desktop -->
+<!-- COPY MONTH MODAL -->
+<div class="copy-month-modal" id="copyMonthModal">
+  <div class="copy-month-content">
+    <h3><i class="fas fa-copy"></i> Copy Routines from Month</h3>
+    <label>Select Source Month:</label>
+    <select id="copyMonthSelect">
+      <option value="1">January 2026</option>
+      <option value="2">February 2026</option>
+      <option value="3">March 2026</option>
+      <option value="4">April 2026</option>
+      <option value="5">May 2026</option>
+      <option value="6">June 2026</option>
+      <option value="7">July 2026</option>
+      <option value="8">August 2026</option>
+      <option value="9">September 2026</option>
+      <option value="10">October 2026</option>
+      <option value="11">November 2026</option>
+      <option value="12">December 2026</option>
+    </select>
+
+    <label>Copy Options:</label>
+    <div class="copy-options">
+      <label>
+        <input type="radio" name="copyMode" value="replace" checked>
+        Replace Current
+      </label>
+      <label>
+        <input type="radio" name="copyMode" value="append">
+        Append to Current
+      </label>
+    </div>
+
+    <div class="copy-month-buttons">
+      <button class="btn-copy-confirm" onclick="executeCopyMonth()">
+        <i class="fas fa-copy"></i> Copy
+      </button>
+      <button class="btn-copy-cancel" onclick="closeCopyModal()">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- CONTROL PANEL -->
 <div class="control-panel-container">
 
-  <!-- LEFT: Mini Calendar + Chibi side by side -->
   <div class="control-left">
     <div class="calendar-wrapper">
       <div class="calendar" id="miniCalendar"></div>
@@ -934,15 +1065,12 @@ tr.routine-row td:first-child {
     <img src="animechibli.png" alt="Chibi" class="chibi-image">
   </div>
 
-  <!-- MIDDLE: Title + Digital Time ONLY (centered) -->
   <div class="control-middle">
     <h1 class="routine-title">ROUTINE TRACKER</h1>
     <div id="digitalClock"></div>
   </div>
 
-  <!-- RIGHT: Buttons + Progress side by side -->
   <div class="control-right">
-    <!-- Buttons stacked vertically on the left of progress -->
     <div class="buttons-container">
       <div class="button-group">
         <div class="monthly-buttons">
@@ -961,21 +1089,28 @@ tr.routine-row td:first-child {
             <option value="12">December</option>
           </select>
         </div>
-        
+
         <button class="dgc-btn" id="addRoutineBtn">
           <i class="fas fa-plus"></i> Add Routine
         </button>
-        
+
+        <button class="dgc-btn" id="copyFromMonthBtn">
+          <i class="fas fa-copy"></i> Copy from Month
+        </button>
+
         <button class="dgc-btn" id="editAllBtn">
           <i class="fas fa-edit"></i> Edit All
         </button>
-        
+
         <button class="dgc-btn" id="manageCategoriesBtn">
           <i class="fas fa-folder"></i> Categories
         </button>
       </div>
 
-      <!-- Category Selector -->
+      <div class="batch-hint">
+        <i class="fas fa-hand-pointer"></i> Click & drag across checkboxes to check/uncheck multiple
+      </div>
+
       <div class="category-selector" id="categorySelector">
         <label>Select Category:</label>
         <select id="categorySelect"></select>
@@ -984,8 +1119,7 @@ tr.routine-row td:first-child {
           <button class="btn-cancel" onclick="cancelAddRoutine()">Cancel</button>
         </div>
       </div>
-      
-      <!-- Category Manager -->
+
       <div class="category-manager" id="categoryManager">
         <h3>Manage Categories</h3>
         <div class="category-list" id="categoryList"></div>
@@ -997,7 +1131,6 @@ tr.routine-row td:first-child {
       </div>
     </div>
 
-    <!-- Monthly Progress Chart - Same size as mini calendar -->
     <div class="progress-container">
       <canvas id="progressChart"></canvas>
     </div>
@@ -1005,7 +1138,6 @@ tr.routine-row td:first-child {
 
 </div>
 
-<!-- TABLE CONTAINER - Below the control panel -->
 <div class="table-container">
   <div class="middle-panel" style="width: 100%;">
     <div class="table-wrapper">
@@ -1017,28 +1149,25 @@ tr.routine-row td:first-child {
   </div>
 </div>
 
-<div class="save-indicator" id="saveIndicator">💾 Saved!</div>
+<div class="save-indicator" id="saveIndicator">Saved!</div>
 
 <script>
 
-/* ===== MOTTO ===== */
 const titles=[
 ['fas fa-bolt','Alam kong kaya mo yan Julie'],
 ['fas fa-crown','You are a beautiful QUEEN JULIE'],
 ['fas fa-money-bill','Yayaman ka Julie'],
 ['fas fa-heart','I Love you Julie']
 ];
-const t=titles[Math.floor(Math.random()*titles.length)];
-document.getElementById('motto').innerHTML=`<i class="${t[0]}"></i> ${t[1]}`;
+const mottoTitle=titles[Math.floor(Math.random()*titles.length)];
+document.getElementById('motto').innerHTML='<i class="'+mottoTitle[0]+'"></i> '+mottoTitle[1];
 
-/* CLOCK */
 function updateClock(){
 document.getElementById('digitalClock').innerText=new Date().toLocaleTimeString();
 }
 setInterval(updateClock,1000);
 updateClock();
 
-/* MINI CALENDAR (UNCHANGED) */
 const miniCal=document.getElementById('miniCalendar');
 const monthSelect=document.getElementById('monthSelect');
 function renderCalendar(month){
@@ -1072,7 +1201,6 @@ miniCal.appendChild(div);
 renderCalendar(parseInt(monthSelect.value));
 monthSelect.onchange=()=>renderCalendar(parseInt(monthSelect.value));
 
-/* ===== DATA PERSISTENCE ===== */
 const STORAGE_KEY = 'queenJulieHabitTracker_v3';
 const CATEGORIES_KEY = 'queenJulieCategories_v1';
 let habitData = {};
@@ -1081,7 +1209,6 @@ let chartInstance = null;
 let isEditMode = false;
 let draggedRow = null;
 
-// Initialize categories
 function initCategories() {
   const saved = localStorage.getItem(CATEGORIES_KEY);
   if (saved) {
@@ -1108,7 +1235,6 @@ function updateCategorySelect() {
   });
 }
 
-// Load data from localStorage
 function loadData() {
   const saved = localStorage.getItem(STORAGE_KEY);
   if (saved) {
@@ -1116,13 +1242,11 @@ function loadData() {
   }
 }
 
-// Save data to localStorage
 function saveData() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(habitData));
   showSaveIndicator();
 }
 
-// Show save indicator
 function showSaveIndicator() {
   const indicator = document.getElementById('saveIndicator');
   indicator.classList.add('show');
@@ -1131,79 +1255,46 @@ function showSaveIndicator() {
   }, 2000);
 }
 
-// Get current month key
 function getMonthKey() {
-  return `2026-${monthSelect.value}`;
+  return '2026-'+monthSelect.value;
 }
 
-// Get previous month key
-function getPreviousMonthKey() {
-  const currentMonth = parseInt(monthSelect.value);
-  let prevMonth = currentMonth - 1;
-  let year = 2026;
-  if (prevMonth === 0) {
-    prevMonth = 12;
-    year = 2025;
-  }
-  return `${year}-${prevMonth}`;
-}
-
-// Carry over data from previous month if current month is empty
-function carryOverFromPreviousMonth() {
-  const currentKey = getMonthKey();
-  const prevKey = getPreviousMonthKey();
-  
-  if (!habitData[currentKey] || habitData[currentKey].length === 0) {
-    if (habitData[prevKey] && habitData[prevKey].length > 0) {
-      habitData[currentKey] = JSON.parse(JSON.stringify(habitData[prevKey]));
-      saveData();
-      return true;
-    }
-  }
-  return false;
-}
-
-// Save current table state
 function saveCurrentTable() {
   const monthKey = getMonthKey();
   const rows = habitBody.querySelectorAll('tr[data-category]');
   const monthData = [];
-  
+
   rows.forEach(row => {
     const category = row.getAttribute('data-category');
     const time = row.cells[1].innerText;
     const activity = row.cells[2].innerText;
     const checks = [];
-    
+
     const checkboxes = row.querySelectorAll('input[type="checkbox"]');
     checkboxes.forEach(cb => {
       checks.push(cb.checked);
     });
-    
+
     monthData.push({ category, time, activity, checks });
   });
-  
+
   habitData[monthKey] = monthData;
   saveData();
   updateChart();
 }
 
-// Load table for specific month
 function loadTable(month) {
-  const monthKey = `2026-${month}`;
-  
-  carryOverFromPreviousMonth();
-  
+  const monthKey = '2026-'+month;
   const monthData = habitData[monthKey] || [];
-  
+
   habitBody.innerHTML = '';
-  
+
   const groupedData = {};
-  
+
   categories.forEach(cat => {
     groupedData[cat] = monthData.filter(item => item.category === cat);
   });
-  
+
   categories.forEach(category => {
     const items = groupedData[category];
     if (items && items.length > 0) {
@@ -1215,54 +1306,50 @@ function loadTable(month) {
       addCategoryHeader(category);
     }
   });
-  
+
   updateDeleteButtonsVisibility();
   updateDragHandlesVisibility();
+  initBatchCheckbox();
 }
 
-// Add category header
 function addCategoryHeader(category) {
   const days = new Date(2026, parseInt(monthSelect.value), 0).getDate();
   const row = document.createElement('tr');
   row.className = 'category-header-row';
-  row.innerHTML = `<td colspan="${3 + days}" class="category-header">${category}</td>`;
+  row.innerHTML = '<td colspan="'+(3 + days)+'" class="category-header">'+category+'</td>';
   habitBody.appendChild(row);
 }
 
-// Create a row with data
-function createRow(category = 'Life', time = '--:--', activity = 'New Routine', checks = []) {
+function createRow(category, time, activity, checks) {
   const month = parseInt(monthSelect.value);
   const days = new Date(2026, month, 0).getDate();
-  
+
   let row = document.createElement('tr');
-  row.setAttribute('draggable', isEditMode); // Only draggable in edit mode
+  row.setAttribute('draggable', isEditMode);
   row.setAttribute('data-category', category);
   row.className = 'routine-row';
-  
-  row.innerHTML = `
-    <td style="display: flex; align-items: center; justify-content: center; gap: 5px;">
-      <i class="fas fa-grip-vertical drag-handle ${isEditMode ? 'visible' : ''}"></i>
-      <i class="fas fa-trash delete-btn ${isEditMode ? 'visible' : ''}" style="color:#ff4fa3;"></i>
-    </td>
-    <td contenteditable="${isEditMode}">${time}</td>
-    <td contenteditable="${isEditMode}">${activity}</td>
-  `;
-  
+
+  row.innerHTML = 
+    '<td style="display: flex; align-items: center; justify-content: center; gap: 5px;">'+
+      '<i class="fas fa-grip-vertical drag-handle '+(isEditMode ? 'visible' : '')+'"></i>'+
+      '<i class="fas fa-trash delete-btn '+(isEditMode ? 'visible' : '')+'" style="color:#ff4fa3;"></i>'+
+    '</td>'+
+    '<td contenteditable="'+isEditMode+'">'+time+'</td>'+
+    '<td contenteditable="'+isEditMode+'">'+activity+'</td>';
+
   for(let i = 0; i < days; i++) {
     const isChecked = checks[i] ? 'checked' : '';
     const weekNum = Math.floor(i / 7);
     const weekClass = weekNum % 2 === 0 ? 'week-1' : 'week-2';
-    row.innerHTML += `<td class="${weekClass}"><input type="checkbox" ${isChecked}></td>`;
+    row.innerHTML += '<td class="'+weekClass+'"><input type="checkbox" '+isChecked+'></td>';
   }
-  
+
   habitBody.appendChild(row);
-  
-  // Add drag and drop listeners only in edit mode
+
   if (isEditMode) {
     addDragListeners(row);
   }
-  
-  // Add delete listener
+
   const deleteBtn = row.querySelector('.delete-btn');
   if (deleteBtn) {
     deleteBtn.addEventListener('click', function() {
@@ -1270,8 +1357,7 @@ function createRow(category = 'Life', time = '--:--', activity = 'New Routine', 
       saveCurrentTable();
     });
   }
-  
-  // Add auto-save listeners
+
   const editableCells = row.querySelectorAll('td[contenteditable="true"]');
   editableCells.forEach(cell => {
     cell.addEventListener('blur', saveCurrentTable);
@@ -1282,14 +1368,13 @@ function createRow(category = 'Life', time = '--:--', activity = 'New Routine', 
       }
     });
   });
-  
+
   const checkboxes = row.querySelectorAll('input[type="checkbox"]');
   checkboxes.forEach(cb => {
     cb.addEventListener('change', saveCurrentTable);
   });
 }
 
-// Improved Drag and Drop functionality
 function addDragListeners(row) {
   row.addEventListener('dragstart', handleDragStart);
   row.addEventListener('dragend', handleDragEnd);
@@ -1303,20 +1388,15 @@ function handleDragStart(e) {
   this.classList.add('dragging');
   e.dataTransfer.effectAllowed = 'move';
   e.dataTransfer.setData('text/plain', this.getAttribute('data-category'));
-  
-  // Set drag image (optional, for better visual)
   const rect = this.getBoundingClientRect();
   e.dataTransfer.setDragImage(this, e.clientX - rect.left, e.clientY - rect.top);
 }
 
 function handleDragEnd(e) {
   this.classList.remove('dragging');
-  
-  // Remove all drag-over classes
   document.querySelectorAll('.drag-over').forEach(el => {
     el.classList.remove('drag-over');
   });
-  
   draggedRow = null;
   saveCurrentTable();
 }
@@ -1324,22 +1404,21 @@ function handleDragEnd(e) {
 function handleDragOver(e) {
   e.preventDefault();
   e.dataTransfer.dropEffect = 'move';
-  
+
   if (!draggedRow || this === draggedRow) return;
-  
+
   const targetRow = this.closest('tr');
   if (!targetRow || !targetRow.classList.contains('routine-row')) return;
-  
-  // Only allow dropping in the same category
+
   const draggedCategory = draggedRow.getAttribute('data-category');
   const targetCategory = targetRow.getAttribute('data-category');
-  
+
   if (draggedCategory === targetCategory) {
     targetRow.classList.add('drag-over');
-    
+
     const rect = targetRow.getBoundingClientRect();
     const midpoint = rect.top + rect.height / 2;
-    
+
     if (e.clientY < midpoint) {
       targetRow.style.borderTop = '3px solid #ff4fa3';
       targetRow.style.borderBottom = '';
@@ -1359,29 +1438,28 @@ function handleDragLeave(e) {
 function handleDrop(e) {
   e.preventDefault();
   e.stopPropagation();
-  
+
   if (!draggedRow || this === draggedRow) return;
-  
+
   const targetRow = this.closest('tr');
   if (!targetRow || !targetRow.classList.contains('routine-row')) return;
-  
+
   const draggedCategory = draggedRow.getAttribute('data-category');
   const targetCategory = targetRow.getAttribute('data-category');
-  
+
   if (draggedCategory === targetCategory) {
     const rect = targetRow.getBoundingClientRect();
     const midpoint = rect.top + rect.height / 2;
-    
+
     if (e.clientY < midpoint) {
       targetRow.parentNode.insertBefore(draggedRow, targetRow);
     } else {
       targetRow.parentNode.insertBefore(draggedRow, targetRow.nextSibling);
     }
-    
+
     saveCurrentTable();
   }
-  
-  // Clean up styles
+
   document.querySelectorAll('.routine-row').forEach(row => {
     row.classList.remove('drag-over');
     row.style.borderTop = '';
@@ -1389,7 +1467,85 @@ function handleDrop(e) {
   });
 }
 
-/* ===== DYNAMIC TABLE ===== */
+/* ===== BATCH CHECKBOX CHECK/UNCHECK ===== */
+let isBatchChecking = false;
+let batchStartState = false;
+let lastCheckedCheckbox = null;
+
+function initBatchCheckbox() {
+  const table = document.querySelector('table');
+  if (!table) return;
+
+  table.removeEventListener('mousedown', handleBatchMouseDown);
+  table.removeEventListener('mouseover', handleBatchMouseOver);
+  document.removeEventListener('mouseup', handleBatchMouseUp);
+
+  table.addEventListener('mousedown', handleBatchMouseDown);
+  table.addEventListener('mouseover', handleBatchMouseOver);
+  document.addEventListener('mouseup', handleBatchMouseUp);
+}
+
+function handleBatchMouseDown(e) {
+  const checkbox = e.target.closest('input[type="checkbox"]');
+  if (!checkbox) return;
+
+  if (e.shiftKey && lastCheckedCheckbox) {
+    e.preventDefault();
+    const checkboxes = getAllCheckboxes();
+    const startIdx = checkboxes.indexOf(lastCheckedCheckbox);
+    const endIdx = checkboxes.indexOf(checkbox);
+
+    if (startIdx !== -1 && endIdx !== -1) {
+      const min = Math.min(startIdx, endIdx);
+      const max = Math.max(startIdx, endIdx);
+      const state = lastCheckedCheckbox.checked;
+
+      for (let i = min; i <= max; i++) {
+        checkboxes[i].checked = state;
+      }
+      saveCurrentTable();
+    }
+    return;
+  }
+
+  isBatchChecking = true;
+  batchStartState = !checkbox.checked;
+  checkbox.checked = batchStartState;
+  lastCheckedCheckbox = checkbox;
+
+  document.body.classList.add('checkbox-dragging');
+  e.preventDefault();
+
+  saveCurrentTable();
+}
+
+function handleBatchMouseOver(e) {
+  if (!isBatchChecking) return;
+
+  const checkbox = e.target.closest('input[type="checkbox"]');
+  if (!checkbox) return;
+
+  checkbox.checked = batchStartState;
+
+  const td = checkbox.closest('td');
+  if (td) {
+    td.classList.add('batch-selected');
+    setTimeout(() => td.classList.remove('batch-selected'), 200);
+  }
+}
+
+function handleBatchMouseUp(e) {
+  if (isBatchChecking) {
+    isBatchChecking = false;
+    document.body.classList.remove('checkbox-dragging');
+    saveCurrentTable();
+  }
+}
+
+function getAllCheckboxes() {
+  return Array.from(document.querySelectorAll('td input[type="checkbox"]'));
+}
+
 const habitHead=document.getElementById("habitHead");
 const habitBody=document.getElementById("habitBody");
 const year=2026;
@@ -1400,17 +1556,17 @@ function generateTable(month){
 habitHead.innerHTML="";
 const days=new Date(year,month,0).getDate();
 
-let dayOfWeekRow = `<tr>
-<th style="width:40px;"></th>
-<th>Time</th>
-<th>Activity</th>`;
+let dayOfWeekRow = '<tr>'+
+'<th style="width:40px;"></th>'+
+'<th>Time</th>'+
+'<th>Activity</th>';
 
 for(let i=1;i<=days;i++){
   const date = new Date(year, month-1, i);
   let dayIndex = date.getDay();
   dayIndex = dayIndex === 0 ? 6 : dayIndex - 1;
   const dayLetter = daysOfWeek[dayIndex];
-  
+
   const weekNum = Math.floor((i-1) / 7);
   let headerClass;
   if (weekNum % 2 === 0) {
@@ -1418,15 +1574,15 @@ for(let i=1;i<=days;i++){
   } else {
     headerClass = 'day-of-week-header week-2-header';
   }
-  
-  dayOfWeekRow += `<th class="${headerClass}">${dayLetter}</th>`;
-}
-dayOfWeekRow += "</tr>";
 
-let dayNumberRow = `<tr>
-<th style="width:40px;"></th>
-<th>Date</th>
-<th>To Do</th>`;
+  dayOfWeekRow += '<th class="'+headerClass+'">'+dayLetter+'</th>';
+}
+dayOfWeekRow += '</tr>';
+
+let dayNumberRow = '<tr>'+
+'<th style="width:40px;"></th>'+
+'<th>Date</th>'+
+'<th>To Do</th>';
 
 for(let i=1;i<=days;i++){
   const weekNum = Math.floor((i-1) / 7);
@@ -1436,10 +1592,10 @@ for(let i=1;i<=days;i++){
   } else {
     headerClass = 'week-2-header';
   }
-  
-  dayNumberRow += `<th class="${headerClass}">${i}</th>`;
+
+  dayNumberRow += '<th class="'+headerClass+'">'+i+'</th>';
 }
-dayNumberRow += "</tr>";
+dayNumberRow += '</tr>';
 
 habitHead.innerHTML = dayOfWeekRow + dayNumberRow;
 
@@ -1453,7 +1609,6 @@ generateTable(parseInt(monthSelect.value));
 updateChart();
 });
 
-// Edit All Button functionality
 document.getElementById("editAllBtn").addEventListener("click", function() {
   isEditMode = !isEditMode;
   this.classList.toggle('active');
@@ -1511,7 +1666,6 @@ function updateDraggable() {
   });
 }
 
-// Category Selector Functions
 document.getElementById("addRoutineBtn").addEventListener("click", function() {
   const selector = document.getElementById('categorySelector');
   selector.classList.toggle('show');
@@ -1529,35 +1683,27 @@ function cancelAddRoutine() {
 }
 
 function addRoutineToCategory(selectedCategory) {
-  // Find if category header exists
   const headers = Array.from(habitBody.querySelectorAll('.category-header'));
   let targetHeader = null;
-  let nextHeader = null;
-  
+
   for (let i = 0; i < headers.length; i++) {
     if (headers[i].textContent === selectedCategory) {
       targetHeader = headers[i].parentNode;
-      // Find next category header (if any)
-      if (i + 1 < headers.length) {
-        nextHeader = headers[i + 1].parentNode;
-      }
       break;
     }
   }
-  
-  // If header doesn't exist, create it
+
   if (!targetHeader) {
     addCategoryHeader(selectedCategory);
     createRow(selectedCategory);
     saveCurrentTable();
     return;
   }
-  
-  // Find the last row of this category
+
   let lastRowOfCategory = null;
   const allRows = Array.from(habitBody.querySelectorAll('tr'));
   let foundCategory = false;
-  
+
   for (let row of allRows) {
     if (row === targetHeader) {
       foundCategory = true;
@@ -1572,47 +1718,45 @@ function addRoutineToCategory(selectedCategory) {
       }
     }
   }
-  
+
   const newRow = createRowElement(selectedCategory);
-  
+
   if (lastRowOfCategory) {
     lastRowOfCategory.after(newRow);
   } else {
-    // Insert right after the header
     targetHeader.after(newRow);
   }
-  
+
   saveCurrentTable();
 }
 
 function createRowElement(category) {
   const month = parseInt(monthSelect.value);
   const days = new Date(2026, month, 0).getDate();
-  
+
   let row = document.createElement('tr');
   row.setAttribute('draggable', isEditMode);
   row.setAttribute('data-category', category);
   row.className = 'routine-row';
-  
-  row.innerHTML = `
-    <td style="display: flex; align-items: center; justify-content: center; gap: 5px;">
-      <i class="fas fa-grip-vertical drag-handle ${isEditMode ? 'visible' : ''}"></i>
-      <i class="fas fa-trash delete-btn ${isEditMode ? 'visible' : ''}" style="color:#ff4fa3;"></i>
-    </td>
-    <td contenteditable="${isEditMode}">--:--</td>
-    <td contenteditable="${isEditMode}">New Routine</td>
-  `;
-  
+
+  row.innerHTML = 
+    '<td style="display: flex; align-items: center; justify-content: center; gap: 5px;">'+
+      '<i class="fas fa-grip-vertical drag-handle '+(isEditMode ? 'visible' : '')+'"></i>'+
+      '<i class="fas fa-trash delete-btn '+(isEditMode ? 'visible' : '')+'" style="color:#ff4fa3;"></i>'+
+    '</td>'+
+    '<td contenteditable="'+isEditMode+'">--:--</td>'+
+    '<td contenteditable="'+isEditMode+'">New Routine</td>';
+
   for(let i = 0; i < days; i++) {
     const weekNum = Math.floor(i / 7);
     const weekClass = weekNum % 2 === 0 ? 'week-1' : 'week-2';
-    row.innerHTML += `<td class="${weekClass}"><input type="checkbox"></td>`;
+    row.innerHTML += '<td class="'+weekClass+'"><input type="checkbox"></td>';
   }
-  
+
   if (isEditMode) {
     addDragListeners(row);
   }
-  
+
   const deleteBtn = row.querySelector('.delete-btn');
   if (deleteBtn) {
     deleteBtn.addEventListener('click', function() {
@@ -1620,7 +1764,7 @@ function createRowElement(category) {
       saveCurrentTable();
     });
   }
-  
+
   const editableCells = row.querySelectorAll('td[contenteditable="true"]');
   editableCells.forEach(cell => {
     cell.addEventListener('blur', saveCurrentTable);
@@ -1631,14 +1775,77 @@ function createRowElement(category) {
       }
     });
   });
-  
+
   const checkboxes = row.querySelectorAll('input[type="checkbox"]');
   checkboxes.forEach(cb => {
     cb.addEventListener('change', saveCurrentTable);
   });
-  
+
   return row;
 }
+
+/* ===== COPY FROM MONTH FEATURE ===== */
+document.getElementById("copyFromMonthBtn").addEventListener("click", function() {
+  const modal = document.getElementById('copyMonthModal');
+  const copySelect = document.getElementById('copyMonthSelect');
+  const currentMonth = parseInt(monthSelect.value);
+
+  let defaultMonth = currentMonth - 1;
+  if (defaultMonth < 1) defaultMonth = 12;
+  copySelect.value = defaultMonth;
+
+  Array.from(copySelect.options).forEach(opt => {
+    opt.disabled = (parseInt(opt.value) === currentMonth);
+  });
+
+  modal.classList.add('show');
+});
+
+function closeCopyModal() {
+  document.getElementById('copyMonthModal').classList.remove('show');
+}
+
+function executeCopyMonth() {
+  const sourceMonth = document.getElementById('copyMonthSelect').value;
+  const copyMode = document.querySelector('input[name="copyMode"]:checked').value;
+  const currentMonth = monthSelect.value;
+
+  const sourceKey = '2026-'+sourceMonth;
+  const currentKey = '2026-'+currentMonth;
+
+  const sourceData = habitData[sourceKey] || [];
+
+  if (sourceData.length === 0) {
+    alert('No routines found in the selected month!');
+    return;
+  }
+
+  const copiedData = sourceData.map(item => ({
+    category: item.category,
+    time: item.time,
+    activity: item.activity,
+    checks: []
+  }));
+
+  if (copyMode === 'replace') {
+    habitData[currentKey] = copiedData;
+  } else {
+    const existingData = habitData[currentKey] || [];
+    habitData[currentKey] = existingData.concat(copiedData);
+  }
+
+  saveData();
+  generateTable(parseInt(currentMonth));
+  updateChart();
+  closeCopyModal();
+  showSaveIndicator();
+}
+
+document.getElementById('copyMonthModal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    closeCopyModal();
+  }
+});
 
 /* ===== CATEGORY MANAGEMENT ===== */
 document.getElementById("manageCategoriesBtn").addEventListener("click", function() {
@@ -1651,17 +1858,16 @@ document.getElementById("manageCategoriesBtn").addEventListener("click", functio
 function renderCategoryList() {
   const list = document.getElementById('categoryList');
   list.innerHTML = '';
-  
+
   categories.forEach((cat, index) => {
     const item = document.createElement('div');
     item.className = 'category-item';
-    item.innerHTML = `
-      <span class="category-name">${cat}</span>
-      <div class="category-actions">
-        <button onclick="editCategory(${index})" title="Edit"><i class="fas fa-edit"></i></button>
-        <button onclick="deleteCategory(${index})" title="Delete"><i class="fas fa-trash"></i></button>
-      </div>
-    `;
+    item.innerHTML = 
+      '<span class="category-name">'+cat+'</span>'+
+      '<div class="category-actions">'+
+        '<button onclick="editCategory('+index+')" title="Edit"><i class="fas fa-edit"></i></button>'+
+        '<button onclick="deleteCategory('+index+')" title="Delete"><i class="fas fa-trash"></i></button>'+
+      '</div>';
     list.appendChild(item);
   });
 }
@@ -1669,15 +1875,14 @@ function renderCategoryList() {
 function addNewCategory() {
   const input = document.getElementById('newCategoryInput');
   const name = input.value.trim();
-  
+
   if (name && !categories.includes(name)) {
     categories.push(name);
     saveCategories();
     updateCategorySelect();
     renderCategoryList();
     input.value = '';
-    
-    // Add header for new category in current table
+
     addCategoryHeader(name);
     showSaveIndicator();
   }
@@ -1688,16 +1893,15 @@ function editCategory(index) {
   const items = list.querySelectorAll('.category-item');
   const item = items[index];
   const oldName = categories[index];
-  
+
   item.classList.add('editing');
-  item.innerHTML = `
-    <input type="text" id="editCatInput" value="${oldName}">
-    <div class="category-actions">
-      <button onclick="saveCategoryEdit(${index})" title="Save"><i class="fas fa-check"></i></button>
-      <button onclick="renderCategoryList()" title="Cancel"><i class="fas fa-times"></i></button>
-    </div>
-  `;
-  
+  item.innerHTML = 
+    '<input type="text" id="editCatInput" value="'+oldName+'">'+
+    '<div class="category-actions">'+
+      '<button onclick="saveCategoryEdit('+index+')" title="Save"><i class="fas fa-check"></i></button>'+
+      '<button onclick="renderCategoryList()" title="Cancel"><i class="fas fa-times"></i></button>'+
+    '</div>';
+
   document.getElementById('editCatInput').focus();
   document.getElementById('editCatInput').select();
 }
@@ -1706,26 +1910,24 @@ function saveCategoryEdit(index) {
   const input = document.getElementById('editCatInput');
   const newName = input.value.trim();
   const oldName = categories[index];
-  
+
   if (newName && newName !== oldName && !categories.includes(newName)) {
     categories[index] = newName;
     saveCategories();
     updateCategorySelect();
-    
-    // Update all rows with this category
-    const rows = document.querySelectorAll(`tr[data-category="${oldName}"]`);
+
+    const rows = document.querySelectorAll('tr[data-category="'+oldName+'"]');
     rows.forEach(row => {
       row.setAttribute('data-category', newName);
     });
-    
-    // Update headers
+
     const headers = document.querySelectorAll('.category-header');
     headers.forEach(header => {
       if (header.textContent === oldName) {
         header.textContent = newName;
       }
     });
-    
+
     saveCurrentTable();
     renderCategoryList();
   }
@@ -1733,22 +1935,21 @@ function saveCategoryEdit(index) {
 
 function deleteCategory(index) {
   const catName = categories[index];
-  if (confirm(`Delete category "${catName}" and all its routines?`)) {
+  if (confirm('Delete category "'+catName+'" and all its routines?')) {
     categories.splice(index, 1);
     saveCategories();
     updateCategorySelect();
-    
-    // Remove all rows and headers for this category
-    const rows = document.querySelectorAll(`tr[data-category="${catName}"]`);
+
+    const rows = document.querySelectorAll('tr[data-category="'+catName+'"]');
     rows.forEach(row => row.remove());
-    
+
     const headers = document.querySelectorAll('.category-header');
     headers.forEach(header => {
       if (header.textContent === catName) {
         header.parentNode.remove();
       }
     });
-    
+
     saveCurrentTable();
     renderCategoryList();
   }
@@ -1761,7 +1962,7 @@ function closeCategoryManager() {
 /* ===== CHART ===== */
 function initChart() {
   const ctx = document.getElementById('progressChart').getContext('2d');
-  
+
   chartInstance = new Chart(ctx, {
     type: 'doughnut',
     data: {
@@ -1804,22 +2005,22 @@ function initChart() {
 
 function updateChart() {
   if (!chartInstance) return;
-  
+
   const monthKey = getMonthKey();
   const monthData = habitData[monthKey] || [];
-  
+
   let totalTasks = 0;
   let completedTasks = 0;
-  
+
   monthData.forEach(row => {
     row.checks.forEach(checked => {
       totalTasks++;
       if (checked) completedTasks++;
     });
   });
-  
+
   const remaining = totalTasks - completedTasks;
-  
+
   chartInstance.data.datasets[0].data = [completedTasks, Math.max(remaining, 0)];
   chartInstance.update();
 }
@@ -1850,7 +2051,6 @@ musicBtn.addEventListener("click", function(){
   }
 });
 
-// Initialize
 initCategories();
 loadData();
 
@@ -1866,4 +2066,3 @@ window.addEventListener('storage', (e) => {
 
 </body>
 </html>
-
