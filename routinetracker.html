@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,6 +10,8 @@
 <link rel="icon" type="image/png" sizes="64x64" href="adminfavicon.ico">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 <style>
 :root {
@@ -206,7 +210,7 @@ header{
   border: 2px solid #ff4fa3;
 }
 
-#monthSelect{
+#monthSelect, #yearSelect{
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -224,19 +228,19 @@ header{
   width: 100%;
 }
 
-#monthSelect:hover{
+#monthSelect, #yearSelect:hover{
   background:#fff;
   color:#ff4fa3;
   border:2px solid #ff4fa3;
   box-shadow:0 0 15px #ff69b4;
 }
 
-#monthSelect:focus{
+#monthSelect, #yearSelect:focus{
   outline:none;
   box-shadow:0 0 20px #ff69b4;
 }
 
-#monthSelect{
+#monthSelect, #yearSelect{
   background-image:
     linear-gradient(135deg,#ff4fa3,#ff7bbf),
     url("data:image/svg+xml;utf8,<svg fill='white' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
@@ -925,7 +929,7 @@ tr.routine-row td:first-child {
     font-size: 11px;
   }
 
-  #monthSelect {
+  #monthSelect, #yearSelect {
     width: 100%;
   }
 
@@ -992,6 +996,15 @@ tr.routine-row td:first-child {
     font-size: 28px;
   }
 }
+.checkall-header{background:#ff7bbf !important;padding:3px !important;}
+.checkall-btn{
+  width:22px;height:22px;border-radius:50%;
+  border:2px solid #fff;background:rgba(255,255,255,0.25);
+  color:#fff;font-size:12px;font-weight:700;cursor:pointer;
+  line-height:1;transition:.2s;padding:0;
+}
+.checkall-btn:hover{background:#fff;color:#ff4fa3;box-shadow:0 0 8px #ff69b4;}
+#yearSelect{min-width:90px;}
 </style>
 <base target="_blank">
 </head>
@@ -1076,7 +1089,7 @@ tr.routine-row td:first-child {
         <div class="monthly-buttons">
           <select id="monthSelect">
             <option value="1">January</option>
-            <option value="2" selected>February</option>
+            <option value="2">February</option>
             <option value="3">March</option>
             <option value="4">April</option>
             <option value="5">May</option>
@@ -1088,6 +1101,7 @@ tr.routine-row td:first-child {
             <option value="11">November</option>
             <option value="12">December</option>
           </select>
+          <select id="yearSelect"></select>
         </div>
 
         <button class="dgc-btn" id="addRoutineBtn">
@@ -1170,9 +1184,72 @@ updateClock();
 
 const miniCal=document.getElementById('miniCalendar');
 const monthSelect=document.getElementById('monthSelect');
-function renderCalendar(month){
+const yearSelect=document.getElementById('yearSelect');
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAeN8HFUvdfCH4U7veGjo-a9-Pqv6Nd008",
+  authDomain: "dgc-estore.firebaseapp.com",
+  databaseURL: "https://dgc-estore-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "dgc-estore",
+  storageBucket: "dgc-estore.firebasestorage.app",
+  messagingSenderId: "620416266904",
+  appId: "1:620416266904:web:f4c2a075d1c48853ae16ed",
+  measurementId: "G-2MJ9HTQ3HH"
+};
+
+function getCurrentYear(){ return parseInt(yearSelect.value) || 2026; }
+
+function populateYearSelect(){
+  yearSelect.innerHTML='';
+  const now=new Date();
+  const endYear=Math.max(now.getFullYear()+5, 2030);
+  for(let y=2026; y<=endYear; y++){
+    const opt=document.createElement('option');
+    opt.value=y;
+    opt.textContent=y;
+    yearSelect.appendChild(opt);
+  }
+}
+
+function setPeriodToToday(){
+  const now=new Date();
+  monthSelect.value=now.getMonth()+1;
+  if(!Array.from(yearSelect.options).some(o=>parseInt(o.value)===now.getFullYear())){
+    const opt=document.createElement('option');
+    opt.value=now.getFullYear();
+    opt.textContent=now.getFullYear();
+    yearSelect.appendChild(opt);
+  }
+  yearSelect.value=now.getFullYear();
+}
+
+function initFirebase(){
+  try{
+    if(!firebase.apps.length){ firebase.initializeApp(firebaseConfig); }
+    database=firebase.database();
+    firebaseReady=true;
+    database.ref(FIREBASE_PATH).on('value',(snapshot)=>{
+      const val=snapshot.val();
+      if(!val) return;
+      const remoteData=val.habitData||{};
+      if(JSON.stringify(remoteData)!==JSON.stringify(habitData)){
+        habitData=remoteData;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(habitData));
+        loadTable(parseInt(monthSelect.value));
+        updateChart();
+      }
+      if(val.categories && JSON.stringify(val.categories)!==JSON.stringify(categories)){
+        categories=val.categories;
+        localStorage.setItem(CATEGORIES_KEY, JSON.stringify(categories));
+        updateCategorySelect();
+      }
+    });
+  }catch(err){
+    firebaseReady=false;
+  }
+}
+function renderCalendar(year, month){
 miniCal.innerHTML='';
-const year=2026;
 const daysInMonth=new Date(year,month,0).getDate();
 const firstDay=new Date(year,month-1,1);
 let startDay=firstDay.getDay();
@@ -1198,16 +1275,30 @@ div.classList.add('today');
 miniCal.appendChild(div);
 }
 }
-renderCalendar(parseInt(monthSelect.value));
-monthSelect.onchange=()=>renderCalendar(parseInt(monthSelect.value));
+renderCalendar(getCurrentYear(), parseInt(monthSelect.value));
 
 const STORAGE_KEY = 'queenJulieHabitTracker_v3';
 const CATEGORIES_KEY = 'queenJulieCategories_v1';
+const FIREBASE_PATH = 'queenJulieHabitTracker';
 let habitData = {};
 let categories = [];
 let chartInstance = null;
 let isEditMode = false;
 let draggedRow = null;
+let database = null;
+let firebaseReady = false;
+let firebaseSaveTimer = null;
+
+function syncToFirebase() {
+  if (!firebaseReady || !database) return;
+  clearTimeout(firebaseSaveTimer);
+  firebaseSaveTimer = setTimeout(() => {
+    database.ref(FIREBASE_PATH).update({
+      habitData: habitData,
+      categories: categories
+    }).catch(() => {});
+  }, 400);
+}
 
 function initCategories() {
   const saved = localStorage.getItem(CATEGORIES_KEY);
@@ -1222,6 +1313,7 @@ function initCategories() {
 
 function saveCategories() {
   localStorage.setItem(CATEGORIES_KEY, JSON.stringify(categories));
+  syncToFirebase();
 }
 
 function updateCategorySelect() {
@@ -1244,6 +1336,7 @@ function loadData() {
 
 function saveData() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(habitData));
+  syncToFirebase();
   showSaveIndicator();
 }
 
@@ -1256,7 +1349,7 @@ function showSaveIndicator() {
 }
 
 function getMonthKey() {
-  return '2026-'+monthSelect.value;
+  return getCurrentYear()+'-'+monthSelect.value;
 }
 
 function saveCurrentTable() {
@@ -1284,7 +1377,7 @@ function saveCurrentTable() {
 }
 
 function loadTable(month) {
-  const monthKey = '2026-'+month;
+  const monthKey = getCurrentYear()+'-'+month;
   const monthData = habitData[monthKey] || [];
 
   habitBody.innerHTML = '';
@@ -1313,7 +1406,7 @@ function loadTable(month) {
 }
 
 function addCategoryHeader(category) {
-  const days = new Date(2026, parseInt(monthSelect.value), 0).getDate();
+  const days = new Date(getCurrentYear(), parseInt(monthSelect.value), 0).getDate();
   const row = document.createElement('tr');
   row.className = 'category-header-row';
   row.innerHTML = '<td colspan="'+(3 + days)+'" class="category-header">'+category+'</td>';
@@ -1322,7 +1415,7 @@ function addCategoryHeader(category) {
 
 function createRow(category, time, activity, checks) {
   const month = parseInt(monthSelect.value);
-  const days = new Date(2026, month, 0).getDate();
+  const days = new Date(getCurrentYear(), month, 0).getDate();
 
   let row = document.createElement('tr');
   row.setAttribute('draggable', isEditMode);
@@ -1548,13 +1641,12 @@ function getAllCheckboxes() {
 
 const habitHead=document.getElementById("habitHead");
 const habitBody=document.getElementById("habitBody");
-const year=2026;
 
 const daysOfWeek = ['M', 'T', 'W', 'TH', 'F', 'S', 'S'];
 
 function generateTable(month){
 habitHead.innerHTML="";
-const days=new Date(year,month,0).getDate();
+const days=new Date(getCurrentYear(),month,0).getDate();
 
 let dayOfWeekRow = '<tr>'+
 '<th style="width:40px;"></th>'+
@@ -1562,7 +1654,7 @@ let dayOfWeekRow = '<tr>'+
 '<th>Activity</th>';
 
 for(let i=1;i<=days;i++){
-  const date = new Date(year, month-1, i);
+  const date = new Date(getCurrentYear(), month-1, i);
   let dayIndex = date.getDay();
   dayIndex = dayIndex === 0 ? 6 : dayIndex - 1;
   const dayLetter = daysOfWeek[dayIndex];
@@ -1597,16 +1689,51 @@ for(let i=1;i<=days;i++){
 }
 dayNumberRow += '</tr>';
 
-habitHead.innerHTML = dayOfWeekRow + dayNumberRow;
+let checkAllRow = '<tr class="checkall-row">'+
+'<th style="width:40px;"></th>'+
+'<th></th>'+
+'<th></th>';
+for(let i=1;i<=days;i++){
+  checkAllRow += '<th class="checkall-header"><button class="checkall-btn" data-col="'+(i-1)+'" title="Check / Uncheck whole column">&#10003;</button></th>';
+}
+checkAllRow += '</tr>';
+
+habitHead.innerHTML = dayOfWeekRow + dayNumberRow + checkAllRow;
 
 loadTable(month);
 }
 
 generateTable(parseInt(monthSelect.value));
 
-monthSelect.addEventListener("change",()=>{
-generateTable(parseInt(monthSelect.value));
-updateChart();
+monthSelect.addEventListener("change", refreshPeriod);
+yearSelect.addEventListener("change", refreshPeriod);
+
+function refreshPeriod(){
+  renderCalendar(getCurrentYear(), parseInt(monthSelect.value));
+  generateTable(parseInt(monthSelect.value));
+  updateChart();
+}
+
+habitHead.addEventListener('click', function(e){
+  const btn = e.target.closest('.checkall-btn');
+  if(!btn) return;
+  const col = parseInt(btn.getAttribute('data-col'));
+  const rows = Array.from(habitBody.querySelectorAll('tr[data-category]'));
+  let allChecked = rows.length > 0;
+  rows.forEach(row => {
+    const cell = row.cells[3+col];
+    if(!cell) return;
+    const cb = cell.querySelector('input[type="checkbox"]');
+    if(cb && !cb.checked) allChecked = false;
+  });
+  const newState = !allChecked;
+  rows.forEach(row => {
+    const cell = row.cells[3+col];
+    if(!cell) return;
+    const cb = cell.querySelector('input[type="checkbox"]');
+    if(cb){ cb.checked = newState; }
+  });
+  saveCurrentTable();
 });
 
 document.getElementById("editAllBtn").addEventListener("click", function() {
@@ -1732,7 +1859,7 @@ function addRoutineToCategory(selectedCategory) {
 
 function createRowElement(category) {
   const month = parseInt(monthSelect.value);
-  const days = new Date(2026, month, 0).getDate();
+  const days = new Date(getCurrentYear(), month, 0).getDate();
 
   let row = document.createElement('tr');
   row.setAttribute('draggable', isEditMode);
@@ -1796,6 +1923,8 @@ document.getElementById("copyFromMonthBtn").addEventListener("click", function()
 
   Array.from(copySelect.options).forEach(opt => {
     opt.disabled = (parseInt(opt.value) === currentMonth);
+    const d = new Date(getCurrentYear(), parseInt(opt.value)-1, 1);
+    opt.textContent = d.toLocaleString('en-US', {month:'long'}) + ' ' + getCurrentYear();
   });
 
   modal.classList.add('show');
@@ -1810,8 +1939,8 @@ function executeCopyMonth() {
   const copyMode = document.querySelector('input[name="copyMode"]:checked').value;
   const currentMonth = monthSelect.value;
 
-  const sourceKey = '2026-'+sourceMonth;
-  const currentKey = '2026-'+currentMonth;
+  const sourceKey = getCurrentYear()+'-'+sourceMonth;
+  const currentKey = getCurrentYear()+'-'+currentMonth;
 
   const sourceData = habitData[sourceKey] || [];
 
@@ -2053,6 +2182,12 @@ musicBtn.addEventListener("click", function(){
 
 initCategories();
 loadData();
+populateYearSelect();
+setPeriodToToday();
+renderCalendar(getCurrentYear(), parseInt(monthSelect.value));
+generateTable(parseInt(monthSelect.value));
+updateChart();
+initFirebase();
 
 window.addEventListener('storage', (e) => {
   if (e.key === STORAGE_KEY) {
